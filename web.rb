@@ -24,7 +24,11 @@ class SingingRain < Sinatra::Base
   #
 
   
-  get '/?:gem?/?:version?' do
+     before do
+    content_type "image/svg+xml; Connection: keep-alive; Content-Encoding: gzip; charset=utf-8"
+  end
+  
+  get '/?:gem?/?:version?'  do
     initialize_default_settings
     initialize_faraday_connection
   
