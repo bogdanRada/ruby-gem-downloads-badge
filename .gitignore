@@ -1,0 +1,16 @@
+/.idea/
+/.bundle/
+/.sass-cache/
+/coverage/
+/db/*.sqlite3
+/log/*.log
+/log/faye.rb.pid
+/tmp/
+/.rbenv-version
+/.powder
+/.gitflow/
+/chromedriver.log
+/nbproject/
+.DS_Store
+**/.DS_Store
+
