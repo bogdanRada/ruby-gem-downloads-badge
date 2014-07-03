@@ -24,7 +24,7 @@ class SingingRain < Sinatra::Base
   #
 
   
-     before do
+  before do
     content_type "image/svg+xml; Connection: keep-alive; Content-Encoding: gzip; charset=utf-8"
   end
   
@@ -55,8 +55,8 @@ class SingingRain < Sinatra::Base
         sorted_versions = version_numbers.version_sort if versions.present?
         last_version_number =  sorted_versions.present? ? sorted_versions.last : ""
         last_version_details = versions.detect {|val| val['number'] == last_version_number } if last_version_number.present?
-       @downloads_count = last_version_details['downloads_count'] if last_version_number.present?
-    end
+        @downloads_count = last_version_details['downloads_count'] if last_version_number.present?
+      end
     
     else
       render_badge_image
@@ -64,11 +64,11 @@ class SingingRain < Sinatra::Base
   end
   
   
-   private
+  private
   
   def render_badge_image
     @downloads_count = 0 if @downloads_count.nil?
-   initialize_shields_faraday_connection
+    initialize_shields_faraday_connection
     resp = @badge_conn.get do |req|
       req.url "/badge/downloads-#{@downloads_count}-#{@color}.svg#{@style}"
       req.headers['Content-Type'] = "image/svg+xml; Connection: keep-alive; Content-Encoding: gzip; charset=utf-8"
@@ -76,7 +76,7 @@ class SingingRain < Sinatra::Base
       req.options.open_timeout = 2
     end
     resp.on_complete {
-       @image_svg = resp.body 
+      @image_svg = resp.body 
       return @image_svg
     }
   end
@@ -106,11 +106,11 @@ class SingingRain < Sinatra::Base
   end
   
   def  initialize_shields_faraday_connection
-     @badge_conn = Faraday.new "http://img.shields.io" do |con|
+    @badge_conn = Faraday.new "http://img.shields.io" do |con|
       con.request :url_encoded
       con.response :logger
       con.adapter :net_http
-    #   con.use Faraday::HttpCache, store: RedisStore
+      #   con.use Faraday::HttpCache, store: RedisStore
     end
   end
   
@@ -120,7 +120,7 @@ class SingingRain < Sinatra::Base
       con.request :url_encoded
       con.response :logger
       con.adapter :net_http
-     # con.use Faraday::HttpCache, store: RedisStore
+      # con.use Faraday::HttpCache, store: RedisStore
     end
   end
   
