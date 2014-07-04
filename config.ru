@@ -1,2 +1,2 @@
 load 'web.rb'
-run SingingRain
+run RubygemsDownloadShieldsApp

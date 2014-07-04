@@ -1,3 +1,11 @@
+GIT
+  remote: https://github.com/raggi/async_sinatra.git
+  revision: 567fcf9be35585f2eeda80d0589e8d536e197d8f
+  specs:
+    async_sinatra (1.1.0)
+      rack (>= 1.4.1)
+      sinatra (>= 1.3.2)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -25,16 +33,23 @@ GEM
     rack (1.5.2)
     rack-handlers (0.7.0)
       rack
+    rack-protection (1.5.3)
+      rack
     rainbows (4.6.2)
       kgio (~> 2.5)
       rack (~> 1.1)
       unicorn (~> 4.8)
     raindrops (0.13.0)
     redis (3.1.0)
-    redis-sinatra (0.0.0)
-    sinatra (1.1.0)
-      rack (~> 1.1)
-      tilt (~> 1.1)
+    redis-sinatra (1.4.0)
+      redis-store (~> 1.1.0)
+      sinatra (~> 1.4.0)
+    redis-store (1.1.4)
+      redis (>= 2.2)
+    sinatra (1.4.5)
+      rack (~> 1.4)
+      rack-protection (~> 1.4)
+      tilt (~> 1.3, >= 1.3.4)
     sinatra-cache (0.3.7)
       sinatra (>= 1.1.0)
       sinatra-outputbuffer (>= 0.1.0)
@@ -54,6 +69,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  async_sinatra!
   em-http-request
   faraday
   faraday-http-cache
@@ -62,7 +78,7 @@ DEPENDENCIES
   rainbows
   redis
   redis-sinatra
-  sinatra (= 1.1.0)
+  sinatra (= 1.4.5)
   sinatra-cache
   sinatra-outputbuffer
   sinatra-settings

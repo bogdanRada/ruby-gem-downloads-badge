@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 ruby "1.9.3"
-gem 'sinatra', '1.1.0'
+gem 'sinatra', '1.4.5'
 # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
 #gem 'spring',        group: :development
 gem 'rack-handlers'
@@ -16,6 +16,7 @@ gem 'sinatra-outputbuffer'
 gem 'sinatra-settings'
 gem 'redis-sinatra'
 gem 'redis'
+gem 'async_sinatra', git: 'https://github.com/raggi/async_sinatra.git'
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
