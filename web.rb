@@ -2,7 +2,6 @@
 require 'rubygems'
 require 'sinatra'
 require 'sinatra/cache'
-require 'redis-sinatra'
 
 require 'em-http-request'
 require "faraday"

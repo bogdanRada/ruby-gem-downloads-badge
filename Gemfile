@@ -10,13 +10,9 @@ gem 'em-http-request'
 gem "faraday"
 gem 'faraday-http-cache'
 gem 'versionomy'
-gem 'haml'
 gem 'sinatra-cache'
 gem 'sinatra-outputbuffer'
 gem 'sinatra-settings'
-gem 'redis-sinatra'
-gem 'redis'
-gem 'async_sinatra', git: 'https://github.com/raggi/async_sinatra.git'
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'

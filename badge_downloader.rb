@@ -7,11 +7,12 @@ class BadgeDownloader
     @style = '?style=flat'  if @style == "flat"
     @gem_manager  =GemVersionManager.new(params)
     @color = "lightgrey" if @gem_manager.get_count  == "invalid"
+    @params = params
     @badge_conn ||=  get_faraday_shields_connection
   end
     
   def download_shield
-    if @gem_manager.get_count == "invalid"
+    if @gem_manager.get_count == "invalid" || @params[:gem].nil?
         return   fetch_image_shield
     else
       @gem_manager.fetch_gem_downloads do
