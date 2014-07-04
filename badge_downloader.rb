@@ -1,13 +1,22 @@
 require_relative './gem_version_manager'
 class BadgeDownloader
   
-  def initialize( params = {})
+  def initialize( params)
     @color = params[:color].nil? ? "blue" : params[:color] ;
     @style =  params[:style].nil? ? '': params[:style]; 
     @style = '?style=flat'  if @style == "flat"
     @gem_manager  =GemVersionManager.new(params)
     @params = params
-    @badge_conn ||=  get_faraday_shields_connection
+    @output = nil
+    @badge_conn =  get_faraday_shields_connection
+  end
+  
+  def get_connection
+    @badge_conn
+  end
+  
+  def get_output 
+    @output
   end
     
   def download_shield
@@ -34,15 +43,15 @@ class BadgeDownloader
       req.options.open_timeout = 2
     end
     resp.on_complete {
-      return  resp.body 
+      @output =  resp.body
     }
   end
       
   def get_faraday_shields_connection
     Faraday.new "http://img.shields.io" do |con|
-      con.request :url_encoded
+      con.request :retry
       con.response :logger
-      con.adapter :net_http
+      con.adapter :typhoeus
       #   con.use Faraday::HttpCache, store: RedisStore
     end
   end

@@ -5,7 +5,7 @@ class RubygemsApi
     @api_conn = Faraday.new "https://rubygems.org", :ssl => {:verify => false } do |con|
       con.request :url_encoded
       con.response :logger
-      con.adapter :net_http
+      con.adapter :typhoeus
       # con.use Faraday::HttpCache, store: RedisStore
     end
   end

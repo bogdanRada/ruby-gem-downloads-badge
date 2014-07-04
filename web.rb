@@ -5,7 +5,8 @@ Bundler.require :default, (ENV["RACK_ENV"] || "development").to_sym
 
 require 'erb'
 require_relative './badge_downloader'
-
+require 'typhoeus'
+require 'typhoeus/adapters/faraday'
 
 class RubygemsDownloadShieldsApp < Sinatra::Base
   register(Sinatra::Cache)
@@ -23,8 +24,12 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   end
   
   get '/?:gem?/?:version?'  do
-    @downloader = BadgeDownloader.new( params)
-    return @downloader.download_shield
+    stream :keep_open do |out|
+      @downloader = BadgeDownloader.new( params)
+      @downloader.download_shield
+      out << @downloader.get_output
+      out.close
+    end
   end
 
   
