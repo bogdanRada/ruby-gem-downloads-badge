@@ -6,7 +6,6 @@ class BadgeDownloader
     @style =  params[:style].nil? ? '': params[:style]; 
     @style = '?style=flat'  if @style == "flat"
     @gem_manager  =GemVersionManager.new(params)
-    @color = "lightgrey" if @gem_manager.get_count  == "invalid"
     @params = params
     @badge_conn ||=  get_faraday_shields_connection
   end
@@ -26,6 +25,7 @@ class BadgeDownloader
   
   def fetch_image_shield
     count = @gem_manager.get_count
+    @color = "lightgrey" if count == "invalid"
     count = 0 if count.nil?
     resp = @badge_conn.get do |req|
       req.url "/badge/downloads-#{count}-#{@color}.svg#{@style}"
