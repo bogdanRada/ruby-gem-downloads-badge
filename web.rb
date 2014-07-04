@@ -7,9 +7,11 @@ require 'erb'
 require_relative './badge_downloader'
 require 'typhoeus'
 require 'typhoeus/adapters/faraday'
+require 'sinatra/contrib/all'
 
 class RubygemsDownloadShieldsApp < Sinatra::Base
   register(Sinatra::Cache)
+  helpers Sinatra::Streaming
    
   set :cache_enabled, true 
   
