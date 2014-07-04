@@ -1,11 +1,8 @@
 #!/usr/bin/env ruby
 require 'rubygems'
-require 'sinatra'
-require 'sinatra/cache'
+require "bundler"
+Bundler.require :default, (ENV["RACK_ENV"] || "development").to_sym
 
-require 'em-http-request'
-require "faraday"
-require 'faraday-http-cache'
 require 'erb'
 require_relative './badge_downloader'
 
