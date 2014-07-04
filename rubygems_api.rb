@@ -18,7 +18,7 @@ class RubygemsApi
       req.options.timeout = 5           # open/read timeout in seconds
       req.options.open_timeout = 2
     end
-    resp.on_complete {
+     resp.on_complete {
       @res = resp.body 
       @res = JSON.parse(@res)
       yield @res if block_given?

@@ -28,7 +28,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   
   get '/?:gem?/?:version?'  do
     @downloader = BadgeDownloader.new( params)
-    @downloader.download_shield
+    return @downloader.download_shield
   end
 
   

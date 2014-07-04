@@ -5,13 +5,26 @@ class BadgeDownloader
     @color = params[:color].nil? ? "blue" : params[:color] ;
     @style =  params[:style].nil? ? '': params[:style]; 
     @style = '?style=flat'  if @style == "flat"
-    @color = "lightgrey" if @count == "invalid"
     @gem_manager  =GemVersionManager.new(params)
+    @color = "lightgrey" if @gem_manager.get_count  == "invalid"
     @badge_conn ||=  get_faraday_shields_connection
   end
     
   def download_shield
-    count = @gem_manager.fetch_gem_downloads
+    if @gem_manager.get_count == "invalid"
+        return   fetch_image_shield
+    else
+      @gem_manager.fetch_gem_downloads do
+          fetch_image_shield
+      end
+    end
+  end
+
+    
+  private
+  
+  def fetch_image_shield
+    count = @gem_manager.get_count
     count = 0 if count.nil?
     resp = @badge_conn.get do |req|
       req.url "/badge/downloads-#{count}-#{@color}.svg#{@style}"
@@ -23,9 +36,6 @@ class BadgeDownloader
       return  resp.body 
     }
   end
-
-    
-  private
       
   def get_faraday_shields_connection
     Faraday.new "http://img.shields.io" do |con|

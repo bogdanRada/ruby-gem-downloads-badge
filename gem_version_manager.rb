@@ -12,17 +12,22 @@ class GemVersionManager
     @error_parse_gem_version = false
     @params = params
     parse_gem_version
+    @rubygems_api = RubygemsApi.new unless @downloads_count == "invalid"
   end
 
+  
+  def get_count 
+    @downloads_count
+  end
 
   def fetch_gem_downloads
     unless @downloads_count == "invalid"
-      @rubygems_api = RubygemsApi.new()
       if (!@gem_name.nil?  && @gem_version.nil?)
     
         @rubygems_api.fetch_data("/api/v1/gems/#{@gem_name}.json") do  |http_response|
           @downloads_count = http_response['version_downloads']
           @downloads_count = "#{http_response['downloads']}_total" if !@params[:type].nil? && @params[:type] == "total"
+          return    yield if block_given?
         end
       
       elsif (!@gem_name.nil?  && !@gem_version.nil? && @gem_version!= "stable" && @error_parse_gem_version == false)
@@ -30,6 +35,7 @@ class GemVersionManager
         @rubygems_api.fetch_data("/api/v1/downloads/#{@gem_name}-#{@gem_version}.json") do  |http_response|
           @downloads_count = http_response['version_downloads']
           @downloads_count = "#{http_response['total_downloads']}_total" if !@params[:type].nil? && @params[:type] == "total"
+           return  yield if block_given?
         end
      
       elsif (!@gem_name.nil?  && !@gem_version.nil? && @gem_version== "stable" && @error_parse_gem_version == false)
@@ -37,13 +43,11 @@ class GemVersionManager
         @rubygems_api.fetch_data("/api/v1/versions/#{@gem_name}.json") do  |http_response|
           latest_stable_version_details = get_latest_stable_version_details(http_response)
           @downloads_count = latest_stable_version_details['downloads_count'] unless latest_stable_version_details.empty?
+             return   yield if block_given?
         end
     
-      else
-        @downloads_count = 0
       end 
     end
-    return @downloads_count
   end
     
 
