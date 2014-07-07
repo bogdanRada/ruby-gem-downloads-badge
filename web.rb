@@ -11,7 +11,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   register(Sinatra::Cache)
   helpers Sinatra::Streaming
    
-  set server: 'rainbows', connections: [] 
+  
   set :cache_enabled, false 
   set :static_cache_control, [:no_cache, :must_revalidate, :max_age => 0]
   set :static, false                            # set up static file routing
