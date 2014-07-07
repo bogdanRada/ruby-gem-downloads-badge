@@ -11,6 +11,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   register(Sinatra::Cache)
   helpers Sinatra::Streaming
    
+  set server: 'rainbows', connections: [] 
   set :cache_enabled, false 
   set :static_cache_control, [:no_cache, :must_revalidate, :max_age => 0]
   set :static, false                            # set up static file routing
@@ -29,11 +30,10 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
     if !params[:gem].nil? &&  params[:gem].include?("favicon")
        send_file File.join(settings.public_folder, "favicon.ico"), :disposition => 'inline', :type => "image/x-icon"
      else
-      stream :keep_open do |out|           
+      stream  do |out|           
           @downloader = BadgeDownloader.new( params, out)
           @downloader.download_shield
       end
-      
     end
   end
 
