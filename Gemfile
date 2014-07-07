@@ -14,6 +14,7 @@ gem 'sinatra-cache'
 gem 'sinatra-outputbuffer'
 gem 'sinatra-settings'
 gem 'sinatra-contrib'
+gem 'rack'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 

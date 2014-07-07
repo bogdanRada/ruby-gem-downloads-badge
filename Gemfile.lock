@@ -67,6 +67,7 @@ DEPENDENCIES
   em-http-request
   faraday
   faraday-http-cache
+  rack
   rack-handlers
   rainbows
   sinatra (= 1.4.5)

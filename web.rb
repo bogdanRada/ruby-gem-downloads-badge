@@ -5,6 +5,7 @@ Bundler.require :default, (ENV["RACK_ENV"] || "development").to_sym
 
 require_relative './badge_downloader'
 require 'sinatra/contrib/all'
+require 'rack'
 
 class RubygemsDownloadShieldsApp < Sinatra::Base
   register(Sinatra::Cache)
@@ -21,11 +22,11 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   before do
     content_type "image/svg+xml; Connection: keep-alive; Content-Encoding: gzip; charset=utf-8"
   end
-  
+
   get '/?:gem?/?:version?'  do
     if !params[:gem].nil? &&  params[:gem].include?("favicon")
-      run Rack::File.new("./static/favicon.ico")
-    else
+       send_file File.join(settings.public_folder, "favicon.ico"), :disposition => 'inline', :type => "image/x-icon"
+     else
       stream :keep_open do |out|           
         EM.run do
           @downloader = BadgeDownloader.new( params, out)
