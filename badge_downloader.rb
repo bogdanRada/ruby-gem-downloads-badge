@@ -36,7 +36,7 @@ class BadgeDownloader
     count = 0 if count.nil?
     resp = @badge_conn.get do |req|
       req.url "/badge/downloads-#{count}-#{@color}.svg#{@style}"
-      req.headers['Content-Type'] = "image/svg+xml; Connection: keep-alive; Content-Encoding: gzip; charset=utf-8"
+      req.headers['Content-Type'] = "image/svg+xml; Content-Encoding: gzip; charset=utf-8; Cache-Control:no-cache; Pragma: no-cache"
       req.options.timeout = 5           # open/read timeout in seconds
       req.options.open_timeout = 2
     end
