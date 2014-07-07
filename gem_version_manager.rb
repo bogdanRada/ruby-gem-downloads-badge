@@ -5,6 +5,11 @@ require 'versionomy'
 class GemVersionManager
   
   INVALID_COUNT = "invalid"
+
+  @attrs = [:gem_name, :gem_version :downloads_count, :params, :rubygems_api, :error_parse_gem_version]
+      
+  attr_reader *@attrs
+  attr_accessor *@attrs
   
   def initialize(params)
     @gem_name = params[:gem].nil? ? nil : params[:gem] ;
@@ -16,17 +21,6 @@ class GemVersionManager
     @rubygems_api = RubygemsApi.new(self) unless invalid_count?
   end
 
-  def gem_name
-    @gem_name
-  end
-  
-  def downloads_count 
-    @downloads_count
-  end
-  
-  def downloads_count=(value)
-    @downloads_count = value
-  end
 
   def display_total?
     !@params[:type].nil? && @params[:type] == "total"

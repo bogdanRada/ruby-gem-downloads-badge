@@ -1,6 +1,11 @@
 require_relative './gem_version_manager'
 class BadgeDownloader
   
+  @attrs = [:color, :style :gem_manager, :params, :badge_conn, :output_buffer]
+      
+      attr_reader *@attrs
+      attr_accessor *@attrs
+
   def initialize( params, output_buffer)
     @color = params[:color].nil? ? "blue" : params[:color] ;
     @style =  params[:style].nil? ? '': params[:style]; 

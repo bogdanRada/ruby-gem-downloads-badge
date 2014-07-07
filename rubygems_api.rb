@@ -2,6 +2,11 @@
 require_relative './gem_version_manager'
 class RubygemsApi
   
+  @attrs = [:manager, :api_conn]
+      
+  attr_reader *@attrs
+  attr_accessor *@attrs
+
   def initialize(manager)
     @manager = manager
     @api_conn = Faraday.new "https://rubygems.org", :ssl => {:verify => false } do |con|
