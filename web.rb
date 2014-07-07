@@ -8,6 +8,7 @@ require 'sinatra/contrib/all'
 require 'rack'
 
 class RubygemsDownloadShieldsApp < Sinatra::Base
+  register(Sinatra::Cache)
   helpers Sinatra::Streaming
    
   set :cache_enabled, true 
