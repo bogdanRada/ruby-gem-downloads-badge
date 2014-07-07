@@ -13,7 +13,7 @@ class BadgeDownloader
   
     
   def download_shield
-    if @gem_manager.downloads_count == "invalid" || @gem_manager.gem_name.nil?
+    if @gem_manager.invalid_count? || @gem_manager.gem_name.nil?
         return   fetch_image_shield
     else
       @gem_manager.fetch_gem_downloads do

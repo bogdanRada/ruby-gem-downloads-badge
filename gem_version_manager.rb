@@ -4,6 +4,7 @@ require 'versionomy'
 
 class GemVersionManager
   
+  INVALID_COUNT = "invalid"
   
   def initialize(params)
     @gem_name = params[:gem].nil? ? nil : params[:gem] ;
@@ -12,7 +13,7 @@ class GemVersionManager
     @error_parse_gem_version = false
     @params = params
     parse_gem_version
-    @rubygems_api = RubygemsApi.new(self) unless @downloads_count == "invalid"
+    @rubygems_api = RubygemsApi.new(self) unless invalid_count?
   end
 
   def gem_name
@@ -32,7 +33,7 @@ class GemVersionManager
   end
   
   def invalid_count?
-    @downloads_count == "invalid"
+    @downloads_count == GemVersionManager::INVALID_COUNT
   end
   
   
@@ -82,7 +83,7 @@ class GemVersionManager
       begin
         Versionomy.parse(@gem_version)
       rescue Versionomy::Errors::ParseError
-        @downloads_count = "invalid";
+        @downloads_count = GemVersionManager::INVALID_COUNT
         @error_parse_gem_version = true
       end
     end

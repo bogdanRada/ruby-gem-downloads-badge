@@ -1,4 +1,5 @@
 
+require_relative './gem_version_manager'
 class RubygemsApi
   
   def initialize(manager)
@@ -24,7 +25,7 @@ class RubygemsApi
         @res = JSON.parse(@res)
       rescue  JSON::ParserError => e
         puts e.inspect
-        @manager.downloads_count = "invalid";
+        @manager.downloads_count = GemVersionManager::INVALID_COUNT;
       end
       block.call @res 
       #request.env['async.callback'].call(response)
