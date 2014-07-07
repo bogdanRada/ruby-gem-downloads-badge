@@ -39,7 +39,6 @@ class BadgeDownloader
       req.headers['Content-Type'] = "image/svg+xml; Content-Encoding: gzip; charset=utf-8;"
       req.headers['Cache-Control'] = "no-cache"
       req.headers['Pragma'] = "no-cache"
-      req.headers['Expires'] = Time.now - 1.day
       req.options.timeout = 5           # open/read timeout in seconds
       req.options.open_timeout = 2
     end
