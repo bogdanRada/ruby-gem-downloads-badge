@@ -35,7 +35,6 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
          EM.run {         
           @downloader = BadgeDownloader.new( params, out)
           @downloader.download_shield
-          erb :index, :locals => {:output_buffer => out}
         }
         EM.error_handler{|e| puts "Error during event loop : #{e.inspect}" }
       end
