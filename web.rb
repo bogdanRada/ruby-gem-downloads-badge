@@ -22,7 +22,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   
   before do
     content_type "image/svg+xml;  Content-Encoding: gzip; charset=utf-8; "
-    cache_control :no_cache
+    cache_control :no_cache, :must_revalidate, :max_age => 0
     etag SecureRandom.hex
   end
 
