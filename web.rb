@@ -31,7 +31,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
     if !params[:gem].nil? &&  params[:gem].include?("favicon")
        send_file File.join(settings.public_folder, "favicon.ico"), :disposition => 'inline', :type => "image/x-icon"
      else
-      stream  do |out|  
+      stream :keep_open do |out|  
          EM.run {         
           @downloader = BadgeDownloader.new( params, out)
           @downloader.download_shield
