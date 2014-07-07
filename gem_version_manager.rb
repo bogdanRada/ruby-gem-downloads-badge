@@ -6,7 +6,7 @@ class GemVersionManager
   
   INVALID_COUNT = "invalid"
 
-  @attrs = [:gem_name, :gem_version :downloads_count, :params, :rubygems_api, :error_parse_gem_version]
+  @attrs = [:gem_name, :gem_version, :downloads_count, :params, :rubygems_api, :error_parse_gem_version]
       
   attr_reader *@attrs
   attr_accessor *@attrs

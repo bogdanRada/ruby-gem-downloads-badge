@@ -1,7 +1,7 @@
 require_relative './gem_version_manager'
 class BadgeDownloader
   
-  @attrs = [:color, :style :gem_manager, :params, :badge_conn, :output_buffer]
+  @attrs = [:color, :style, :gem_manager, :params, :badge_conn, :output_buffer]
       
       attr_reader *@attrs
       attr_accessor *@attrs
