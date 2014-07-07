@@ -6,6 +6,7 @@ Bundler.require :default, (ENV["RACK_ENV"] || "development").to_sym
 require_relative './badge_downloader'
 require 'sinatra/contrib/all'
 require 'rack'
+require 'securerandom'
 
 class RubygemsDownloadShieldsApp < Sinatra::Base
   register(Sinatra::Cache)
