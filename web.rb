@@ -14,7 +14,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
    
   set :cache_enabled, false 
   set :static_cache_control, [:no_cache, :must_revalidate, :max_age => 0]
-  set :static, true                             # set up static file routing
+  set :static, false                            # set up static file routing
   set :public_folder, File.expand_path('../static', __FILE__)# set up the static dir (with images/js/css inside)
   
   set :views,  File.expand_path('../views', __FILE__) # set up the views dir
