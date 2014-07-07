@@ -8,9 +8,10 @@ require 'sinatra/contrib/all'
 require 'rack'
 
 class RubygemsDownloadShieldsApp < Sinatra::Base
+  register(Sinatra::Cache)
   helpers Sinatra::Streaming
    
-  set :cache_enabled, true 
+  set :cache_enabled, false 
   
   set :static, true                             # set up static file routing
   set :public_folder, File.expand_path('../static', __FILE__)# set up the static dir (with images/js/css inside)
@@ -21,7 +22,6 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   before do
     content_type "image/svg+xml; Connection: keep-alive; Content-Encoding: gzip; charset=utf-8; "
     cache_control :no_cache, :must_revalidate, :max_age => 0
-    expires 0, :no_cache, :must_revalidate
   end
 
   get '/?:gem?/?:version?'  do
