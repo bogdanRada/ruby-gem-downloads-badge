@@ -3,10 +3,7 @@ require 'rubygems'
 require "bundler"
 Bundler.require :default, (ENV["RACK_ENV"] || "development").to_sym
 
-require 'erb'
 require_relative './badge_downloader'
-require 'typhoeus'
-require 'typhoeus/adapters/faraday'
 require 'sinatra/contrib/all'
 
 class RubygemsDownloadShieldsApp < Sinatra::Base
@@ -16,7 +13,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   set :cache_enabled, true 
   
   set :static, true                             # set up static file routing
-  set :public_folder, File.expand_path('..', __FILE__) # set up the static dir (with images/js/css inside)
+  set :public_folder, File.expand_path('../static', __FILE__)# set up the static dir (with images/js/css inside)
   
   set :views,  File.expand_path('../views', __FILE__) # set up the views dir
   
@@ -26,15 +23,22 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   end
   
   get '/?:gem?/?:version?'  do
-    stream :keep_open do |out|
-      @downloader = BadgeDownloader.new( params)
-      @downloader.download_shield
-      out << @downloader.get_output
-      out.close
+    if !params[:gem].nil? &&  params[:gem].include?("favicon")
+      run Rack::File.new("./static/favicon.ico")
+    else
+      stream :keep_open do |out|           
+        EM.run do
+          @downloader = BadgeDownloader.new( params, out)
+          @downloader.download_shield
+        end
+        EM.error_handler{ |e|
+          puts   " Error raised during event loop: #{e.message}"
+        }
+      end
+      
     end
   end
 
-  
 end
 
   
