@@ -6,6 +6,7 @@ Bundler.require :default, (ENV["RACK_ENV"] || "development").to_sym
 require_relative './badge_downloader'
 require 'sinatra/streaming'
 require 'securerandom'
+require 'erb'
 
 class RubygemsDownloadShieldsApp < Sinatra::Base
   register(Sinatra::Cache)
@@ -30,9 +31,13 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
     if !params[:gem].nil? &&  params[:gem].include?("favicon")
        send_file File.join(settings.public_folder, "favicon.ico"), :disposition => 'inline', :type => "image/x-icon"
      else
-      stream  do |out|           
+      stream  do |out|  
+         EM.run {         
           @downloader = BadgeDownloader.new( params, out)
           @downloader.download_shield
+          erb :index, :locals => {:output_buffer => out}
+        }
+        EM.error_handler{|e| puts "Error during event loop : #{e.inspect}" }
       end
     end
   end
