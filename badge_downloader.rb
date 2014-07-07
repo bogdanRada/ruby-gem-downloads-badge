@@ -42,7 +42,6 @@ class BadgeDownloader
     end
     resp.on_complete {
        @output_buffer <<  resp.body
-       @output_buffer << etag(resp.body)
        @output_buffer.close
     }
   end

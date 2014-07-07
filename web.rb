@@ -8,7 +8,6 @@ require 'sinatra/contrib/all'
 require 'rack'
 
 class RubygemsDownloadShieldsApp < Sinatra::Base
-  register(Sinatra::Cache)
   helpers Sinatra::Streaming
    
   set :cache_enabled, true 
@@ -20,7 +19,8 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   
   
   before do
-    content_type "image/svg+xml; Connection: keep-alive; Content-Encoding: gzip; charset=utf-8; Cache-Control: no-cache"
+    content_type "image/svg+xml; Connection: keep-alive; Content-Encoding: gzip; charset=utf-8; "
+    cache_control :no_cache, :must_revalidate, :max_age => 0
   end
 
   get '/?:gem?/?:version?'  do
