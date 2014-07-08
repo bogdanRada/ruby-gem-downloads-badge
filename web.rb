@@ -22,7 +22,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   
   
   before do
-    content_type "image/svg+xml;  Content-Encoding: gzip; charset=utf-8; "
+    #content_type "image/svg+xml;  Content-Encoding: gzip; charset=utf-8; "
     cache_control :no_cache, :must_revalidate, :max_age => 0
     etag SecureRandom.hex
     last_modified(Time.now)
@@ -35,9 +35,13 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
     else
       stream :keep_open do |out|  
         EM.run { 
-          @downloader = BadgeDownloader.new( params, out)
-          @downloader.download_shield
+          @downloader = BadgeDownloader.new( params, nil)
+          resp = @downloader.download_shield
+          resp.on_complete {
+            out <<  erb(:index, :locals =>  { :image_svg => resp.body })
+            out.close
           }
+        }
         EM.error_handler{|e| puts "Error during event loop : #{e.inspect}" }
       end
     end
