@@ -51,8 +51,8 @@ class BadgeDownloader
     Faraday.new "http://img.shields.io" do |con|
       con.request :url_encoded
       con.response :logger
-      con.adapter :em_http
       con.use FaradayNoCacheMiddleware
+      con.adapter :em_http
       #   con.use Faraday::HttpCache, store: RedisStore
     end
   end

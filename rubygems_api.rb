@@ -12,6 +12,7 @@ class RubygemsApi
     @api_conn = Faraday.new "https://rubygems.org", :ssl => {:verify => false } do |con|
       con.request :url_encoded
       con.response :logger
+      con.use FaradayNoCacheMiddleware
       con.adapter :em_http
     end
   end
