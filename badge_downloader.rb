@@ -4,7 +4,7 @@ class BadgeDownloader
   
   INVALID_COUNT = "invalid"
   
-  @attrs = [:color, :style, :shield_conn, :downloads_count, :params, :output_buffer]
+  @attrs = [:color, :style, :shield_conn, :downloads_count, :params, :output_buffer, :rubygems_api]
       
   attr_reader *@attrs
   attr_accessor *@attrs
@@ -17,19 +17,30 @@ class BadgeDownloader
     @params = params
     @output_buffer = output_buffer
     @shield_conn =  get_faraday_shields_connection
+    @rubygems_api = RubygemsApi.new(self) 
   end
   
-
+  def show_invalid?
+    @rubygems_api.has_errors? ||  @rubygems_api.gem_name.nil?
+  end
+  
+  def fetch_gem_shield
+    @rubygems_api.fetch_gem_downloads do
+      fetch_image_shield
+    end
+  end
+  
+  
   def display_total?
     !@params[:type].nil? && @params[:type] == "total"
   end
-  
-  def invalid_count?
-    @downloads_count == BadgeDownloader::INVALID_COUNT
-  end
+
   
   def fetch_image_shield
-    @color = "lightgrey" if invalid_count?
+    if show_invalid? && !@rubygems_api.gem_name.nil?
+      @color = "lightgrey"
+      @downloads_count = BadgeDownloader::INVALID_COUNT
+    end
     @downloads_count = 0 if @downloads_count.nil?
     resp =   @shield_conn.get do |req|
       req.url "/badge/downloads-#{@downloads_count }-#{@color}.svg#{@style}"
