@@ -27,10 +27,10 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   
   before do
     content_type "image/svg+xml;  Content-Encoding: gzip; charset=utf-8; "
-    headers({"Pragma" => "no-cache", "Cache-Control" => "no-cache"})
+    headers({"Pragma" => "no-cache"})
 #    etag SecureRandom.hex
 #    last_modified(Time.now - 60)
-    expires Time.now - 1
+    expires Time.now - 1, :no_cache, :must_revalidate, :max_age => 0
   end
 
   get '/?:gem?/?:version?'  do
