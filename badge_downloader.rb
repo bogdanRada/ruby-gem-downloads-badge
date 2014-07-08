@@ -1,56 +1,56 @@
-require_relative './gem_version_manager'
-require_relative './config/initializers/faraday_no_cache_middleware'
+
+require_relative './rubygems_api'
 class BadgeDownloader
   
-  @attrs = [:color, :style, :gem_manager, :params, :badge_conn, :output_buffer]
+  INVALID_COUNT = "invalid"
+  
+  @attrs = [:color, :style, :shield_conn, :downloads_count, :params, :output_buffer]
       
-      attr_reader *@attrs
-      attr_accessor *@attrs
+  attr_reader *@attrs
+  attr_accessor *@attrs
 
   def initialize( params, output_buffer)
     @color = params[:color].nil? ? "blue" : params[:color] ;
     @style =  params[:style].nil? ? '': params[:style]; 
     @style = '?style=flat'  if @style == "flat"
-    @gem_manager  =GemVersionManager.new(params)
+    @downloads_count = nil
     @params = params
-    @badge_conn =  get_faraday_shields_connection
     @output_buffer = output_buffer
+    @shield_conn =  get_faraday_shields_connection
   end
   
-    
-  def download_shield
-    if @gem_manager.invalid_count? || @gem_manager.gem_name.nil?
-           fetch_image_shield
-    else
-      @gem_manager.fetch_gem_downloads do
-          fetch_image_shield
-      end
-    end
-  end
 
-    
-  private
+  def display_total?
+    !@params[:type].nil? && @params[:type] == "total"
+  end
+  
+  def invalid_count?
+    @downloads_count == BadgeDownloader::INVALID_COUNT
+  end
   
   def fetch_image_shield
-    count = @gem_manager.downloads_count
-    @color = "lightgrey" if @gem_manager.invalid_count?
-    count = 0 if count.nil?
-     @badge_conn.get do |req|
-      req.url "/badge/downloads-#{count}-#{@color}.svg#{@style}"
+    @color = "lightgrey" if invalid_count?
+    @downloads_count = 0 if @downloads_count.nil?
+    resp =   @shield_conn.get do |req|
+      req.url "/badge/downloads-#{@downloads_count }-#{@color}.svg#{@style}"
       req.headers['Content-Type'] = "image/svg+xml; Content-Encoding: gzip; charset=utf-8;"
-       req.headers["Cache-Control"] =  "no-cache, no-store, max-age=0, must-revalidate"
-      req.headers["Pragma"] = "no-cache"
       req.options.timeout = 5           # open/read timeout in seconds
       req.options.open_timeout = 2
     end
-  
+    resp.on_complete {
+      @output_buffer << resp.body
+      @output_buffer.close
+    }
   end
+  
+ 
+  private 
+  
       
   def get_faraday_shields_connection
     Faraday.new "http://img.shields.io" do |con|
       con.request :url_encoded
       con.response :logger
-      con.use FaradayNoCacheMiddleware
       con.adapter :em_http
       #   con.use Faraday::HttpCache, store: RedisStore
     end

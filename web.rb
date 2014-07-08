@@ -3,12 +3,16 @@ require 'rubygems'
 require "bundler"
 Bundler.require :default, (ENV["RACK_ENV"] || "development").to_sym
 
-require_relative './badge_downloader'
 require 'sinatra/streaming'
 require "sinatra/json"
 require 'json'
 require 'securerandom'
 require 'erb'
+require 'versionomy'
+require_relative './config/initializers/version_sort'
+
+require_relative './badge_downloader'
+require_relative './rubygems_api'
 
 class RubygemsDownloadShieldsApp < Sinatra::Base
   helpers Sinatra::Streaming
@@ -32,15 +36,21 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
     
     if !params[:gem].nil? &&  params[:gem].include?("favicon")
       send_file File.join(settings.public_folder, "favicon.ico"), :disposition => 'inline', :type => "image/x-icon"
+    elsif  !params[:gem].nil? &&  params[:gem].include?("github.js")
+      send_file File.join(settings.public_folder, "github.js"), :disposition => 'inline', :type => "text/javascript"
     else
       stream :keep_open do |out|  
         EM.run { 
-          @downloader = BadgeDownloader.new( params, nil)
-          resp = @downloader.download_shield
-          resp.on_complete {
-            out <<  erb(:index, :locals =>  { :image_svg => resp.body })
-            out.close
-          }
+          @downloader = BadgeDownloader.new( params, out)
+          @rubygems_api = RubygemsApi.new(@downloader) 
+            
+          if @downloader.invalid_count? || @rubygems_api.gem_name.nil?
+            @downloader.fetch_image_shield
+          else
+            @rubygems_api.fetch_gem_downloads do
+              @downloader.fetch_image_shield
+            end
+          end
         }
         EM.error_handler{|e| puts "Error during event loop : #{e.inspect}" }
       end
