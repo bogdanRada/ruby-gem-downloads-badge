@@ -15,6 +15,7 @@ class RubygemsApi
     unless has_errors?
       @api_conn = Faraday.new "https://rubygems.org", :ssl => {:verify => false } do |con|
         con.request :url_encoded
+        con.use FaradayNoCacheMiddleware
         con.response :logger
         con.adapter :em_http
       end
@@ -69,22 +70,24 @@ class RubygemsApi
   private 
   
   def fetch_data(url, &block)
-    resp =@api_conn.get do |req|
-      req.url url
-      req.headers['Content-Type'] = 'application/json'
-      req.options.timeout = 5           # open/read timeout in seconds
-      req.options.open_timeout = 2
-    end
-    resp.on_complete {
-      @res = resp.body 
-      begin
-        @res = JSON.parse(@res)
-      rescue  JSON::ParserError => e
-        @errors << ["Error while parsing response from api : #{e.inspect}"]
+    unless @api_conn.nil?
+      resp =@api_conn.get do |req|
+        req.url url
+        req.headers['Content-Type'] = 'application/json'
+        req.options.timeout = 5           # open/read timeout in seconds
+        req.options.open_timeout = 2
       end
-      block.call @res 
-      #request.env['async.callback'].call(response)
-    }
+      resp.on_complete {
+        @res = resp.body 
+        begin
+          @res = JSON.parse(@res)
+        rescue  JSON::ParserError => e
+          @errors << ["Error while parsing response from api : #{e.inspect}"]
+        end
+        block.call @res 
+        #request.env['async.callback'].call(response)
+      }
+    end
   end
 
   def parse_gem_version
