@@ -22,6 +22,8 @@ class RubygemsApi
     resp =@api_conn.get do |req|
       req.url url
       req.headers['Content-Type'] = 'application/json'
+      req.headers["Cache-Control"] =  "no-cache, no-store, max-age=0, must-revalidate"
+      req.headers["Pragma"] = "no-cache"
       req.options.timeout = 5           # open/read timeout in seconds
       req.options.open_timeout = 2
     end
