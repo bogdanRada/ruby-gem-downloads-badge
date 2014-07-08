@@ -1,4 +1,5 @@
 require_relative './gem_version_manager'
+require_relative './config/initializers/faraday_no_cache_middleware'
 class BadgeDownloader
   
   @attrs = [:color, :style, :gem_manager, :params, :badge_conn, :output_buffer]
@@ -51,6 +52,7 @@ class BadgeDownloader
       con.request :url_encoded
       con.response :logger
       con.adapter :em_http
+      con.use FaradayNoCacheMiddleware
       #   con.use Faraday::HttpCache, store: RedisStore
     end
   end
