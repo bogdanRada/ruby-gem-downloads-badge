@@ -36,8 +36,6 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
     
     if !params[:gem].nil? &&  params[:gem].include?("favicon")
       send_file File.join(settings.public_folder, "favicon.ico"), :disposition => 'inline', :type => "image/x-icon"
-    elsif  !params[:gem].nil? &&  params[:gem].include?("github.js")
-      send_file File.join(settings.public_folder, "github.js"), :disposition => 'inline', :type => "text/javascript"
     else
       stream :keep_open do |out|  
         EM.run { 
