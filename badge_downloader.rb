@@ -45,8 +45,8 @@ class BadgeDownloader
     resp =   @shield_conn.get do |req|
       req.url "/badge/downloads-#{@downloads_count }-#{@color}.svg#{@style}"
       req.headers['Content-Type'] = "image/svg+xml; Content-Encoding: gzip; charset=utf-8;"
-      req.options.timeout = 5           # open/read timeout in seconds
-      req.options.open_timeout = 2
+      req.options.timeout = 10         # open/read timeout in seconds
+      req.options.open_timeout = 5
     end
     resp.on_complete {
       @output_buffer << resp.body

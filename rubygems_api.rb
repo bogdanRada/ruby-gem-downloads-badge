@@ -74,8 +74,8 @@ class RubygemsApi
       resp =@api_conn.get do |req|
         req.url url
         req.headers['Content-Type'] = 'application/json'
-        req.options.timeout = 5           # open/read timeout in seconds
-        req.options.open_timeout = 2
+        req.options.timeout = 10           # open/read timeout in seconds
+        req.options.open_timeout = 5
       end
       resp.on_complete {
         @res = resp.body 
