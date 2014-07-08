@@ -3,7 +3,7 @@ class BadgeDownloader
   
   INVALID_COUNT = "invalid"
   
-  @attrs = [:color, :style, :shield_conn, :params, :output_buffer, :rubygems_api]
+  @attrs = [:color, :style, :shield_conn, :output_buffer, :rubygems_api]
       
   attr_reader *@attrs
   attr_accessor *@attrs
@@ -12,7 +12,6 @@ class BadgeDownloader
     @color = params[:color].nil? ? "blue" : params[:color] ;
     @style =  params[:style].nil? ? '': params[:style]; 
     @style = '?style=flat'  if @style == "flat"
-    @params = params
     @output_buffer = output_buffer
     @shield_conn =  get_faraday_shields_connection
     @rubygems_api = RubygemsApi.new(params) 
