@@ -45,6 +45,8 @@ class BadgeDownloader
     resp =   @shield_conn.get do |req|
       req.url "/badge/downloads-#{@downloads_count }-#{@color}.svg#{@style}"
       req.headers['Content-Type'] = "image/svg+xml; Content-Encoding: gzip; charset=utf-8;"
+      req.headers["Cache-Control"] =  "no-cache, no-store, max-age=0, must-revalidate"
+      req.headers["Pragma"] = "no-cache"
       req.options.timeout = 10         # open/read timeout in seconds
       req.options.open_timeout = 5
     end
@@ -62,8 +64,8 @@ class BadgeDownloader
     Faraday.new "http://img.shields.io" do |con|
       con.request :url_encoded
       con.request :retry
-      con.use FaradayNoCacheMiddleware
       con.response :logger
+      con.use FaradayNoCacheMiddleware
       con.adapter :em_http
       #   con.use Faraday::HttpCache, store: RedisStore
     end

@@ -15,8 +15,8 @@ class RubygemsApi
     unless has_errors?
       @api_conn = Faraday.new "https://rubygems.org", :ssl => {:verify => false } do |con|
         con.request :url_encoded
-        con.use FaradayNoCacheMiddleware
         con.response :logger
+        con.use FaradayNoCacheMiddleware
         con.adapter :em_http
       end
     end
@@ -74,6 +74,8 @@ class RubygemsApi
       resp =@api_conn.get do |req|
         req.url url
         req.headers['Content-Type'] = 'application/json'
+        req.headers["Cache-Control"] =  "no-cache, no-store, max-age=0, must-revalidate"
+        req.headers["Pragma"] = "no-cache"
         req.options.timeout = 10           # open/read timeout in seconds
         req.options.open_timeout = 5
       end
