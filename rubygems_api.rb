@@ -34,7 +34,7 @@ class RubygemsApi
         fetch_data("/api/v1/gems/#{@gem_name}.json") do  |http_response|
           unless has_errors?
             @manager.downloads_count = http_response['version_downloads']
-            @manager.downloads_count = "#{http_response['downloads']}_total" if @manager.display_total?
+            @manager.downloads_count = "#{http_response['downloads']}_total" if display_total?
           end
           block.call 
         end
@@ -45,7 +45,7 @@ class RubygemsApi
         fetch_data("/api/v1/downloads/#{@gem_name}-#{@gem_version}.json") do  |http_response|
           unless has_errors?
             @manager.downloads_count = http_response['version_downloads']
-            @manager.downloads_count = "#{http_response['total_downloads']}_total" if @manager.display_total?
+            @manager.downloads_count = "#{http_response['total_downloads']}_total" if display_total?
           end
           block.call 
         end
@@ -68,6 +68,10 @@ class RubygemsApi
   
   
   private 
+  
+    def display_total?
+    !@manager.params[:type].nil? && @manager.params[:type] == "total"
+  end
   
   def fetch_data(url, &block)
     unless @api_conn.nil?

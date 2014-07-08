@@ -41,11 +41,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
       stream :keep_open do |out|  
         EM.run { 
           @downloader = BadgeDownloader.new( params, out)
-          if @downloader.show_invalid?
-            @downloader.fetch_image_shield
-          else
-            @downloader.fetch_gem_shield
-          end
+          @downloader.fetch_image_badge_svg
         }
         EM.error_handler{|e| puts "Error during event loop : #{e.inspect}" }
       end

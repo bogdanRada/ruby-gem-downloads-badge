@@ -1,5 +1,4 @@
 
-require_relative './rubygems_api'
 class BadgeDownloader
   
   INVALID_COUNT = "invalid"
@@ -20,6 +19,16 @@ class BadgeDownloader
     @rubygems_api = RubygemsApi.new(self) 
   end
   
+  def fetch_image_badge_svg
+    if show_invalid?
+      fetch_image_shield
+    else
+      fetch_gem_shield
+    end
+  end
+  
+  private 
+  
   def show_invalid?
     @rubygems_api.has_errors? ||  @rubygems_api.gem_name.nil?
   end
@@ -30,10 +39,7 @@ class BadgeDownloader
     end
   end
   
-  
-  def display_total?
-    !@params[:type].nil? && @params[:type] == "total"
-  end
+ 
 
   
   def fetch_image_shield
@@ -57,9 +63,6 @@ class BadgeDownloader
   end
   
  
-  private 
-  
-      
   def get_faraday_shields_connection
     Faraday.new "http://img.shields.io" do |con|
       con.request :url_encoded
