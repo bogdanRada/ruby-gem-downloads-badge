@@ -5,9 +5,8 @@ Bundler.require :default, (ENV["RACK_ENV"] || "development").to_sym
 
 require 'sinatra/streaming'
 require "sinatra/json"
-require 'json'
+require 'json's
 require 'securerandom'
-require 'erb'
 require 'versionomy'
 require_relative './config/initializers/version_sort'
 require_relative './config/initializers/faraday_no_cache_middleware'
