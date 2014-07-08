@@ -11,7 +11,7 @@ You will then get a nice and pretty SVG with the downloads count of the gem  pro
 ```
   ![](http://ruby-gem-downloads-badge.herokuapp.com/rails)
 ```
- ![](http://ruby-gem-downloads-badge.herokuapp.com/rails)
+ ![](https://ruby-gem-downloads-badge.herokuapp.com/rails)
 
 You can also specify  the version of the gem, for example: 
 ```
