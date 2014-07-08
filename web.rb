@@ -27,7 +27,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   
   before do
     content_type "image/svg+xml;  Content-Encoding: gzip; charset=utf-8; "
-    headers({"Pragma" => "no-cache", "Cache-Control" => "no-cache, no-store, max-age=0, must-revalidate"})
+    headers({"Pragma" => "no-cache", "Cache-Control" => "no-cache"})
 #    etag SecureRandom.hex
 #    last_modified(Time.now - 60)
     expires Time.now - 1
