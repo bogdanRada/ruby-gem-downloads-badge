@@ -22,15 +22,11 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   
   
   before do
-  content_type "image/svg+xml;  Content-Encoding: gzip; charset=utf-8; "
+    content_type "image/svg+xml;  Content-Encoding: gzip; charset=utf-8; "
     cache_control :no_cache, :must_revalidate, :max_age => 0
-    etag SecureRandom.hex
   end
 
   get '/?:gem?/?:version?'  do
-    headers \
-    "Cache-Control" => "no-cache, no-store, max-age=0, must-revalidate",
-    "Pragma"        => "no-cache"
     
     if !params[:gem].nil? &&  params[:gem].include?("favicon")
       send_file File.join(settings.public_folder, "favicon.ico"), :disposition => 'inline', :type => "image/x-icon"
