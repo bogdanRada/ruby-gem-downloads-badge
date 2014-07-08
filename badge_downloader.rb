@@ -3,7 +3,7 @@ class BadgeDownloader
   
   INVALID_COUNT = "invalid"
   
-  @attrs = [:color, :style, :shield_conn, :downloads_count, :params, :output_buffer, :rubygems_api]
+  @attrs = [:color, :style, :shield_conn, :params, :output_buffer, :rubygems_api]
       
   attr_reader *@attrs
   attr_accessor *@attrs
@@ -12,11 +12,10 @@ class BadgeDownloader
     @color = params[:color].nil? ? "blue" : params[:color] ;
     @style =  params[:style].nil? ? '': params[:style]; 
     @style = '?style=flat'  if @style == "flat"
-    @downloads_count = nil
     @params = params
     @output_buffer = output_buffer
     @shield_conn =  get_faraday_shields_connection
-    @rubygems_api = RubygemsApi.new(self) 
+    @rubygems_api = RubygemsApi.new(params) 
   end
   
   def fetch_image_badge_svg
@@ -45,11 +44,11 @@ class BadgeDownloader
   def fetch_image_shield
     if show_invalid? && !@rubygems_api.gem_name.nil?
       @color = "lightgrey"
-      @downloads_count = BadgeDownloader::INVALID_COUNT
+      @rubygems_api.downloads_count = BadgeDownloader::INVALID_COUNT
     end
-    @downloads_count = 0 if @downloads_count.nil?
+    @rubygems_api.downloads_count = 0 if @rubygems_api.downloads_count.nil?
     resp =   @shield_conn.get do |req|
-      req.url "/badge/downloads-#{@downloads_count }-#{@color}.svg#{@style}"
+      req.url "/badge/downloads-#{@rubygems_api.downloads_count }-#{@color}.svg#{@style}"
       req.headers['Content-Type'] = "image/svg+xml; Content-Encoding: gzip; charset=utf-8;"
       req.headers["Cache-Control"] =  "no-cache, no-store, max-age=0, must-revalidate"
       req.headers["Pragma"] = "no-cache"

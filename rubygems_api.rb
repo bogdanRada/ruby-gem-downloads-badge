@@ -1,15 +1,17 @@
 class RubygemsApi
   
-  @attrs = [:manager, :api_conn, :errors, :gem_name, :gem_version]
+  @attrs = [ :api_conn, :errors, :gem_name, :gem_version, :downloads_count,:display_total ]
       
   attr_reader *@attrs
   attr_accessor *@attrs
 
-  def initialize(manager)
-    @manager = manager
-    @gem_name =  @manager.params[:gem].nil? ? nil :  @manager.params[:gem] ;
-    @gem_version =  @manager.params[:version].nil? ? nil :  @manager.params[:version] ;
+  def initialize(params)
+    @gem_name =  params[:gem].nil? ? nil : params[:gem] ;
+    @gem_version = params[:version].nil? ? nil : params[:version] ;
+    @display_total = !params[:type].nil? && params[:type] == "total"
     @errors = []
+   
+    @downloads_count = nil
     parse_gem_version
      
     unless has_errors?
@@ -33,8 +35,8 @@ class RubygemsApi
       if (!@gem_name.nil?  && @gem_version.nil?)
         fetch_data("/api/v1/gems/#{@gem_name}.json") do  |http_response|
           unless has_errors?
-            @manager.downloads_count = http_response['version_downloads']
-            @manager.downloads_count = "#{http_response['downloads']}_total" if display_total?
+            @downloads_count = http_response['version_downloads']
+            @downloads_count = "#{http_response['downloads']}_total" if display_total
           end
           block.call 
         end
@@ -44,8 +46,8 @@ class RubygemsApi
       
         fetch_data("/api/v1/downloads/#{@gem_name}-#{@gem_version}.json") do  |http_response|
           unless has_errors?
-            @manager.downloads_count = http_response['version_downloads']
-            @manager.downloads_count = "#{http_response['total_downloads']}_total" if display_total?
+            @downloads_count = http_response['version_downloads']
+            @downloads_count = "#{http_response['total_downloads']}_total" if display_total
           end
           block.call 
         end
@@ -55,7 +57,7 @@ class RubygemsApi
         fetch_data("/api/v1/versions/#{@gem_name}.json") do  |http_response|
           unless has_errors?
             latest_stable_version_details = get_latest_stable_version_details(http_response)
-            @manager.downloads_count = latest_stable_version_details['downloads_count'] unless latest_stable_version_details.empty?
+            @downloads_count = latest_stable_version_details['downloads_count'] unless latest_stable_version_details.empty?
           end
           block.call 
         end
@@ -68,11 +70,7 @@ class RubygemsApi
   
   
   private 
-  
-    def display_total?
-    !@manager.params[:type].nil? && @manager.params[:type] == "total"
-  end
-  
+    
   def fetch_data(url, &block)
     unless @api_conn.nil?
       resp =@api_conn.get do |req|
