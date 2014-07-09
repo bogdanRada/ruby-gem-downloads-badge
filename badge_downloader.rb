@@ -46,7 +46,7 @@ class BadgeDownloader
     end
     @rubygems_api.downloads_count = 0 if @rubygems_api.downloads_count.nil?
     if @rubygems_api.downloads_count != BadgeDownloader::INVALID_COUNT
-      @rubygems_api.downloads_count = comma_numbers(@rubygems_api.downloads_count) 
+      @rubygems_api.downloads_count = number_with_delimiter(@rubygems_api.downloads_count) 
     end
     resp =   @shield_conn.get do |req|
       req.url "/badge/downloads-#{@rubygems_api.downloads_count }-#{@color}.svg#{@style}"
@@ -62,10 +62,16 @@ class BadgeDownloader
     }
   end
   
-  def comma_numbers(number, delimiter = '.')
-    number.to_s.reverse.gsub(%r{([0-9]{3}(?=([0-9])))}, "\\1#{delimiter}").reverse
+  def number_with_delimiter(number, delimiter=",", separator=".")
+    begin
+      parts = number.to_s.split('.')
+      parts[0].gsub!(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1#{delimiter}")
+      parts.join separator
+    rescue
+      number
+    end
   end
-  
+
  
   def get_faraday_shields_connection
     Faraday.new "http://img.shields.io" do |con|
