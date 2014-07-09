@@ -42,7 +42,10 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
           @downloader = BadgeDownloader.new( params, out)
           @downloader.fetch_image_badge_svg
         }
-        EM.error_handler{|e| puts "Error during event loop : #{e.inspect}" }
+        EM.error_handler{|e| 
+          puts "Error during event loop : #{e.inspect}"
+          puts e.backtrace
+         }
       end
     end
   end
