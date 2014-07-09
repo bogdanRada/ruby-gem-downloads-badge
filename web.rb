@@ -9,7 +9,6 @@ require 'json'
 require 'securerandom'
 require 'versionomy'
 require_relative './config/initializers/version_sort'
-require_relative './config/initializers/faraday_no_cache_middleware'
 
 require_relative './badge_downloader'
 require_relative './rubygems_api'

@@ -78,7 +78,6 @@ class BadgeDownloader
       con.request :url_encoded
       con.request :retry
       con.response :logger
-      con.use FaradayNoCacheMiddleware
       con.adapter :em_http
       #   con.use Faraday::HttpCache, store: RedisStore
     end
