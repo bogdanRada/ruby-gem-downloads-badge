@@ -46,6 +46,9 @@ class BadgeDownloader
       @rubygems_api.downloads_count = BadgeDownloader::INVALID_COUNT
     end
     @rubygems_api.downloads_count = 0 if @rubygems_api.downloads_count.nil?
+    if @rubygems_api.downloads_count != BadgeDownloader::INVALID_COUNT
+      @rubygems_api.downloads_count = comma_numbers(@rubygems_api.downloads_count) 
+    end
     resp =   @shield_conn.get do |req|
       req.url "/badge/downloads-#{@rubygems_api.downloads_count }-#{@color}.svg#{@style}"
       req.headers['Content-Type'] = "image/svg+xml; Content-Encoding: gzip; charset=utf-8;"
@@ -58,6 +61,10 @@ class BadgeDownloader
       @output_buffer << resp.body
       @output_buffer.close
     }
+  end
+  
+  def comma_numbers(number, delimiter = '.')
+    number.to_s.reverse.gsub(%r{([0-9]{3}(?=([0-9])))}, "\\1#{delimiter}").reverse
   end
   
  
