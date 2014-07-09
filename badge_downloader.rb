@@ -10,8 +10,7 @@ class BadgeDownloader
 
   def initialize( params, output_buffer)
     @color = params[:color].nil? ? "blue" : params[:color] ;
-    @style =  params[:style].nil? ? '': params[:style]; 
-    @style = '?style=flat'  if @style == "flat"
+    @style =  params[:style].nil?  || params[:style] != 'flat' ? '': "?style=#{params[:style]}"; 
     @output_buffer = output_buffer
     @shield_conn =  get_faraday_shields_connection
     @rubygems_api = RubygemsApi.new(params) 
