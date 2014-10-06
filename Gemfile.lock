@@ -2,7 +2,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     addressable (2.3.6)
-    backports (3.6.0)
+    backports (3.6.2)
     blockenspiel (0.4.5)
     cookiejar (0.3.2)
     em-http-request (1.1.2)
