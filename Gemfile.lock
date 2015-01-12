@@ -2,7 +2,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     addressable (2.3.6)
-    backports (3.6.3)
+    backports (3.6.4)
     blockenspiel (0.4.5)
     cookiejar (0.3.2)
     em-http-request (1.1.2)
@@ -13,19 +13,19 @@ GEM
       http_parser.rb (>= 0.6.0)
     em-socksify (0.3.0)
       eventmachine (>= 1.0.0.beta.4)
-    eventmachine (1.0.3)
-    faraday (0.9.0)
+    eventmachine (1.0.4)
+    faraday (0.9.1)
       multipart-post (>= 1.2, < 3)
     http_parser.rb (0.6.0)
     kgio (2.9.2)
     multi_json (1.10.1)
     multipart-post (2.0.0)
-    rack (1.5.2)
+    rack (1.6.0)
     rack-handlers (0.7.0)
       rack
     rack-protection (1.5.3)
       rack
-    rack-test (0.6.2)
+    rack-test (0.6.3)
       rack (>= 1.0)
     rainbows (4.6.2)
       kgio (~> 2.5)
