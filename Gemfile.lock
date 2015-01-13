@@ -14,12 +14,9 @@ GEM
     em-socksify (0.3.0)
       eventmachine (>= 1.0.0.beta.4)
     eventmachine (1.0.4)
-    faraday (0.9.0)
-      multipart-post (>= 1.2, < 3)
     http_parser.rb (0.6.0)
     kgio (2.9.3)
     multi_json (1.10.1)
-    multipart-post (2.0.0)
     rack (1.6.0)
     rack-handlers (0.7.0)
       rack
@@ -60,11 +57,10 @@ PLATFORMS
 
 DEPENDENCIES
   em-http-request
-  faraday (= 0.9.0)
   rack
   rack-handlers
   rainbows
-  sinatra (= 1.4.5)
+  sinatra
   sinatra-contrib
   sinatra-outputbuffer
   sinatra-settings

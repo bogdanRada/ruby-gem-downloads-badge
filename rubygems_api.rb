@@ -1,26 +1,19 @@
 class RubygemsApi
   
-  @attrs = [ :api_conn, :errors, :gem_name, :gem_version, :downloads_count,:display_total ]
+  @attrs = [ :errors, :gem_name, :gem_version, :downloads_count,:display_total ]
       
   attr_reader *@attrs
   attr_accessor *@attrs
 
   def initialize(params)
-    @gem_name =  params[:gem].nil? ? nil : params[:gem] ;
-    @gem_version = params[:version].nil? ? nil : params[:version] ;
-    @display_total = !params[:type].nil? && params[:type] == "total"
+    @gem_name =  params['gem'].nil? ? nil : params['gem'] ;
+    @gem_version = params['version'].nil? ? nil : params['version'] ;
+    @display_total = !params['type'].nil? && params['type'] == "total"
     @errors = []
    
     @downloads_count = nil
     parse_gem_version
      
-    unless has_errors?
-      @api_conn = Faraday.new "https://rubygems.org", :ssl => {:verify => false } do |con|
-        con.request :url_encoded
-        con.response :logger
-        con.adapter :em_http
-      end
-    end
   end
   
   def has_errors?
@@ -80,24 +73,17 @@ class RubygemsApi
   
     
   def fetch_data(url, &block)
-    unless @api_conn.nil?
-      resp =@api_conn.get do |req|
-        req.url url
-        req.headers['Content-Type'] = 'application/json'
-        req.headers["Cache-Control"] =  "no-cache, no-store, max-age=0, must-revalidate"
-        req.headers["Pragma"] = "no-cache"
-        req.options.timeout = 10           # open/read timeout in seconds
-        req.options.open_timeout = 5
-      end
-      resp.on_complete {
-        @res = resp.body 
+    unless has_errors?
+      http = EventMachine::HttpRequest.new("https://rubygems.org#{url}").get 
+     http.errback { |e| puts "Error during fetching data #{url} : #{e.inspect}" }
+      http.callback {
+          @res =  http.response
         begin
           @res = JSON.parse(@res)
         rescue  JSON::ParserError => e
           @errors << ["Error while parsing response from api : #{e.inspect}"]
         end
         block.call @res 
-        #request.env['async.callback'].call(response)
       }
     end
   end
