@@ -47,8 +47,9 @@ class BadgeDownloader
     if @rubygems_api.downloads_count != BadgeDownloader::INVALID_COUNT
       @rubygems_api.downloads_count = number_with_delimiter(@rubygems_api.downloads_count) 
     end
-    http = EventMachine::HttpRequest.new("http://img.shields.io/badge/downloads-#{@rubygems_api.downloads_count }-#{@color}.svg#{@style}").get 
-    http.errback { |e| puts "Error during fetching data #{url} : #{e.inspect}" }
+    url = "http://img.shields.io/badge/downloads-#{@rubygems_api.downloads_count }-#{@color}.svg#{@style}"
+    http = EventMachine::HttpRequest.new(url).get 
+    http.errback { |e| puts "Error during fetching data for #{url}: #{e.inspect}" }
     http.callback {
       @output_buffer <<  http.response
       @output_buffer.close
