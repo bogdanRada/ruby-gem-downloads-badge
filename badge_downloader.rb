@@ -3,16 +3,15 @@ class BadgeDownloader
   
   INVALID_COUNT = "invalid"
   
-  @attrs = [:color, :style, :shield_conn, :output_buffer, :rubygems_api]
+  @attrs = [:color, :style, :output_buffer, :rubygems_api]
       
   attr_reader *@attrs
   attr_accessor *@attrs
 
   def initialize( params, output_buffer)
-    @color = params[:color].nil? ? "blue" : params[:color] ;
-    @style =  params[:style].nil?  || params[:style] != 'flat' ? '': "?style=#{params[:style]}"; 
+    @color = params['color'].nil? ? "blue" : params[:color] ;
+    @style =  params['style'].nil?  || params['style'] != 'flat' ? '': "?style=#{params['style']}"; 
     @output_buffer = output_buffer
-    @shield_conn =  get_faraday_shields_connection
     @rubygems_api = RubygemsApi.new(params) 
   end
   
@@ -48,16 +47,10 @@ class BadgeDownloader
     if @rubygems_api.downloads_count != BadgeDownloader::INVALID_COUNT
       @rubygems_api.downloads_count = number_with_delimiter(@rubygems_api.downloads_count) 
     end
-    resp =   @shield_conn.get do |req|
-      req.url "/badge/downloads-#{@rubygems_api.downloads_count }-#{@color}.svg#{@style}"
-      req.headers['Content-Type'] = "image/svg+xml; Content-Encoding: gzip; charset=utf-8;"
-      req.headers["Cache-Control"] =  "no-cache, no-store, max-age=0, must-revalidate"
-      req.headers["Pragma"] = "no-cache"
-      req.options.timeout = 10         # open/read timeout in seconds
-      req.options.open_timeout = 5
-    end
-    resp.on_complete {
-      @output_buffer << resp.body
+    http = EventMachine::HttpRequest.new("http://img.shields.io/badge/downloads-#{@rubygems_api.downloads_count }-#{@color}.svg#{@style}").get 
+    http.errback { |e| puts "Error during fetching data #{url} : #{e.inspect}" }
+    http.callback {
+      @output_buffer <<  http.response
       @output_buffer.close
     }
   end
@@ -73,14 +66,6 @@ class BadgeDownloader
   end
 
  
-  def get_faraday_shields_connection
-    Faraday.new "http://img.shields.io" do |con|
-      con.request :url_encoded
-      con.request :retry
-      con.response :logger
-      con.adapter :em_http
-      #   con.use Faraday::HttpCache, store: RedisStore
-    end
-  end
+ 
     
 end
