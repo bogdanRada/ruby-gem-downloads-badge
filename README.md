@@ -1,9 +1,9 @@
 http://ruby-gem-downloads-badge.herokuapp.com/ - gem downloads shields
 =============
 
-![](http://stillmaintained.com/bogdanRada/ruby-gem-downloads-badge.png)
+[![Project Status](https://stillmaintained.com/bogdanRada/ruby-gem-downloads-badge.png)]
 
-Clean and simple gem download badge, [courtesy of shields.io](http://github.com/badges/shields), that displays the downloads number of your gem.
+Clean and simple gem download badge, [courtesy of shields.io](https://github.com/badges/shields), that displays the downloads number of your gem.
 By default will display the downloads count of the latest version of the gem provided. 
 
 ##Use
