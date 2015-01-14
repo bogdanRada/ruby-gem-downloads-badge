@@ -11,6 +11,7 @@ class BadgeDownloader
   def initialize( params, output_buffer)
     @color = params['color'].nil? ? "blue" : params[:color] ;
     @style =  params['style'].nil?  || params['style'] != 'flat' ? '': "?style=#{params['style']}"; 
+    @display_metric = !params['metric'].nil? && (params['metric'] == "true" || params['metric']  == true )
     @output_buffer = output_buffer
     @rubygems_api = RubygemsApi.new(params) 
   end
@@ -45,7 +46,11 @@ class BadgeDownloader
     end
     @rubygems_api.downloads_count = 0 if @rubygems_api.downloads_count.nil?
     if @rubygems_api.downloads_count != BadgeDownloader::INVALID_COUNT
-      @rubygems_api.downloads_count = number_with_delimiter(@rubygems_api.downloads_count) 
+      if @display_metric
+        @rubygems_api.downloads_count  = number_with_metric(@rubygems_api.downloads_count)  
+      else
+      @rubygems_api.downloads_count  =  number_with_delimiter(@rubygems_api.downloads_count)
+      end
     end
     url = "http://img.shields.io/badge/downloads-#{@rubygems_api.downloads_count }-#{@color}.svg#{@style}"
     http = EventMachine::HttpRequest.new(url).get 
@@ -55,6 +60,22 @@ class BadgeDownloader
       @output_buffer.close
     }
   end
+
+  def  number_with_metric(number) 
+    metric_prefix = ['k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y']
+    metric_power = metric_prefix.map.with_index { |item, index|  (1000**(index + 1)) }
+    i = metric_prefix.size - 1
+    while i >= 0  do
+      limit = metric_power[i]
+      if (number > limit) 
+        number = (number / limit).to_f.round;
+        return ''+number.to_s + metric_prefix[i].to_s;
+      end  
+      i -= 1
+    end
+     return ''+number.to_s;
+  end
+  
   
   def number_with_delimiter(number, delimiter=",", separator=".")
     begin
