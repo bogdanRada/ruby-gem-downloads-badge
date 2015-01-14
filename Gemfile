@@ -11,5 +11,8 @@ gem 'sinatra-settings'
 gem 'sinatra-contrib'
 gem 'rack'
 
-
-
+group :development do
+  gem 'foreman'
+  gem 'rerun'
+  gem 'rb-fsevent'
+end

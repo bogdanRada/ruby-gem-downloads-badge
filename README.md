@@ -47,6 +47,16 @@ If you want a flat image, you can add `&style=flat` at the end of the url.
 
 ![](http://ruby-gem-downloads-badge.herokuapp.com/rails?style=flat)
 
+
+If you want the downloads count to use metrics,, you can add `&metric=true` at the end of the url.
+
+```
+![](http://ruby-gem-downloads-badge.herokuapp.com/rails?metric=true)
+```
+
+![](http://ruby-gem-downloads-badge.herokuapp.com/rails?metric=true)
+
+
 That's it!
 
 ###Further Customization
