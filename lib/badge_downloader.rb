@@ -13,7 +13,6 @@ class BadgeDownloader
     @style =  params['style'].nil?  || params['style'] != 'flat' ? '': "?style=#{params['style']}"; 
     @output_buffer = output_buffer
     @rubygems_api = RubygemsApi.new(params) 
-    @rubygems_api.has_errors? || @rubygems_api.gem_name.nil?
   end
   
   def fetch_image_badge_svg
