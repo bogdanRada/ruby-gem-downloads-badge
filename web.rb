@@ -8,10 +8,8 @@ require "sinatra/json"
 require 'json'
 require 'securerandom'
 require 'versionomy'
-require_relative './config/initializers/version_sort'
-
-require_relative './badge_downloader'
-require_relative './rubygems_api'
+Dir.glob("./config/initializers/**/*.rb") {|file| require file}
+Dir.glob("./lib**/*.rb") {|file| require file}
 
 class RubygemsDownloadShieldsApp < Sinatra::Base
   helpers Sinatra::Streaming
@@ -22,7 +20,6 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   set :public_folder, File.expand_path('../static', __FILE__)# set up the static dir (with images/js/css inside)
   
   set :views,  File.expand_path('../views', __FILE__) # set up the views dir
-  
   
   before do
     content_type "image/svg+xml;  Content-Encoding: gzip; charset=utf-8; "
