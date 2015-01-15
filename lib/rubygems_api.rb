@@ -1,5 +1,5 @@
 class RubygemsApi
-  INVALID_COUNT = "invalid"
+
     
   @attrs = [ :errors, :gem_name, :gem_version, :downloads_count,:display_total ]
       
@@ -21,10 +21,7 @@ class RubygemsApi
   def has_errors?
     !@errors.empty? || @gem_name.nil? 
   end
- 
-  def has_invalid_count?
-    @downloads_count == INVALID_COUNT
-  end
+
 
    
   def fetch_gem_downloads(&block)
@@ -43,17 +40,6 @@ class RubygemsApi
     end
   end
   
-  def set_final_downloads_count
-    @downloads_count = INVALID_COUNT  if has_errors? 
-    @downloads_count = 0 if @downloads_count.nil?
-    if @downloads_count != INVALID_COUNT
-      if @display_metric
-        @downloads_count  = number_with_metric(@downloads_count)  
-      else
-        @downloads_count  =  number_with_delimiter(@downloads_count)
-      end
-    end
-  end
   
   private 
   
@@ -125,7 +111,7 @@ class RubygemsApi
     last_version_number.empty? ? {} : versions.detect {|val| val['number'] == last_version_number } 
   end
   
-  
-  
+
+
   
 end
