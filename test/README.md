@@ -1,4 +1,4 @@
-http://ruby-gem-test.herokuapp.com/ - gem downloads shields
+This page is used only for testing. Please do not use any of these urls in your README files!!!!
 =============
 
 
