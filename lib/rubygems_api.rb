@@ -9,6 +9,7 @@ class RubygemsApi
     @gem_name =  params['gem'].nil? ? nil : params['gem'] ;
     @gem_version = params['version'].nil? ? nil : params['version'] ;
     @display_total = !params['type'].nil? && params['type'] == "total"
+    @display_metric = !params['metric'].nil? && (params['metric'] == "true" || params['metric']  == true )
     @errors = []
    
     @downloads_count = nil
@@ -17,9 +18,10 @@ class RubygemsApi
   end
   
   def has_errors?
-    !@errors.empty?
+    !@errors.empty? || @gem_name.nil?
   end
  
+
    
   def fetch_gem_downloads(&block)
     unless has_errors?
@@ -37,7 +39,19 @@ class RubygemsApi
     end
   end
   
-  
+    def set_final_downloads_count
+    if has_errors? 
+      @downloads_count = BadgeDownloader::INVALID_COUNT
+    end
+    @downloads_count = 0 if @downloads_count.nil?
+    if @downloads_count != BadgeDownloader::INVALID_COUNT
+      if @display_metric
+        @downloads_count  = number_with_metric(@downloads_count)  
+      else
+        @downloads_count  =  number_with_delimiter(@downloads_count)
+      end
+    end
+  end
   
   private 
   
@@ -75,9 +89,9 @@ class RubygemsApi
   def fetch_data(url, &block)
     unless has_errors?
       http = EventMachine::HttpRequest.new("https://rubygems.org#{url}").get 
-     http.errback { |e| puts "Error during fetching data #{url} : #{e.inspect}" }
+      http.errback { |e| puts "Error during fetching data #{url} : #{e.inspect}" }
       http.callback {
-          @res =  http.response
+        @res =  http.response
         begin
           @res = JSON.parse(@res)
         rescue  JSON::ParserError => e
@@ -98,6 +112,9 @@ class RubygemsApi
     end
   end
   
+  
+
+  
   def get_latest_stable_version_details(http_response)
     versions =  http_response.select{ |val|  val['prerelease'] == false } unless  http_response.empty?
     version_numbers =  versions.map{|val| val['number'] } unless versions.empty?
@@ -105,6 +122,8 @@ class RubygemsApi
     last_version_number =  sorted_versions.empty?  ? "" : sorted_versions.last 
     last_version_number.empty? ? {} : versions.detect {|val| val['number'] == last_version_number } 
   end
+  
+  
   
   
 end
