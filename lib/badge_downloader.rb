@@ -1,8 +1,5 @@
 
 class BadgeDownloader
-  
-  INVALID_COUNT = "invalid"
-  
   @attrs = [:color, :style, :output_buffer, :rubygems_api]
       
   attr_reader *@attrs
@@ -34,7 +31,7 @@ class BadgeDownloader
   
   def fetch_image_shield
     @rubygems_api.set_final_downloads_count
-    @color = "lightgrey" if @rubygems_api.downloads_count == BadgeDownloader::INVALID_COUNT
+    @color = "lightgrey" if @rubygems_api.has_invalid_count?
     url = "http://img.shields.io/badge/downloads-#{@rubygems_api.downloads_count }-#{@color}.svg#{@style}"
     http = EventMachine::HttpRequest.new(url).get 
     http.errback { |e| puts "Error during fetching data for #{url}: #{e.inspect}" }
