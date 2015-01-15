@@ -47,7 +47,7 @@ class BadgeDownloader
       @rubygems_api.downloads_count = BadgeDownloader::INVALID_COUNT 
       @color = "lightgrey" 
     end
-    @rubygems_api.downloads_count = 0 if @downloads_count.nil?
+    @rubygems_api.downloads_count = 0 if  @rubygems_api.downloads_count.nil?
     if  @rubygems_api.downloads_count != BadgeDownloader::INVALID_COUNT
       if @display_metric
         @rubygems_api.downloads_count  = number_with_metric( @rubygems_api.downloads_count)  
