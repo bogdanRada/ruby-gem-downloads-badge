@@ -10,6 +10,7 @@ class BadgeDownloader
   def initialize( params, output_buffer)
     @color = params['color'].nil? ? "blue" : params[:color] ;
     @style =  params['style'].nil?  || params['style'] != 'flat' ? '': "?style=#{params['style']}"; 
+    @display_metric = !params['metric'].nil? && (params['metric'] == "true" || params['metric']  == true )
     @output_buffer = output_buffer
     @rubygems_api = RubygemsApi.new(params) 
   end
