@@ -10,7 +10,6 @@ class RubygemsApi
     @gem_name =  params['gem'].nil? ? nil : params['gem'] ;
     @gem_version = params['version'].nil? ? nil : params['version'] ;
     @display_total = !params['type'].nil? && params['type'] == "total"
-    @display_metric = !params['metric'].nil? && (params['metric'] == "true" || params['metric']  == true )
     @errors = []
    
     @downloads_count = nil
