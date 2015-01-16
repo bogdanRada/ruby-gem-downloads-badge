@@ -23,7 +23,7 @@ class RubygemsApi
 
 
    
-  def fetch_gem_downloads(&block)
+  def fetch_downloads_data(&block)
     unless has_errors?
      
       if (!@gem_name.nil?  && @gem_version.nil?)
