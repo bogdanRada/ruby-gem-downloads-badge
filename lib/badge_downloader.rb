@@ -19,18 +19,13 @@ class BadgeDownloader
     if @rubygems_api.has_errors?
       fetch_image_shield
     else
-      fetch_gem_shield
+      @rubygems_api.fetch_gem_downloads do
+        fetch_image_shield
+      end
     end
   end
   
   private 
-  
-  def fetch_gem_shield
-    @rubygems_api.fetch_gem_downloads do
-      fetch_image_shield
-    end
-  end
-
   
   def fetch_image_shield
     set_final_downloads_count
