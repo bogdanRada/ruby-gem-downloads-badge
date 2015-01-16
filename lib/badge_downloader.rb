@@ -17,7 +17,7 @@ class BadgeDownloader
   end
   
   def fetch_image_badge_svg
-    if api_is_valid?
+    if api_has_methods?
       if @api_data.has_errors?
         fetch_image_shield
       else
@@ -31,10 +31,6 @@ class BadgeDownloader
   end
   
   private 
-  
-  def api_is_valid?
-    api_has_methods? ?  true : false
-  end
   
   def api_has_methods?
     API_METHODS & @api_data.methods == API_METHODS
