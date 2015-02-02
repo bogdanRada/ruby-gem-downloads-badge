@@ -2,6 +2,9 @@ GEM
   remote: https://rubygems.org/
   specs:
     addressable (2.3.6)
+    async_sinatra (1.1.0)
+      rack (>= 1.4.1)
+      sinatra (>= 1.3.2)
     backports (3.6.4)
     blockenspiel (0.4.5)
     celluloid (0.16.0)
@@ -76,6 +79,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  async_sinatra
   em-http-request
   foreman
   rack

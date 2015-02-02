@@ -29,7 +29,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
     expires Time.now - 1, :no_cache, :must_revalidate, :max_age => 0
   end
 
-  get '/?:gem?/?:version?'  do
+  aget '/?:gem?/?:version?'  do
     
     if !params[:gem].nil? &&  params[:gem].include?("favicon")
       send_file File.join(settings.public_folder, "favicon.ico"), :disposition => 'inline', :type => "image/x-icon"

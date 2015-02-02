@@ -10,6 +10,7 @@ gem 'sinatra-outputbuffer'
 gem 'sinatra-settings'
 gem 'sinatra-contrib'
 gem 'rack'
+gem 'async_sinatra'
 
 group :development do
   gem 'foreman'
