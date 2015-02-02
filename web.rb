@@ -13,7 +13,7 @@ Dir.glob("./lib**/*.rb") {|file| require file}
 
 class RubygemsDownloadShieldsApp < Sinatra::Base
   helpers Sinatra::Streaming
-   
+ register Sinatra::Async
   
   set :static_cache_control, [:no_cache, :must_revalidate, :max_age => 0]
   set :static, false                            # set up static file routing
