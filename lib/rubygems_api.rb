@@ -24,17 +24,17 @@ class RubygemsApi
 
 
    
-  def fetch_downloads_data(&block)
+  def fetch_downloads_data(block)
     unless has_errors?
      
       if (!@gem_name.nil?  && @gem_version.nil?)
-        fetch_gem_data_without_version(&block)
+        fetch_gem_data_without_version(block)
       
       elsif (!@gem_name.nil?  && !@gem_version.nil? && @gem_version!= "stable" )
-        fetch_specific_version_data(&block)
+        fetch_specific_version_data(block)
      
       elsif (!@gem_name.nil?  && !@gem_version.nil? && @gem_version== "stable" )
-        fetch_gem_stable_version_data(&block)
+        fetch_gem_stable_version_data(block)
       end 
     
     end
@@ -43,33 +43,33 @@ class RubygemsApi
   
   private 
   
-  def fetch_gem_stable_version_data(&block)
-    fetch_data("/api/v1/versions/#{@gem_name}.json") do  |http_response|
+  def fetch_gem_stable_version_data(block)
+    fetch_data("/api/v1/versions/#{@gem_name}") do  |http_response|
       unless has_errors?
         latest_stable_version_details = get_latest_stable_version_details(http_response)
         @downloads_count = latest_stable_version_details['downloads_count'] unless latest_stable_version_details.empty?
       end
-      block.call 
+      block.call @downloads_count
     end
   end
   
-  def fetch_specific_version_data(&block)
-    fetch_data("/api/v1/downloads/#{@gem_name}-#{@gem_version}.json") do  |http_response|
+  def fetch_specific_version_data(block)
+    fetch_data("/api/v1/downloads/#{@gem_name}-#{@gem_version}") do  |http_response|
       unless has_errors?
         @downloads_count = http_response['version_downloads']
         @downloads_count = "#{http_response['total_downloads']}_total" if display_total
       end
-      block.call 
+      block.call @downloads_count
     end
   end
   
-  def fetch_gem_data_without_version(&block)
-    fetch_data("/api/v1/gems/#{@gem_name}.json") do  |http_response|
+  def fetch_gem_data_without_version(block)
+    fetch_data("/api/v1/gems/#{@gem_name}") do  |http_response|
       unless has_errors?
         @downloads_count = http_response['version_downloads']
         @downloads_count = "#{http_response['downloads']}_total" if display_total
       end
-      block.call 
+      block.call @downloads_count
     end
   end
   
@@ -77,11 +77,10 @@ class RubygemsApi
   def fetch_data(url, &block)
     exclusive do
     unless has_errors?
-      data_url = "https://rubygems.org#{url}"
+      data_url = "http://rubygems.org#{url}"
       fetcher = HttpFetcher.new
-      future = fetcher.future.fetch(data_url)
+      future = fetcher.future.fetch_json(data_url)
       @res = future.value
-      raise @res.inspect
       begin
         @res = JSON.parse(@res)
       rescue  JSON::ParserError => e

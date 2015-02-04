@@ -7,6 +7,7 @@ require 'sinatra/streaming'
 require "sinatra/json"
 require 'thread'
 require 'celluloid'
+require 'celluloid/autostart'
 require 'celluloid/io'
 require 'http'
 require 'json'
@@ -15,6 +16,7 @@ require 'versionomy'
 Dir.glob("./config/initializers/**/*.rb") {|file| require file}
 Dir.glob("./lib**/*.rb") {|file| require file}
 
+Celluloid.task_class = Celluloid::TaskThread
 module RestfulCelluloid
 
 

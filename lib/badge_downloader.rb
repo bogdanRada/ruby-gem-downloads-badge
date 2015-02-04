@@ -12,6 +12,7 @@ class BadgeDownloader
   attr_accessor *@attrs
 
   def initialize( params, output_buffer, external_api_details)
+    @condition = Celluloid::Condition.new
     @color = params['color'].nil? ? "blue" : params[:color] ;
     @style =  params['style'].nil?  || params['style'] != 'flat' ? '': "?style=#{params['style']}"; 
     @display_metric = !params['metric'].nil? && (params['metric'] == "true" || params['metric']  == true )
@@ -24,9 +25,13 @@ class BadgeDownloader
       if @api_data.has_errors?
         fetch_image_shield
       else
-        @api_data.fetch_downloads_data do
-          fetch_image_shield
+        blk = lambda do |sum|
+          @condition.signal(sum)
         end
+        @api_data.async.fetch_downloads_data(blk) 
+        wait_result = @condition.wait
+        @api_data.downloads_count = wait_result
+        fetch_image_shield
       end
     else
       raise "The API must implement all necessary methods #{API_METHODS.join(",  ")}"
