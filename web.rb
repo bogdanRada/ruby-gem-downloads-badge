@@ -18,7 +18,7 @@ Dir.glob("./lib**/*.rb") {|file| require file}
 
 class RubygemsDownloadShieldsApp < ::Sinatra::Base
   helpers Sinatra::Streaming
-   
+  register Sinatra::Async 
   
   set :static_cache_control, [:no_cache, :must_revalidate, :max_age => 0]
   set :static, false                            # set up static file routing
@@ -34,7 +34,7 @@ class RubygemsDownloadShieldsApp < ::Sinatra::Base
     expires Time.now - 1, :no_cache, :must_revalidate, :max_age => 0
   end
 
-  get '/?:gem?/?:version?'  do
+  aget '/?:gem?/?:version?'  do
     
     if !params[:gem].nil? &&  params[:gem].include?("favicon")
       send_file File.join(settings.public_folder, "favicon.ico"), :disposition => 'inline', :type => "image/x-icon"
