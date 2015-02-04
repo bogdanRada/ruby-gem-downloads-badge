@@ -16,7 +16,6 @@ require 'versionomy'
 Dir.glob("./config/initializers/**/*.rb") {|file| require file}
 Dir.glob("./lib**/*.rb") {|file| require file}
 
-
 class RubygemsDownloadShieldsApp < ::Sinatra::Base
   helpers Sinatra::Streaming
    
