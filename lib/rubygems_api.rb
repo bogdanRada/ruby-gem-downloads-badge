@@ -1,7 +1,7 @@
 class RubygemsApi
   include Celluloid
   include Celluloid::Logger
-    
+  
   @attrs = [ :errors, :gem_name, :gem_version, :downloads_count,:display_total ]
       
   attr_reader *@attrs
@@ -75,7 +75,6 @@ class RubygemsApi
   
     
   def fetch_data(url, &block)
-    exclusive do
     unless has_errors?
       data_url = "http://rubygems.org#{url}"
       fetcher = HttpFetcher.new
@@ -87,7 +86,6 @@ class RubygemsApi
         @errors << ["Error while parsing response from api : #{e.inspect}"]
       end
       block.call @res 
-    end
     end
   end
 
