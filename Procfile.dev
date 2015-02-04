@@ -1,1 +1,1 @@
-web: rerun -- bundle exec rainbows  -p $PORT -c ./config/rainbows.rb
+web: rerun --  bundle exec reel-rack  -p $PORT

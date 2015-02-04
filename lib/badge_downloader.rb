@@ -1,5 +1,8 @@
-
+require_relative './http_fetcher'
 class BadgeDownloader
+  include Celluloid
+  include Celluloid::Logger
+  
   INVALID_COUNT = "invalid"
   API_METHODS =  [:has_errors?, :downloads_count, :fetch_downloads_data]
   
@@ -40,12 +43,11 @@ class BadgeDownloader
   def fetch_image_shield
     set_final_downloads_count
     url = "http://img.shields.io/badge/downloads-#{@api_data.downloads_count }-#{@color}.svg#{@style}"
-    http = EventMachine::HttpRequest.new(url).get 
-    http.errback { |e| puts "Error during fetching data for #{url}: #{e.inspect}" }
-    http.callback {
-      @output_buffer <<  http.response
-      @output_buffer.close
-    }
+    fetcher = HttpFetcher.new
+    future = fetcher.future.fetch(url)
+    response = future.value
+    @output_buffer <<  response
+    @output_buffer.close
   end
   
   def set_final_downloads_count

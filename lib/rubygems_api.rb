@@ -1,5 +1,6 @@
 class RubygemsApi
-
+  include Celluloid
+  include Celluloid::Logger
     
   @attrs = [ :errors, :gem_name, :gem_version, :downloads_count,:display_total ]
       
@@ -74,18 +75,20 @@ class RubygemsApi
   
     
   def fetch_data(url, &block)
+    exclusive do
     unless has_errors?
-      http = EventMachine::HttpRequest.new("https://rubygems.org#{url}").get 
-      http.errback { |e| puts "Error during fetching data #{url} : #{e.inspect}" }
-      http.callback {
-        @res =  http.response
-        begin
-          @res = JSON.parse(@res)
-        rescue  JSON::ParserError => e
-          @errors << ["Error while parsing response from api : #{e.inspect}"]
-        end
-        block.call @res 
-      }
+      data_url = "https://rubygems.org#{url}"
+      fetcher = HttpFetcher.new
+      future = fetcher.future.fetch(data_url)
+      @res = future.value
+      raise @res.inspect
+      begin
+        @res = JSON.parse(@res)
+      rescue  JSON::ParserError => e
+        @errors << ["Error while parsing response from api : #{e.inspect}"]
+      end
+      block.call @res 
+    end
     end
   end
 
