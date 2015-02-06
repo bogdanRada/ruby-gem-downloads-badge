@@ -1,3 +1,5 @@
+require 'lattice'
+require "lattice/server"
 require File.expand_path("../boot", __FILE__)
 
 # Require your resources here
@@ -34,3 +36,5 @@ module LatticeTest
 end
 
 Lattice.app = LatticeTest::Application
+
+ Lattice::Server.new("127.0.0.1", ENV['PORT'].present? ? ENV['PORT'] : 5000, root: Lattice.root).run

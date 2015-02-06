@@ -1,0 +1,1 @@
+load 'config/application.rb'
