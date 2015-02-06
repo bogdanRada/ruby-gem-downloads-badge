@@ -11,12 +11,11 @@ class BadgeDownloader
   attr_reader *@attrs
   attr_accessor *@attrs
 
-  def initialize( params, output_buffer, external_api_details)
+  def initialize( params, external_api_details)
     @condition = Celluloid::Condition.new
     @color = params['color'].nil? ? "blue" : params[:color] ;
     @style =  params['style'].nil?  || params['style'] != 'flat' ? '': "?style=#{params['style']}"; 
     @display_metric = !params['metric'].nil? && (params['metric'] == "true" || params['metric']  == true )
-    @output_buffer = output_buffer
     @api_data = external_api_details
   end
   
@@ -51,8 +50,7 @@ class BadgeDownloader
     fetcher = HttpFetcher.new
     future = fetcher.future.fetch(url)
     response = future.value
-    @output_buffer <<  response
-    @output_buffer.close
+    return response.to_s
   end
   
   def set_final_downloads_count

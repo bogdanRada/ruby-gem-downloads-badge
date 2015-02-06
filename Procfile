@@ -1,1 +1,1 @@
-web: bundle exec reel-rack  -p $PORT
+web: bundle exec lattice server  -p $PORT

@@ -1,15 +1,17 @@
 source 'https://rubygems.org'
 
 ruby "2.1.5"
-gem 'sinatra'
-gem 'sinatra-contrib'
+gem 'activesupport'
 gem 'versionomy'
 
 gem 'celluloid'
 gem 'celluloid-io'
 
-gem 'rack'
-gem 'reel-rack'
+gem 'reel', git: "https://github.com/celluloid/reel.git"
+gem 'lattice',    github: 'celluloid/lattice'
+gem 'webmachine', github: 'seancribbs/webmachine-ruby'
+gem 'webmachine-test'
+
 gem 'foreman'
 
 group :development do
