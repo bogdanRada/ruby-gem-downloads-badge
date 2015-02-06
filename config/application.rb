@@ -27,6 +27,7 @@ module LatticeTest
     app.routes do
       add [:gem, :version, :*], Resources::Home
       add [:gem, :*], Resources::Home
+      add [:*], Resources::Home
     end
     app.configure do |config|
       config.adapter = :Reel
