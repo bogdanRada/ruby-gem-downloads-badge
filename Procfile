@@ -1,1 +1,1 @@
-web: bundle exec lattice server  -p $PORT
+web: rackup -p $PORT

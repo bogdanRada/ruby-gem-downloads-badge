@@ -1,1 +1,1 @@
-load 'config/application.rb'
+require './config/application.rb'

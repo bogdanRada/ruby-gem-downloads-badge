@@ -1,1 +1,1 @@
-web: rerun --  bundle exec lattice server  -p $PORT
+web: rerun -- rackup -p $PORT
