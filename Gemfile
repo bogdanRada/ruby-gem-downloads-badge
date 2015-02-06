@@ -10,6 +10,7 @@ gem 'celluloid-io'
 gem 'reel', git: "https://github.com/celluloid/reel.git"
 gem 'lattice',    github: 'celluloid/lattice'
 gem 'webmachine', github: 'seancribbs/webmachine-ruby'
+gem 'webmachine-test'
 
 gem 'foreman'
 

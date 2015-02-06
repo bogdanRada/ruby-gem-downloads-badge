@@ -81,6 +81,8 @@ GEM
       thread_safe (~> 0.1)
     versionomy (0.4.4)
       blockenspiel (>= 0.4.5)
+    webmachine-test (0.3.0)
+      webmachine
     websocket_parser (1.0.0)
 
 PLATFORMS
@@ -98,3 +100,4 @@ DEPENDENCIES
   rerun
   versionomy
   webmachine!
+  webmachine-test
