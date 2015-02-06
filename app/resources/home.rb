@@ -60,6 +60,8 @@ module Resources
     
     def finish_request
       response.headers['Pragma'] = "no-cache"
+      response.headers['Cache-Control'] = "no-cache, must-revalidate, max-age=-1"
+      response.headers['Expires'] = Time.now - 1
       response.headers['Content-Type'] =  "image/svg+xml;  Content-Encoding: gzip; charset=utf-8; " unless display_favicon?
     end
     
