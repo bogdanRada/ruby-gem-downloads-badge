@@ -1,1 +1,1 @@
-web: rerun -- rackup -p $PORT
+web: rerun -- bundle exec rackup -p $PORT
