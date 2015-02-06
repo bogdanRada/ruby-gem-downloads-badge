@@ -13,7 +13,7 @@ class BadgeDownloader
 
   def initialize( params, external_api_details)
     @condition = Celluloid::Condition.new
-    @color = params['color'].nil? ? "blue" : params[:color] ;
+    @color = params['color'].nil? ? "blue" : params['color'] ;
     @style =  params['style'].nil?  || params['style'] != 'flat' ? '': "?style=#{params['style']}"; 
     @display_metric = !params['metric'].nil? && (params['metric'] == "true" || params['metric']  == true )
     @api_data = external_api_details
