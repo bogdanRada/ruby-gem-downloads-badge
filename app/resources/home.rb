@@ -65,7 +65,7 @@ module Resources
     
     def to_svg
       if display_favicon?
-        response.headers['Content-Type'] = "image/x-icon"
+        response.headers['Content-Type'] = "image/x-icon; Content-Encoding: gzip; charset=utf-8;"
         response.headers['Content-Disposition'] = "inline"
         @file = File.join(public_folder, "favicon.ico")
         open(@file, "rb") {|io| io.read }
