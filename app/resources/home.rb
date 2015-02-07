@@ -35,10 +35,7 @@ module Resources
     def resource_exists?
       true
     end
-  
-  def downloader
-      @downloader = supervisor.pool(BadgeDownloader, as: :badge_downloader, size: 2, args: [params, Celluloid::Actor[:rubygems_api]])
-  end
+
   
     def params
       {
@@ -54,7 +51,7 @@ module Resources
     def supervisor
       @supervisor = Celluloid::SupervisionGroup.run!
       @supervisor.supervise_as(:rubygems_api, RubygemsApi, params)
-      @supervisor
+      @supervisor.supervise_as(:badge_downloader, BadgeDownloader, params, Celluloid::Actor[:rubygems_api])
     end
     
     def public_folder
@@ -75,7 +72,8 @@ module Resources
         @file = File.join(public_folder, "favicon.ico")
         open(@file, "rb") {|io| io.read }
       else 
-        downloader.fetch_image_badge_svg
+        supervisor
+        Celluloid::Actor[:badge_downloader].fetch_image_badge_svg
       end
     end
     
