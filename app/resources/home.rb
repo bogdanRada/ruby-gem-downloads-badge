@@ -36,14 +36,10 @@ module Resources
       true
     end
   
-    def rubygems_api
-      @rubygems_api = RubygemsApi.new(params) 
-    end
-    
-    def downloader
-      @downloader = BadgeDownloader.new( params, rubygems_api )
-    end
-    
+  def downloader
+      @downloader = supervisor.pool(BadgeDownloader, as: :badge_downloader, size: 2, args: [params, Celluloid::Actor[:rubygems_api]])
+  end
+  
     def params
       {
         'gem' => request.path_info[:gem],
@@ -53,6 +49,12 @@ module Resources
     
     def display_favicon?
       params["gem"].present? &&  params["gem"].include?("favicon")
+    end
+
+    def supervisor
+      @supervisor = Celluloid::SupervisionGroup.run!
+      @supervisor.supervise_as(:rubygems_api, RubygemsApi, params)
+      @supervisor
     end
     
     def public_folder
@@ -72,7 +74,7 @@ module Resources
         response.headers['Content-Disposition'] = "inline"
         @file = File.join(public_folder, "favicon.ico")
         open(@file, "rb") {|io| io.read }
-      else        
+      else 
         downloader.fetch_image_badge_svg
       end
     end

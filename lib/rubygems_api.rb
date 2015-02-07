@@ -75,7 +75,7 @@ class RubygemsApi
     
   def fetch_data(url, &block)
     unless has_errors?
-      data_url = "http://rubygems.org#{url}"
+      data_url = "https://rubygems.org#{url}"
       fetcher = HttpFetcher.new
       future = fetcher.future.fetch_json(data_url)
       @res = future.value(10)

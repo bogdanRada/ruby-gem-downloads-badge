@@ -46,7 +46,7 @@ end
   
   def fetch_image_shield
     set_final_downloads_count
-    url = "http://img.shields.io/badge/downloads-#{@api_data.downloads_count }-#{@color}.svg#{@style}"
+    url = "https://img.shields.io/badge/downloads-#{@api_data.downloads_count }-#{@color}.svg#{@style}"
     fetcher = HttpFetcher.new
     future = fetcher.future.fetch(url)
     response = future.value(10)
