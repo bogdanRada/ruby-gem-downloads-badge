@@ -72,7 +72,12 @@ module Resources
         @file = File.join(public_folder, "favicon.ico")
         open(@file, "rb") {|io| io.read }
       else
-        downloader.fetch_image_badge_svg
+        @condition = Celluloid::Condition.new
+         blk = lambda do |sum|
+          @condition.signal(sum)
+        end
+        downloader.fetch_image_badge_svg(blk)
+        @condition.wait
       end
     end
     
