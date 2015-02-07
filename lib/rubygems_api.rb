@@ -78,7 +78,7 @@ class RubygemsApi
       data_url = "http://rubygems.org#{url}"
       fetcher = HttpFetcher.new
       future = fetcher.future.fetch_json(data_url)
-      @res = future.value
+      @res = future.value(10)
       begin
         @res = JSON.parse(@res)
       rescue  JSON::ParserError => e

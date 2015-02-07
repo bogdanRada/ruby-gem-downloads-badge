@@ -49,7 +49,7 @@ end
     url = "http://img.shields.io/badge/downloads-#{@api_data.downloads_count }-#{@color}.svg#{@style}"
     fetcher = HttpFetcher.new
     future = fetcher.future.fetch(url)
-    response = future.value
+    response = future.value(10)
      until response.present?
       sleep
      end
