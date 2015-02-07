@@ -16,7 +16,7 @@ Dir.glob("./lib**/*.rb") {|file| require file}
 
 module Resources
   class Home < Lattice::Resource
-    include Celluloid
+  
     
     def allowed_methods
       [ "GET"]
@@ -72,13 +72,8 @@ module Resources
         response.headers['Content-Disposition'] = "inline"
         @file = File.join(public_folder, "favicon.ico")
         open(@file, "rb") {|io| io.read }
-      else
-        @condition = Celluloid::Condition.new
-         blk = lambda do |sum|
-          @condition.signal(sum)
-        end
-        downloader.fetch_image_badge_svg(blk)
-        @condition.wait
+      else        
+        downloader.fetch_image_badge_svg
       end
     end
     

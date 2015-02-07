@@ -17,12 +17,12 @@ class BadgeDownloader
     @style =  params['style'].nil?  || params['style'] != 'flat' ? '': "?style=#{params['style']}"; 
     @display_metric = !params['metric'].nil? && (params['metric'] == "true" || params['metric']  == true )
     @api_data = external_api_details
-  end
+end
   
-  def fetch_image_badge_svg(resource_blk)
+  def fetch_image_badge_svg
     if api_has_methods?
       if @api_data.has_errors?
-        fetch_image_shield(resource_blk)
+        fetch_image_shield
       else
         blk = lambda do |sum|
           @condition.signal(sum)
@@ -30,7 +30,7 @@ class BadgeDownloader
         @api_data.async.fetch_downloads_data(blk) 
         wait_result = @condition.wait
         @api_data.downloads_count = wait_result
-        fetch_image_shield(resource_blk)
+        fetch_image_shield
       end
     else
       raise "The API must implement all necessary methods #{API_METHODS.join(",  ")}"
@@ -44,13 +44,16 @@ class BadgeDownloader
   end
   
   
-  def fetch_image_shield(resource_blk)
+  def fetch_image_shield
     set_final_downloads_count
     url = "http://img.shields.io/badge/downloads-#{@api_data.downloads_count }-#{@color}.svg#{@style}"
     fetcher = HttpFetcher.new
     future = fetcher.future.fetch(url)
     response = future.value
-    resource_blk.call response
+     until response.present?
+      sleep
+     end
+     return response
   end
   
   def set_final_downloads_count
