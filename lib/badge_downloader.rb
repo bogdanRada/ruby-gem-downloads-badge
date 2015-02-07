@@ -19,10 +19,10 @@ class BadgeDownloader
     @api_data = external_api_details
   end
   
-  def fetch_image_badge_svg
+  def fetch_image_badge_svg(resource_blk)
     if api_has_methods?
       if @api_data.has_errors?
-        fetch_image_shield
+        fetch_image_shield(resource_blk)
       else
         blk = lambda do |sum|
           @condition.signal(sum)
@@ -30,7 +30,7 @@ class BadgeDownloader
         @api_data.async.fetch_downloads_data(blk) 
         wait_result = @condition.wait
         @api_data.downloads_count = wait_result
-        fetch_image_shield
+        fetch_image_shield(resource_blk)
       end
     else
       raise "The API must implement all necessary methods #{API_METHODS.join(",  ")}"
@@ -44,13 +44,13 @@ class BadgeDownloader
   end
   
   
-  def fetch_image_shield
+  def fetch_image_shield(resource_blk)
     set_final_downloads_count
     url = "http://img.shields.io/badge/downloads-#{@api_data.downloads_count }-#{@color}.svg#{@style}"
     fetcher = HttpFetcher.new
     future = fetcher.future.fetch(url)
     response = future.value
-    return response.to_s
+    resource_blk.call response
   end
   
   def set_final_downloads_count
