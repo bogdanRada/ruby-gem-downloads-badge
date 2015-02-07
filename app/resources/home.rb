@@ -16,6 +16,7 @@ Dir.glob("./lib**/*.rb") {|file| require file}
 
 module Resources
   class Home < Lattice::Resource
+    include Celluloid
     
     def allowed_methods
       [ "GET"]
