@@ -52,6 +52,7 @@ module Resources
       @supervisor = Celluloid::SupervisionGroup.run!
       @supervisor.supervise_as(:rubygems_api, RubygemsApi, params)
       @supervisor.supervise_as(:badge_downloader, BadgeDownloader, params, Celluloid::Actor[:rubygems_api])
+      @supervisor
     end
     
     def public_folder
@@ -73,7 +74,9 @@ module Resources
         open(@file, "rb") {|io| io.read }
       else 
         supervisor
-        Celluloid::Actor[:badge_downloader].fetch_image_badge_svg
+        result =Celluloid::Actor[:badge_downloader].fetch_image_badge_svg
+        @supervisor.finalize
+        result
       end
     end
     
