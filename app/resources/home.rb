@@ -75,7 +75,7 @@ module Resources
       else 
         supervisor
         result =Celluloid::Actor[:badge_downloader].fetch_image_badge_svg
-        @supervisor.finalize
+        @supervisor.terminate
         result
       end
     end
