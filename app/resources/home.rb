@@ -66,8 +66,8 @@ module Resources
         @file = File.join(public_folder, "favicon.ico")
         open(@file, "rb") {|io| io.read }
       else 
-        manager = CelluloidManager.new(params)
-        manager.work
+        manager = CelluloidManager.new
+        manager.delegate(params)
       end
     end
     
