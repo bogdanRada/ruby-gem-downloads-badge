@@ -1,6 +1,7 @@
 require_relative './http_fetcher'
 class BadgeDownloader
   include Celluloid
+  include Celluloid::Notifications
   include Celluloid::Logger
   
   INVALID_COUNT = "invalid"
@@ -8,7 +9,6 @@ class BadgeDownloader
   
   @attrs = [:color, :style, :output_buffer, :rubygems_api]
  
-  attr_reader *@attrs
   attr_accessor *@attrs
 
   def initialize( params, external_api_details)
@@ -19,10 +19,10 @@ class BadgeDownloader
     @api_data = external_api_details
 end
   
-  def fetch_image_badge_svg
+  def fetch_image_badge_svg(manager_blk)
     if api_has_methods?
       if @api_data.has_errors?
-        fetch_image_shield
+        fetch_image_shield(manager_blk)
       else
         blk = lambda do |sum|
           @condition.signal(sum)
@@ -30,7 +30,7 @@ end
         @api_data.async.fetch_downloads_data(blk) 
         wait_result = @condition.wait
         @api_data.downloads_count = wait_result
-        fetch_image_shield
+        fetch_image_shield(manager_blk)
       end
     else
       raise "The API must implement all necessary methods #{API_METHODS.join(",  ")}"
@@ -44,16 +44,13 @@ end
   end
   
   
-  def fetch_image_shield
+  def fetch_image_shield(manager_blk)
     set_final_downloads_count
     url = "https://img.shields.io/badge/downloads-#{@api_data.downloads_count }-#{@color}.svg#{@style}"
     fetcher = HttpFetcher.new
     future = fetcher.future.fetch(url)
     response = future.value(10)
-     until response.present?
-      sleep
-     end
-     return response
+    manager_blk.call response
   end
   
   def set_final_downloads_count

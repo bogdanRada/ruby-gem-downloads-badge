@@ -47,13 +47,6 @@ module Resources
     def display_favicon?
       params["gem"].present? &&  params["gem"].include?("favicon")
     end
-
-    def supervisor
-      @supervisor = Celluloid::SupervisionGroup.run!
-      @supervisor.supervise_as(:rubygems_api, RubygemsApi, params)
-      @supervisor.supervise_as(:badge_downloader, BadgeDownloader, params, Celluloid::Actor[:rubygems_api])
-      @supervisor
-    end
     
     def public_folder
       File.expand_path('../../../static', __FILE__)
@@ -73,10 +66,8 @@ module Resources
         @file = File.join(public_folder, "favicon.ico")
         open(@file, "rb") {|io| io.read }
       else 
-        supervisor
-        result =Celluloid::Actor[:badge_downloader].fetch_image_badge_svg
-        @supervisor.terminate
-        result
+        manager = CelluloidManager.new(params)
+        manager.work
       end
     end
     
