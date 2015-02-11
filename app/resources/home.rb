@@ -67,7 +67,9 @@ module Resources
         open(@file, "rb") {|io| io.read }
       else 
         manager = CelluloidManager.new
-        manager.delegate(params)
+        result =manager.delegate(params)
+        manager.terminate
+        result
       end
     end
     
