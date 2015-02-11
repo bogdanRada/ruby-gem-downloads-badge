@@ -3,7 +3,6 @@ require_relative "./rubygems_api"
 
 class CelluloidManager 
   include Celluloid
-  include Celluloid::Notifications
   include Celluloid::Logger
     
   @attributes = [:jobs,:job_to_worker , :worker_to_job, :params, :condition]

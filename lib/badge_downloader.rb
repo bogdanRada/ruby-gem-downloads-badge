@@ -1,7 +1,6 @@
 require_relative './http_fetcher'
 class BadgeDownloader
   include Celluloid
-  include Celluloid::Notifications
   include Celluloid::Logger
   
   INVALID_COUNT = "invalid"
