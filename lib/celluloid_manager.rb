@@ -51,7 +51,8 @@ class CelluloidManager
     job = @worker_to_job[worker.mailbox.address]
     @worker_to_job.delete(worker.mailbox.address)
     info "restarting #{job} on new worker" 
-    if job.present?
+    if job.present? && job["worker_action"].blank?
+      job["worker_action"] = "rollback"
       delegate(job)
     end
   end 
