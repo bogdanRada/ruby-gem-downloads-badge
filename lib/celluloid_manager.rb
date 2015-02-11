@@ -9,7 +9,7 @@ class CelluloidManager
  
   attr_accessor *@attributes
   
-  attr_reader :worker_supervisor
+  attr_reader :worker_supervisor, :workers
   trap_exit :worker_died
   finalizer :finalize
   
@@ -25,7 +25,7 @@ class CelluloidManager
   end
  
   def finalize
-    terminate
+    terminate 
   end
    
   
@@ -33,10 +33,11 @@ class CelluloidManager
     job_id = @jobs.size + 1 
     @jobs[job_id] = params
     params['job_id'] = job_id
-    @worker_supervisor.supervise_as(:rubygems_api, RubygemsApi, params )
+    rubygems_api = RubygemsApi.new(params)
+    Actor.current.link rubygems_api
     #debug(@jobs)
     #start work and send it to the background
-    Celluloid::Actor[:badge_downloader].work(params, Celluloid::Actor[:rubygems_api], Actor.current)
+   BadgeDownloader.new.work(params, rubygems_api, Actor.current)
   end
     
   #call back from actor once it has received it's job
