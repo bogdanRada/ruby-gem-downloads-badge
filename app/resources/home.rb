@@ -56,7 +56,10 @@ module Resources
       response.headers['Pragma'] = "no-cache"
       response.headers['Cache-Control'] = "no-cache, must-revalidate, max-age=-1"
       response.headers['Expires'] = Time.now - 1
-      response.headers['Content-Type'] =  "image/svg+xml;  Content-Encoding: gzip; charset=utf-8; " unless display_favicon?
+      unless display_favicon?
+        response.headers['Transfer-Encoding'] = 'chunked' 
+        response.headers['Content-Type'] =  "image/svg+xml;  Content-Encoding: gzip; charset=utf-8; " 
+      end
     end
     
     def to_svg
@@ -69,7 +72,9 @@ module Resources
         manager = CelluloidManager.new
         result =manager.delegate(params)
         manager.terminate
-        result
+        Fiber.new do
+          Fiber.yield result
+        end 
       end
     end
     
