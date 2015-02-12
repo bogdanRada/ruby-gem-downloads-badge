@@ -57,7 +57,6 @@ module Resources
       response.headers['Cache-Control'] = "no-cache, must-revalidate, max-age=-1"
       response.headers['Expires'] = Time.now - 1
       unless display_favicon?
-        response.headers['Transfer-Encoding'] = 'chunked' 
         response.headers['Content-Type'] =  "image/svg+xml;  Content-Encoding: gzip; charset=utf-8; " 
       end
     end
