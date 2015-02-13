@@ -68,12 +68,12 @@ module Resources
         @file = File.join(public_folder, "favicon.ico")
         open(@file, "rb") {|io| io.read }
       else 
-         manager = CelluloidManager.new
+        manager = CelluloidManager.new
         Fiber.new do
           result =manager.delegate(params)
           manager.terminate
           Fiber.yield result
-        end 
+        end.resume 
       end
     end
     
