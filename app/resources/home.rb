@@ -69,14 +69,12 @@ module Resources
         @file = File.join(public_folder, "favicon.ico")
         open(@file, "rb") {|io| io.read }
       else 
-        manager = CelluloidManager.new
-        Fiber.new do
-          stream = Stream.new(Stream, :keep_open) { |out|
-            out <<  manager.delegate(params)
-            manager.terminate
-          }
-          stream.each {|str|   Fiber.yield  str }
-        end.resume 
+        stream = Stream.new(Stream, :keep_open) { |out|
+          manager = CelluloidManager.new
+          out <<  manager.delegate(params)
+          manager.terminate
+        }
+        stream.each {|str|  return  str }
       end
     end
     
