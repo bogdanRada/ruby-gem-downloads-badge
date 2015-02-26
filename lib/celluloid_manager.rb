@@ -5,11 +5,11 @@ class CelluloidManager
   include Celluloid
   include Celluloid::Logger
     
-  @attributes = [:jobs,:job_to_worker , :worker_to_job, :params, :condition, :actor_system, :worker_supervisor, :gem_workers, :workers]
+  @attributes = [:jobs,:job_to_worker , :worker_to_job, :params, :condition]
  
   attr_accessor *@attributes
   
-  attr_reader :worker_supervisor, :workers
+  attr_reader :worker_supervisor, :workers, :gem_workers
   trap_exit :worker_died
   finalizer :finalize
   
@@ -18,7 +18,6 @@ class CelluloidManager
     @condition = Celluloid::Condition.new
     @worker_supervisor = Celluloid::SupervisionGroup.run!
    
-    @actor_system =   Celluloid.boot
     @jobs = {}
     @job_to_worker = {}
     @worker_to_job = {}
