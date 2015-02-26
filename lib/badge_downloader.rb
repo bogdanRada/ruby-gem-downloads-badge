@@ -4,67 +4,49 @@ class BadgeDownloader
   include Celluloid::Logger
   
   INVALID_COUNT = "invalid"
-  API_METHODS =  [:has_errors?, :downloads_count, :fetch_downloads_data]
   
-  @attrs = [:color, :style, :output_buffer, :rubygems_api, :job_id]
+  @attrs = [:manager, :params,:color, :style, :job_id, :display_metric, :api_data, :downloads_count, :output_buffer]
  
   attr_accessor *@attrs
 
-  def work( manager, params, external_api_details)
-    @manager = manager
+  def work( params, external_api_details)
+    @params = params
     @condition = Celluloid::Condition.new
-    @color = params['color'].nil? ? "blue" : params['color'] ;
-    @style =  params['style'].nil?  || params['style'] != 'flat' ? '': "?style=#{params['style']}"; 
-    @display_metric = !params['metric'].nil? && (params['metric'] == "true" || params['metric']  == true )
+    @color = @params['color'].nil? ? "blue" : @params['color'] ;
+    @style =  @params['style'].nil?  || params['style'] != 'flat' ? '': "?style=#{@params['style']}"; 
+    @display_metric = @params['metric'].nil? && (@params['metric'] == "true" || @params['metric']  == true )
     @api_data = external_api_details
-    @manager.register_worker_for_job(params, Actor.current)
-end
-  
-  def fetch_image_badge_svg(manager_blk)
-    if api_has_methods?
-      if @api_data.has_errors?
-        fetch_image_shield(manager_blk)
-      else
-        blk = lambda do |sum|
-          @condition.signal(sum)
-        end
-        @api_data.async.fetch_downloads_data(blk) 
-        wait_result = @condition.wait
-        @api_data.downloads_count = wait_result
-        fetch_image_shield(manager_blk)
-      end
-    else
-      raise "The API must implement all necessary methods #{API_METHODS.join(",  ")}"
-    end
+    fetch_image_badge_svg
   end
+  
   
   private 
   
-  def api_has_methods?
-    API_METHODS & @api_data.methods == API_METHODS
-  end
-  
-  
-  def fetch_image_shield(manager_blk)
+  def fetch_image_badge_svg    
     set_final_downloads_count
-    url = "https://img.shields.io/badge/downloads-#{@api_data.downloads_count }-#{@color}.svg#{@style}"
+    url = "https://img.shields.io/badge/downloads-#{@downloads_count }-#{@color}.svg#{@style}"
     fetcher = HttpFetcher.new
     future = fetcher.future.fetch(url)
     response = future.value(10)
-    manager_blk.call response
+    return response
   end
-  
+ 
   def set_final_downloads_count
-    if @api_data.has_errors? 
-      @api_data.downloads_count = BadgeDownloader::INVALID_COUNT 
+    blk = lambda do |sum|
+      @condition.signal(sum)
+    end
+    @api_data.async.fetch_downloads_data(@params, blk)
+    @downloads_count =  @condition.wait
+    if @downloads_count == "invalid"
+      @downloads_count = BadgeDownloader::INVALID_COUNT
       @color = "lightgrey" 
     end
-    @api_data.downloads_count = 0 if  @api_data.downloads_count.nil?
-    if  @api_data.downloads_count != BadgeDownloader::INVALID_COUNT
+    @downloads_count = 0 if  @downloads_count.nil?
+    if  @downloads_count != BadgeDownloader::INVALID_COUNT
       if @display_metric
-        @api_data.downloads_count  = number_with_metric( @api_data.downloads_count)  
+        @downloads_count  = number_with_metric(@downloads_count)  
       else
-        @api_data.downloads_count  =  number_with_delimiter( @api_data.downloads_count)
+        @downloads_count  =  number_with_delimiter(@downloads_count)
       end
     end
   end

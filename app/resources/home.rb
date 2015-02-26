@@ -14,11 +14,11 @@ Dir.glob("./config/initializers/**/*.rb") {|file| require file}
 Dir.glob("./lib**/*.rb") {|file| require file}
 require 'sinatra/streaming'
 Stream = Sinatra::Helpers::Stream
-  
-module Resources
+
+module Resources 
   class Home < Lattice::Resource
-   
-    
+  
+  
     def allowed_methods
       [ "GET"]
     end
@@ -72,7 +72,7 @@ module Resources
         CelluloidManager.supervise_as :celluloid_manager if Celluloid::Actor[:celluloid_manager].blank?
           stream = Stream.new(Stream, :keep_open) { |out|
             out <<  Celluloid::Actor[:celluloid_manager].delegate(params)
-          }
+        }
           stream.each {|str|  return  str }
       end
     end

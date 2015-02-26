@@ -7,34 +7,20 @@ class RubygemsApi
   attr_reader *@attrs
   attr_accessor *@attrs
   
-  def work(params)
-    @gem_name =  params['gem'].nil? ? nil : params['gem'] ;
-    @gem_version = params['version'].nil? ? nil : params['version'] ;
-    @display_total = !params['type'].nil? && params['type'] == "total"
-    @errors = []
-   
-    @downloads_count = nil
-    parse_gem_version
-    return Actor.current
-  end
-  
-  def has_errors?
-    !@errors.empty? || @gem_name.nil? 
-  end
-
-
-   
-  def fetch_downloads_data(block)
-    unless has_errors?
+  def fetch_downloads_data(params, blk)
+    work(params)
+    if has_errors?
+      blk.call "invalid"
+    else
      
       if (!@gem_name.nil?  && @gem_version.nil?)
-        fetch_gem_data_without_version(block)
+        fetch_gem_data_without_version(blk)
       
       elsif (!@gem_name.nil?  && !@gem_version.nil? && @gem_version!= "stable" )
-        fetch_specific_version_data(block)
+        fetch_specific_version_data(blk)
      
       elsif (!@gem_name.nil?  && !@gem_version.nil? && @gem_version== "stable" )
-        fetch_gem_stable_version_data(block)
+        fetch_gem_stable_version_data(blk)
       end 
     
     end
@@ -43,33 +29,47 @@ class RubygemsApi
   
   private 
   
-  def fetch_gem_stable_version_data(block)
+  def has_errors?
+    !@errors.empty? || @gem_name.nil? 
+  end
+  
+  def work(params)
+    @gem_name =  params['gem'].nil? ? nil : params['gem'] ;
+    @gem_version = params['version'].nil? ? nil : params['version'] ;
+    @display_total = !params['type'].nil? && params['type'] == "total"
+    @errors = []
+   
+    @downloads_count = nil
+    parse_gem_version
+  end
+  
+  def fetch_gem_stable_version_data(blk)
     fetch_data("/api/v1/versions/#{@gem_name}.json") do  |http_response|
       unless has_errors?
         latest_stable_version_details = get_latest_stable_version_details(http_response)
         @downloads_count = latest_stable_version_details['downloads_count'] unless latest_stable_version_details.empty?
       end
-      block.call @downloads_count
+      blk.call @downloads_count
     end
   end
   
-  def fetch_specific_version_data(block)
+  def fetch_specific_version_data(blk)
     fetch_data("/api/v1/downloads/#{@gem_name}-#{@gem_version}.json") do  |http_response|
       unless has_errors?
         @downloads_count = http_response['version_downloads']
         @downloads_count = "#{http_response['total_downloads']}_total" if display_total
       end
-      block.call @downloads_count
+      blk.call @downloads_count
     end
   end
   
-  def fetch_gem_data_without_version(block)
+  def fetch_gem_data_without_version(blk)
     fetch_data("/api/v1/gems/#{@gem_name}.json") do  |http_response|
       unless has_errors?
         @downloads_count = http_response['version_downloads']
         @downloads_count = "#{http_response['downloads']}_total" if display_total
       end
-      block.call @downloads_count
+      blk.call @downloads_count
     end
   end
   
