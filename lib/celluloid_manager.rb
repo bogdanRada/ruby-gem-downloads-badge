@@ -36,7 +36,7 @@ class CelluloidManager
     params["job_id"] = job_id
     @jobs[job_id] = params
     rubygems_api =  @gem_workers.future.work(params).value
-     @workers.future.work(Actor.current, params, rubygems_api).value
+    @workers.future.work(Actor.current, params, rubygems_api).value
   end
   
   def register_worker_for_job(job, worker)
