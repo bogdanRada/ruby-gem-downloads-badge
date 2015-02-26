@@ -12,11 +12,12 @@ require 'securerandom'
 require 'versionomy'
 Dir.glob("./config/initializers/**/*.rb") {|file| require file}
 Dir.glob("./lib**/*.rb") {|file| require file}
-
-
+require 'sinatra/streaming'
+Stream = Sinatra::Helpers::Stream
+  
 module Resources
   class Home < Lattice::Resource
-  
+   
     
     def allowed_methods
       [ "GET"]
@@ -70,9 +71,11 @@ module Resources
       else 
         manager = CelluloidManager.new
         Fiber.new do
-          result =manager.delegate(params)
-          manager.terminate
-          Fiber.yield result
+          stream = Stream.new(Stream, :keep_open) { |out|
+            out <<  manager.delegate(params)
+            manager.terminate
+          }
+          stream.each {|str|   Fiber.yield  str }
         end.resume 
       end
     end

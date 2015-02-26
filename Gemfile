@@ -13,6 +13,7 @@ gem 'webmachine', github: 'seancribbs/webmachine-ruby'
 gem 'webmachine-test'
 
 gem 'foreman'
+gem 'sinatra-contrib'
 
 group :development do
   gem 'rerun'
