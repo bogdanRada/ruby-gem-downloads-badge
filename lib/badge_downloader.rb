@@ -9,13 +9,13 @@ class BadgeDownloader
  
   attr_accessor *@attrs
 
-  def work( params, external_api_details)
+  def work( params, api_actor_name)
     @params = params
     @condition = Celluloid::Condition.new
     @color = @params['color'].nil? ? "blue" : @params['color'] ;
     @style =  @params['style'].nil?  || params['style'] != 'flat' ? '': "?style=#{@params['style']}"; 
     @display_metric = @params['metric'].nil? && (@params['metric'] == "true" || @params['metric']  == true )
-    @api_data = external_api_details
+    @api_actor_name = api_actor_name
     fetch_image_badge_svg
   end
   
@@ -35,7 +35,7 @@ class BadgeDownloader
     blk = lambda do |sum|
       @condition.signal(sum)
     end
-    @api_data.async.fetch_downloads_data(@params, blk)
+    Celluloid::Actor[@api_actor_name.to_s.to_sym].async.fetch_downloads_data(@params, blk)
     @downloads_count =  @condition.wait
     if @downloads_count == "invalid"
       @downloads_count = BadgeDownloader::INVALID_COUNT

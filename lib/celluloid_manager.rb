@@ -14,13 +14,14 @@ class CelluloidManager
   
   
   def initialize
-    @worker_supervisor = Celluloid::SupervisionGroup.run!
+
    
     @jobs = {}
     @job_to_worker = {}
     @worker_to_job = {}
-    @gem_workers = @worker_supervisor.pool(RubygemsApi, as: :gem_workers, size: 10)
-    @workers = @worker_supervisor.pool(BadgeDownloader, as: :workers, size: 10)
+    @worker_supervisor = Celluloid::SupervisionGroup.run!
+    @worker_supervisor.supervise_as(:rubygems_api, RubygemsApi)
+    @worker_supervisor.supervise_as(:badge_downloader, BadgeDownloader)
   end
  
   
@@ -29,7 +30,7 @@ class CelluloidManager
     job_id = @jobs.size + 1 
     params["job_id"] = job_id
     @jobs[job_id] = params
-    @workers.future.work(params, @gem_workers).value
+    Celluloid::Actor[:badge_downloader].future.work(params, "rubygems_api").value
   end
   
   
