@@ -33,20 +33,25 @@ class CelluloidManager
   
   def delegate(params)
     job_id = @jobs.size + 1 
+    params["job_id"] = job_id
     @jobs[job_id] = params
-  
     rubygems_api =  @gem_workers.future.work(params).value
-
-    worker =  @workers.future.work(params, rubygems_api).value
+     @workers.future.work(Actor.current, params, rubygems_api).value
+  end
+  
+  def register_worker_for_job(job, worker)
+    job = job.stringify_keys
     
-    @job_to_worker[job_id] = worker
-    @worker_to_job[worker.mailbox.address] = params
-    # puts "Worker who called back for job: #{job.inspect} was #{worker.inspect}"
+    worker.job_id = job['job_id'] if worker.job_id.blank?
+    @job_to_worker[job['job_id']] = worker
+    @worker_to_job[worker.mailbox.address] = job
+    Actor.current.link worker    
     blk = lambda do |sum|
       @condition.signal(sum)
     end
     worker.async.fetch_image_badge_svg(blk)
     return  @condition.wait
+    # puts "Worker who called back for job: #{job.inspect} was #{worker.inspect}"
   end
   
   def worker_died(worker, reason)

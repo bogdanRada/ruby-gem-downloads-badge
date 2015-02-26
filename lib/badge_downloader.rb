@@ -6,17 +6,18 @@ class BadgeDownloader
   INVALID_COUNT = "invalid"
   API_METHODS =  [:has_errors?, :downloads_count, :fetch_downloads_data]
   
-  @attrs = [:color, :style, :output_buffer, :rubygems_api]
+  @attrs = [:color, :style, :output_buffer, :rubygems_api, :job_id]
  
   attr_accessor *@attrs
 
-  def work( params, external_api_details)
+  def work( manager, params, external_api_details)
+    @manager = manager
     @condition = Celluloid::Condition.new
     @color = params['color'].nil? ? "blue" : params['color'] ;
     @style =  params['style'].nil?  || params['style'] != 'flat' ? '': "?style=#{params['style']}"; 
     @display_metric = !params['metric'].nil? && (params['metric'] == "true" || params['metric']  == true )
     @api_data = external_api_details
-    return Actor.current
+    @manager.register_worker_for_job(params, Actor.current)
 end
   
   def fetch_image_badge_svg(manager_blk)
