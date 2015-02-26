@@ -69,12 +69,11 @@ module Resources
         @file = File.join(public_folder, "favicon.ico")
         open(@file, "rb") {|io| io.read }
       else 
-        stream = Stream.new(Stream, :keep_open) { |out|
-          manager = CelluloidManager.new
-          out <<  manager.delegate(params)
-          manager.terminate
-        }
-        stream.each {|str|  return  str }
+        CelluloidManager.supervise_as :celluloid_manager if Celluloid::Actor[:celluloid_manager].blank?
+          stream = Stream.new(Stream, :keep_open) { |out|
+            out <<  Celluloid::Actor[:celluloid_manager].delegate(params)
+          }
+          stream.each {|str|  return  str }
       end
     end
     

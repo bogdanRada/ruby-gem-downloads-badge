@@ -6,8 +6,8 @@ class RubygemsApi
       
   attr_reader *@attrs
   attr_accessor *@attrs
-
-  def initialize(params)
+  
+  def work(params)
     @gem_name =  params['gem'].nil? ? nil : params['gem'] ;
     @gem_version = params['version'].nil? ? nil : params['version'] ;
     @display_total = !params['type'].nil? && params['type'] == "total"
@@ -15,6 +15,7 @@ class RubygemsApi
    
     @downloads_count = nil
     parse_gem_version
+    return Actor.current
   end
   
   def has_errors?
