@@ -7,27 +7,20 @@ class RubygemsApi
   attr_reader *@attrs
   attr_accessor *@attrs
   
-  def fetch_downloads_data(params, blk)
-    work(params)
-    if has_errors?
-      blk.call "invalid"
-    else
-     
-      if (!@gem_name.nil?  && @gem_version.nil?)
-        fetch_gem_data_without_version(blk)
-      
-      elsif (!@gem_name.nil?  && !@gem_version.nil? && @gem_version!= "stable" )
-        fetch_specific_version_data(blk)
-     
-      elsif (!@gem_name.nil?  && !@gem_version.nil? && @gem_version== "stable" )
-        fetch_gem_stable_version_data(blk)
-      end 
+  def fetch_downloads_data(blk)
     
-    end
+    if (!@gem_name.nil?  && @gem_version.nil?)
+      fetch_gem_data_without_version(blk)
+      
+    elsif (!@gem_name.nil?  && !@gem_version.nil? && @gem_version!= "stable" )
+      fetch_specific_version_data(blk)
+      
+    elsif (!@gem_name.nil?  && !@gem_version.nil? && @gem_version== "stable" )
+      fetch_gem_stable_version_data(blk)
+    end 
+    
   end
   
-  
-  private 
   
   def has_errors?
     !@errors.empty? || @gem_name.nil? 
@@ -43,42 +36,46 @@ class RubygemsApi
     parse_gem_version
   end
   
+  private 
   def fetch_gem_stable_version_data(blk)
-    fetch_data("/api/v1/versions/#{@gem_name}.json") do  |http_response|
-      unless has_errors?
+     blk_lambda = lambda do  |http_response|
+       unless has_errors?
         latest_stable_version_details = get_latest_stable_version_details(http_response)
         @downloads_count = latest_stable_version_details['downloads_count'] unless latest_stable_version_details.empty?
       end
       blk.call @downloads_count
-    end
+     end
+    fetch_data("/api/v1/versions/#{@gem_name}.json",blk_lambda )
   end
   
   def fetch_specific_version_data(blk)
-    fetch_data("/api/v1/downloads/#{@gem_name}-#{@gem_version}.json") do  |http_response|
-      unless has_errors?
+    blk_lambda = lambda do  |http_response|
+        unless has_errors?
         @downloads_count = http_response['version_downloads']
         @downloads_count = "#{http_response['total_downloads']}_total" if display_total
       end
       blk.call @downloads_count
     end
+    fetch_data("/api/v1/downloads/#{@gem_name}-#{@gem_version}.json", blk_lambda)
   end
   
   def fetch_gem_data_without_version(blk)
-    fetch_data("/api/v1/gems/#{@gem_name}.json") do  |http_response|
+    blk_lambda = lambda do  |http_response|
       unless has_errors?
         @downloads_count = http_response['version_downloads']
         @downloads_count = "#{http_response['downloads']}_total" if display_total
       end
       blk.call @downloads_count
     end
+    fetch_data("/api/v1/gems/#{@gem_name}.json", blk_lambda)
   end
   
     
-  def fetch_data(url, &block)
+  def fetch_data(url, blk)
     unless has_errors?
       data_url = "https://rubygems.org#{url}"
       fetcher = HttpFetcher.new
-      fetcher.async.fetch_async(block, data_url, { "Accept" => "application/json" })
+      fetcher.async.fetch_async({ :url => data_url,  :headers =>{ "Accept" => "application/json" }}, blk) 
     end
   end
 

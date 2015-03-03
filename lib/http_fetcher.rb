@@ -2,9 +2,9 @@ class HttpFetcher
   include Celluloid
   include Celluloid::Logger
   
-  def fetch_async(blk, url, headers = {})
-    Unirest.get(url,   headers: headers) {|response|
-      blk.call  response.body
+  def fetch_async(options, block)
+    Unirest.get(options[:url],   headers: options[:headers].present? ?  options[:headers] : {} ) {|response|
+      block.call  response.body
     }
   end
   

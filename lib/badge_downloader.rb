@@ -16,7 +16,7 @@ class BadgeDownloader
     @style =  @params['style'].nil?  || params['style'] != 'flat' ? '': "?style=#{@params['style']}"; 
     @display_metric = @params['metric'].nil? && (@params['metric'] == "true" || @params['metric']  == true )
     @api_actor_name = api_actor_name
-    fetch_image_badge_svg
+    async.fetch_image_badge_svg
   end
   
   
@@ -26,19 +26,25 @@ class BadgeDownloader
     set_final_downloads_count
     url = "https://img.shields.io/badge/downloads-#{@downloads_count }-#{@color}.svg#{@style}"
     fetcher = HttpFetcher.new
-    fetcher.async.fetch_async(@manager_blk, url)
+    blk = lambda do  |response|
+      @manager_blk.call response
+    end
+    fetcher.async.fetch_async({:url => url}, blk) 
   end
  
   def set_final_downloads_count
-     @condition = Celluloid::Condition.new
-    blk = lambda do |sum|
-      @condition.signal(sum)
-    end
-    Celluloid::Actor[@api_actor_name.to_s.to_sym].async.fetch_downloads_data(@params, blk)
-    @downloads_count =  @condition.wait
-    if @downloads_count == "invalid"
+    api = Celluloid::Actor[@api_actor_name.to_s.to_sym]
+    api.work(@params)
+    if api. has_errors?
       @downloads_count = BadgeDownloader::INVALID_COUNT
       @color = "lightgrey" 
+    else
+      @condition = Celluloid::Condition.new
+      blk = lambda do |sum|
+        @condition.signal(sum)
+      end
+      api.async.fetch_downloads_data(blk)
+      @downloads_count =  @condition.wait
     end
     @downloads_count = 0 if  @downloads_count.nil?
     if  @downloads_count != BadgeDownloader::INVALID_COUNT
