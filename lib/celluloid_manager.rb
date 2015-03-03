@@ -22,7 +22,7 @@ class CelluloidManager
     @worker_supervisor.supervise_as(:badge_downloader, BadgeDownloader)
   end
  
-  
+ 
   
   def delegate(blk, params)
     job_id = @jobs.size + 1 
@@ -30,7 +30,7 @@ class CelluloidManager
     @jobs[job_id] = params
     Celluloid::Actor[:badge_downloader].async.work(params, blk,  "rubygems_api")
   end
- 
+  
   def worker_died(worker, reason)
     job = @worker_to_job[worker.mailbox.address]
     @worker_to_job.delete(worker.mailbox.address)

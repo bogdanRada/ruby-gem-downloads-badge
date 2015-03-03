@@ -2,7 +2,6 @@ require_relative './http_fetcher'
 class BadgeDownloader
   include Celluloid
   include Celluloid::Logger
-  
   INVALID_COUNT = "invalid"
   
   @attrs = [:manager, :params,:color, :style, :job_id, :display_metric, :api_data, :downloads_count, :output_buffer]
@@ -16,35 +15,28 @@ class BadgeDownloader
     @style =  @params['style'].nil?  || params['style'] != 'flat' ? '': "?style=#{@params['style']}"; 
     @display_metric = @params['metric'].nil? && (@params['metric'] == "true" || @params['metric']  == true )
     @api_actor_name = api_actor_name
-    async.fetch_image_badge_svg
-  end
-  
-  
-  private 
-  
-  def fetch_image_badge_svg    
-    set_final_downloads_count
-    url = "https://img.shields.io/badge/downloads-#{@downloads_count }-#{@color}.svg#{@style}"
-    fetcher = HttpFetcher.new
-    blk = lambda do  |response|
-      @manager_blk.call response
-    end
-    fetcher.async.fetch_async({:url => url}, blk) 
-  end
- 
-  def set_final_downloads_count
     api = Celluloid::Actor[@api_actor_name.to_s.to_sym]
     api.work(@params)
     if api. has_errors?
-      @downloads_count = BadgeDownloader::INVALID_COUNT
-      @color = "lightgrey" 
+      fetch_image_badge_svg  BadgeDownloader::INVALID_COUNT
     else
-      @condition = Celluloid::Condition.new
+      @condition2 = Celluloid::Condition.new 
       blk = lambda do |sum|
-        @condition.signal(sum)
+        @condition2.signal(sum)
       end
-      api.async.fetch_downloads_data(blk)
-      @downloads_count =  @condition.wait
+      api.future.fetch_downloads_data(blk)
+      result = @condition2.wait
+      fetch_image_badge_svg result
+    end
+  end
+  
+  
+  private
+  
+  def fetch_image_badge_svg(count)
+    @downloads_count = count
+    if     @downloads_count == BadgeDownloader::INVALID_COUNT
+      @color = "lightgrey"
     end
     @downloads_count = 0 if  @downloads_count.nil?
     if  @downloads_count != BadgeDownloader::INVALID_COUNT
@@ -54,8 +46,14 @@ class BadgeDownloader
         @downloads_count  =  number_with_delimiter(@downloads_count)
       end
     end
+    url = "https://img.shields.io/badge/downloads-#{@downloads_count }-#{@color}.svg#{@style}"
+    fetcher = HttpFetcher.new
+    blk = lambda do  |response|
+      @manager_blk.call response
+    end
+    fetcher.async.fetch_async({:url => url}, blk) 
   end
-
+ 
   def  number_with_metric(number) 
     metric_prefix = ['k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y']
     metric_power = metric_prefix.map.with_index { |item, index|  (1000**(index + 1)) }
