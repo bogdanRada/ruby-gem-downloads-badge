@@ -13,8 +13,6 @@ require 'versionomy'
 require 'unirest'
 Dir.glob("./config/initializers/**/*.rb") {|file| require file}
 Dir.glob("./lib**/*.rb") {|file| require file}
-require 'sinatra/streaming'
-Stream = Sinatra::Helpers::Stream
 
 module Resources 
   class Home < Lattice::Resource
@@ -77,10 +75,6 @@ module Resources
         CelluloidManager.supervise_as :celluloid_manager if Celluloid::Actor[:celluloid_manager].blank?
         Celluloid::Actor[:celluloid_manager].async.delegate(blk, params)
         return @condition2.wait
-        #        stream = Stream.new(Stream, :keep_open) { |out|
-        #            out <<  Celluloid::Actor[:celluloid_manager].delegate(params)
-        #        }
-        #    stream.each {|str|  return  str }
       end
     end
     

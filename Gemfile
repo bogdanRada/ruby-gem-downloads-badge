@@ -14,7 +14,6 @@ gem 'webmachine-test'
 gem 'unirest'
 
 gem 'foreman'
-gem 'sinatra-contrib'
 
 group :development do
   gem 'rerun'
