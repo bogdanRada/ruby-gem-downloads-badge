@@ -10,6 +10,7 @@ require 'http'
 require 'json'
 require 'securerandom'
 require 'versionomy'
+require 'unirest'
 Dir.glob("./config/initializers/**/*.rb") {|file| require file}
 Dir.glob("./lib**/*.rb") {|file| require file}
 require 'sinatra/streaming'

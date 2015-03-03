@@ -39,6 +39,7 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
+    addressable (2.3.7)
     as-notifications (1.0.1)
     backports (3.6.4)
     blockenspiel (0.4.5)
@@ -65,6 +66,7 @@ GEM
       celluloid (>= 0.15.2)
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
+    mime-types (1.25.1)
     minitest (5.5.1)
     multi_json (1.10.1)
     nio4r (1.1.0)
@@ -76,8 +78,13 @@ GEM
     rb-fsevent (0.9.4)
     rb-inotify (0.9.5)
       ffi (>= 0.5.0)
+    rdoc (4.2.0)
+      json (~> 1.4)
     rerun (0.10.0)
       listen (~> 2.7, >= 2.7.3)
+    rest-client (1.6.8)
+      mime-types (~> 1.16)
+      rdoc (>= 2.4.2)
     sinatra (1.4.5)
       rack (~> 1.4)
       rack-protection (~> 1.4)
@@ -96,6 +103,10 @@ GEM
       hitimes
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
+    unirest (1.1.2)
+      addressable (~> 2.3.5)
+      json (~> 1.8.1)
+      rest-client (~> 1.6.7)
     versionomy (0.4.4)
       blockenspiel (>= 0.4.5)
     webmachine-test (0.3.0)
@@ -116,6 +127,7 @@ DEPENDENCIES
   reel!
   rerun
   sinatra-contrib
+  unirest
   versionomy
   webmachine!
   webmachine-test

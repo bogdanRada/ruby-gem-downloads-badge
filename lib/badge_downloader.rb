@@ -9,9 +9,9 @@ class BadgeDownloader
  
   attr_accessor *@attrs
 
-  def work( params, api_actor_name)
+  def work( params,manager_blk,  api_actor_name)
+    @manager_blk = manager_blk
     @params = params
-    @condition = Celluloid::Condition.new
     @color = @params['color'].nil? ? "blue" : @params['color'] ;
     @style =  @params['style'].nil?  || params['style'] != 'flat' ? '': "?style=#{@params['style']}"; 
     @display_metric = @params['metric'].nil? && (@params['metric'] == "true" || @params['metric']  == true )
@@ -26,12 +26,17 @@ class BadgeDownloader
     set_final_downloads_count
     url = "https://img.shields.io/badge/downloads-#{@downloads_count }-#{@color}.svg#{@style}"
     fetcher = HttpFetcher.new
-    future = fetcher.future.fetch(url)
-    response = future.value(10)
-    return response
+    @condition2 = Celluloid::Condition.new 
+    blk = lambda do |sum|
+      @condition2.signal(sum)
+    end
+     fetcher.fetch_async(blk, url)
+    future =  @condition2.wait
+    @manager_blk.call future
   end
  
   def set_final_downloads_count
+     @condition = Celluloid::Condition.new
     blk = lambda do |sum|
       @condition.signal(sum)
     end

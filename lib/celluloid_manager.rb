@@ -4,7 +4,7 @@ require_relative "./rubygems_api"
 class CelluloidManager 
   include Celluloid
   include Celluloid::Logger
-    
+  
   @attributes = [:jobs,:job_to_worker , :worker_to_job, :params]
  
   attr_accessor *@attributes
@@ -14,8 +14,6 @@ class CelluloidManager
   
   
   def initialize
-
-   
     @jobs = {}
     @job_to_worker = {}
     @worker_to_job = {}
@@ -30,10 +28,14 @@ class CelluloidManager
     job_id = @jobs.size + 1 
     params["job_id"] = job_id
     @jobs[job_id] = params
-    Celluloid::Actor[:badge_downloader].future.work(params, "rubygems_api").value
+    @condition = Celluloid::Condition.new 
+    blk = lambda do |sum|
+      @condition.signal(sum)
+    end
+    Celluloid::Actor[:badge_downloader].async.work(params, blk,  "rubygems_api")
+    return @condition.wait
   end
-  
-  
+ 
   def worker_died(worker, reason)
     job = @worker_to_job[worker.mailbox.address]
     @worker_to_job.delete(worker.mailbox.address)

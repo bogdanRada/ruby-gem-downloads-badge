@@ -78,8 +78,12 @@ class RubygemsApi
     unless has_errors?
       data_url = "https://rubygems.org#{url}"
       fetcher = HttpFetcher.new
-      future = fetcher.future.fetch_json(data_url)
-      @res = future.value(10)
+      @condition2 = Celluloid::Condition.new 
+      blk = lambda do |sum|
+        @condition2.signal(sum)
+      end
+      fetcher.fetch_async_json(blk ,data_url)
+      @res =  @condition2.wait
       begin
         @res = JSON.parse(@res)
       rescue  JSON::ParserError => e
