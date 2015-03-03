@@ -1,14 +1,11 @@
 class HttpFetcher  
+  include Celluloid
+  include Celluloid::Logger
   
-  def fetch_async(blk, url)
-    Unirest.get(url) {|response|
+  def fetch_async(blk, url, headers = {})
+    Unirest.get(url,   headers: headers) {|response|
       blk.call  response.body
     }
   end
   
-  def fetch_async_json(blk, url)
-    Unirest.get( url,  headers:{ "Accept" => "application/json" }) {|response|
-      blk.call  response.body
-    }
-  end
 end

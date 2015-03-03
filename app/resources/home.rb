@@ -70,11 +70,17 @@ module Resources
         @file = File.join(public_folder, "favicon.ico")
         open(@file, "rb") {|io| io.read }
       else 
+        @condition2 = Celluloid::Condition.new 
+        blk = lambda do |sum|
+          @condition2.signal(sum)
+        end
         CelluloidManager.supervise_as :celluloid_manager if Celluloid::Actor[:celluloid_manager].blank?
-          stream = Stream.new(Stream, :keep_open) { |out|
-            out <<  Celluloid::Actor[:celluloid_manager].delegate(params)
-        }
-          stream.each {|str|  return  str }
+        Celluloid::Actor[:celluloid_manager].async.delegate(blk, params)
+        return @condition2.wait
+        #        stream = Stream.new(Stream, :keep_open) { |out|
+        #            out <<  Celluloid::Actor[:celluloid_manager].delegate(params)
+        #        }
+        #    stream.each {|str|  return  str }
       end
     end
     

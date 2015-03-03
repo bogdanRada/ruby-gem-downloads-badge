@@ -24,16 +24,11 @@ class CelluloidManager
  
   
   
-  def delegate(params)
+  def delegate(blk, params)
     job_id = @jobs.size + 1 
     params["job_id"] = job_id
     @jobs[job_id] = params
-    @condition = Celluloid::Condition.new 
-    blk = lambda do |sum|
-      @condition.signal(sum)
-    end
     Celluloid::Actor[:badge_downloader].async.work(params, blk,  "rubygems_api")
-    return @condition.wait
   end
  
   def worker_died(worker, reason)

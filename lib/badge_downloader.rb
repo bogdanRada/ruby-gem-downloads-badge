@@ -26,13 +26,7 @@ class BadgeDownloader
     set_final_downloads_count
     url = "https://img.shields.io/badge/downloads-#{@downloads_count }-#{@color}.svg#{@style}"
     fetcher = HttpFetcher.new
-    @condition2 = Celluloid::Condition.new 
-    blk = lambda do |sum|
-      @condition2.signal(sum)
-    end
-     fetcher.fetch_async(blk, url)
-    future =  @condition2.wait
-    @manager_blk.call future
+    fetcher.async.fetch_async(@manager_blk, url)
   end
  
   def set_final_downloads_count

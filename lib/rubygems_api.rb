@@ -78,18 +78,7 @@ class RubygemsApi
     unless has_errors?
       data_url = "https://rubygems.org#{url}"
       fetcher = HttpFetcher.new
-      @condition2 = Celluloid::Condition.new 
-      blk = lambda do |sum|
-        @condition2.signal(sum)
-      end
-      fetcher.fetch_async_json(blk ,data_url)
-      @res =  @condition2.wait
-      begin
-        @res = JSON.parse(@res)
-      rescue  JSON::ParserError => e
-        @errors << ["Error while parsing response from api : #{e.inspect}"]
-      end
-      block.call @res 
+      fetcher.async.fetch_async(block, data_url, { "Accept" => "application/json" })
     end
   end
 
