@@ -18,4 +18,7 @@ gem 'foreman'
 group :development do
   gem 'rerun'
   gem 'rb-fsevent'
+  gem 'rubocop' # to check Ruby code
+  gem 'scss-lint' # to check SCSS code
+  gem 'phare'
 end
