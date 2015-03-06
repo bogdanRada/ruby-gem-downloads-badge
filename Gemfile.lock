@@ -2,6 +2,9 @@ GEM
   remote: https://rubygems.org/
   specs:
     addressable (2.3.6)
+    ast (2.0.0)
+    astrolabe (1.3.0)
+      parser (>= 2.2.0.pre.3, < 3.0)
     async_sinatra (1.1.0)
       rack (>= 1.4.1)
       sinatra (>= 1.3.2)
@@ -32,6 +35,10 @@ GEM
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
     multi_json (1.10.1)
+    parser (2.2.0.3)
+      ast (>= 1.1, < 3.0)
+    phare (0.6)
+    powerpack (0.1.0)
     rack (1.6.0)
     rack-handlers (0.7.0)
       rack
@@ -39,6 +46,7 @@ GEM
       rack
     rack-test (0.6.3)
       rack (>= 1.0)
+    rainbow (2.0.0)
     rainbows (4.6.2)
       kgio (~> 2.5)
       rack (~> 1.1)
@@ -49,6 +57,17 @@ GEM
       ffi (>= 0.5.0)
     rerun (0.10.0)
       listen (~> 2.7, >= 2.7.3)
+    rubocop (0.29.1)
+      astrolabe (~> 1.3)
+      parser (>= 2.2.0.1, < 3.0)
+      powerpack (~> 0.1)
+      rainbow (>= 1.99.1, < 3.0)
+      ruby-progressbar (~> 1.4)
+    ruby-progressbar (1.7.1)
+    sass (3.4.13)
+    scss-lint (0.34.0)
+      rainbow (~> 2.0)
+      sass (~> 3.4.1)
     sinatra (1.4.5)
       rack (~> 1.4)
       rack-protection (~> 1.4)
@@ -82,11 +101,14 @@ DEPENDENCIES
   async_sinatra
   em-http-request
   foreman
+  phare
   rack
   rack-handlers
   rainbows
   rb-fsevent
   rerun
+  rubocop
+  scss-lint
   sinatra
   sinatra-contrib
   sinatra-outputbuffer
