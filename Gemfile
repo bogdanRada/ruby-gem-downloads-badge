@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-ruby "2.1.5"
+ruby '2.1.5'
 gem 'sinatra'
 gem 'rack-handlers'
 gem 'rainbows'
@@ -16,4 +16,7 @@ group :development do
   gem 'foreman'
   gem 'rerun'
   gem 'rb-fsevent'
+  gem 'rubocop' # to check Ruby code
+  gem 'scss-lint' # to check SCSS code
+  gem 'phare'
 end
