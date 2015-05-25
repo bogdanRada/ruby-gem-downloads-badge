@@ -12,99 +12,116 @@ GIT
 
 GIT
   remote: git://github.com/seancribbs/webmachine-ruby.git
-  revision: e92f3992104772a7a1ded0773a076b4149dab9ca
+  revision: 5db75bf761f38b0728b32a06b63e5a6926cd746f
   specs:
-    webmachine (1.3.1)
+    webmachine (1.4.0)
       as-notifications (~> 1.0)
       i18n (>= 0.4.0)
       multi_json
 
 GIT
+  remote: https://github.com/celluloid/celluloid-io.git
+  revision: 6ed01f4f702f4901ac5ca3dd12573af8c10f2388
+  specs:
+    celluloid-io (0.16.2)
+      celluloid (>= 0.16.0)
+      nio4r (>= 1.1.0)
+
+GIT
+  remote: https://github.com/celluloid/celluloid.git
+  revision: 9c28a6825cbdf4b916540caad82b17126c1f8945
+  specs:
+    celluloid (0.16.0)
+      timers (~> 4.0.0)
+
+GIT
   remote: https://github.com/celluloid/reel.git
-  revision: b92756dde5f22b114cffae9e51ccaf6196c581ca
+  revision: 7b3d06f7b895ff78e755dc8ab4e7361bbfcf9b1a
   specs:
     reel (0.6.0)
       celluloid (>= 0.15.1)
       celluloid-io (>= 0.15.0)
       http (>= 0.6.0.pre)
       http_parser.rb (>= 0.6.0)
-      websocket_parser (>= 0.1.6)
+      rack
+      websocket-driver (>= 0.5.1)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (4.2.0)
+    activesupport (4.2.1)
       i18n (~> 0.7)
       json (~> 1.7, >= 1.7.7)
       minitest (~> 5.1)
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
-    addressable (2.3.7)
+    addressable (2.3.8)
     as-notifications (1.0.1)
     ast (2.0.0)
     astrolabe (1.3.0)
       parser (>= 2.2.0.pre.3, < 3.0)
     blockenspiel (0.4.5)
-    celluloid (0.16.0)
-      timers (~> 4.0.0)
-    celluloid-io (0.16.2)
-      celluloid (>= 0.16.0)
-      nio4r (>= 1.1.0)
-    colorize (0.7.5)
-    dotenv (1.0.2)
-    ffi (1.9.6)
-    foreman (0.77.0)
-      dotenv (~> 1.0.2)
+    colorize (0.7.7)
+    domain_name (0.5.24)
+      unf (>= 0.0.5, < 1.0.0)
+    ffi (1.9.8)
+    foreman (0.78.0)
       thor (~> 0.19.1)
-    form_data (0.1.0)
     hitimes (1.2.2)
-    http (0.7.1)
-      form_data (~> 0.1.0)
+    http (0.8.11)
+      addressable (~> 2.3)
+      http-cookie (~> 1.0)
+      http-form_data (~> 1.0.1)
       http_parser.rb (~> 0.6.0)
+    http-cookie (1.0.2)
+      domain_name (~> 0.5)
+    http-form_data (1.0.1)
     http_parser.rb (0.6.0)
     i18n (0.7.0)
     json (1.8.2)
-    listen (2.8.5)
-      celluloid (>= 0.15.2)
+    listen (2.10.0)
+      celluloid (~> 0.16.0)
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
     mime-types (1.25.1)
-    minitest (5.5.1)
-    multi_json (1.10.1)
+    minitest (5.6.1)
+    multi_json (1.11.0)
     nio4r (1.1.0)
-    parser (2.2.0.3)
+    parser (2.2.2.3)
       ast (>= 1.1, < 3.0)
-    phare (0.6)
-    powerpack (0.1.0)
-    rack (1.6.0)
+    phare (0.7.1)
+    powerpack (0.1.1)
+    rack (1.6.1)
     rainbow (2.0.0)
-    rb-fsevent (0.9.4)
+    rb-fsevent (0.9.5)
     rb-inotify (0.9.5)
       ffi (>= 0.5.0)
     rdoc (4.2.0)
-      json (~> 1.4)
     rerun (0.10.0)
       listen (~> 2.7, >= 2.7.3)
     rest-client (1.6.8)
       mime-types (~> 1.16)
       rdoc (>= 2.4.2)
-    rubocop (0.29.1)
+    rubocop (0.31.0)
       astrolabe (~> 1.3)
-      parser (>= 2.2.0.1, < 3.0)
+      parser (>= 2.2.2.1, < 3.0)
       powerpack (~> 0.1)
       rainbow (>= 1.99.1, < 3.0)
       ruby-progressbar (~> 1.4)
-    ruby-progressbar (1.7.1)
-    sass (3.4.13)
-    scss-lint (0.34.0)
+    ruby-progressbar (1.7.5)
+    sass (3.4.14)
+    scss-lint (0.38.0)
       rainbow (~> 2.0)
       sass (~> 3.4.1)
     thor (0.19.1)
-    thread_safe (0.3.4)
+    thread_safe (0.3.5)
     timers (4.0.1)
       hitimes
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
+    unf (0.1.4)
+      unf_ext
+    unf_ext (0.0.7.1)
     unirest (1.1.2)
       addressable (~> 2.3.5)
       json (~> 1.8.1)
@@ -113,15 +130,17 @@ GEM
       blockenspiel (>= 0.4.5)
     webmachine-test (0.3.0)
       webmachine
-    websocket_parser (1.0.0)
+    websocket-driver (0.5.4)
+      websocket-extensions (>= 0.1.0)
+    websocket-extensions (0.1.2)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   activesupport
-  celluloid
-  celluloid-io
+  celluloid!
+  celluloid-io!
   foreman
   lattice!
   phare
