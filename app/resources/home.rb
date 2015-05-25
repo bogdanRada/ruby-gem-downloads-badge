@@ -72,8 +72,9 @@ module Resources
         blk = lambda do |sum|
           condition2.signal(sum)
         end
-        CelluloidManager.supervise_as :celluloid_manager if Celluloid::Actor[:celluloid_manager].blank?
-        Celluloid::Actor[:celluloid_manager].async.delegate(params,blk,  "rubygems_api")
+        BadgeDownloader.supervise_as :badge_downloader if Celluloid::Actor[:badge_downloader].blank?
+          RubygemsApi.supervise_as :rubygems_api if Celluloid::Actor[:rubygems_api].blank?
+          Celluloid::Actor[:badge_downloader].async.work(params, blk,  :rubygems_api)
         Fiber.new do
           Fiber.yield condition2.wait
         end.resume
