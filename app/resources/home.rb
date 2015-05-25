@@ -68,13 +68,15 @@ module Resources
         @file = File.join(public_folder, "favicon.ico")
         open(@file, "rb") {|io| io.read }
       else 
-        @condition2 = Celluloid::Condition.new 
+        condition2 = Celluloid::Condition.new 
         blk = lambda do |sum|
-          @condition2.signal(sum)
+          condition2.signal(sum)
         end
         CelluloidManager.supervise_as :celluloid_manager if Celluloid::Actor[:celluloid_manager].blank?
-        Celluloid::Actor[:celluloid_manager].delegate(blk, params)
-        return @condition2.wait
+        Celluloid::Actor[:celluloid_manager].async.delegate(params,blk,  "rubygems_api")
+        Fiber.new do
+          Fiber.yield condition2.wait
+        end.resume
       end
     end
     

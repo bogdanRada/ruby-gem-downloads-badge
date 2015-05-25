@@ -24,11 +24,11 @@ class CelluloidManager
  
  
   
-  def delegate(blk, params)
+  def delegate( params, blk,  api_actor_name)
     job_id = @jobs.size + 1 
     params["job_id"] = job_id
     @jobs[job_id] = params
-    Celluloid::Actor[:badge_downloader].async.work(params, blk,  "rubygems_api")
+    Celluloid::Actor[:badge_downloader].async.work(params, blk,  api_actor_name)
   end
   
   def worker_died(worker, reason)

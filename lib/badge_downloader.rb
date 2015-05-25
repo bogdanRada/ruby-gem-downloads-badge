@@ -23,7 +23,7 @@ class BadgeDownloader
       blk = lambda do |sum|
        fetch_image_badge_svg sum
       end
-      api.future.fetch_downloads_data(blk)
+      api.async.fetch_downloads_data(blk) 
     end
   end
   
