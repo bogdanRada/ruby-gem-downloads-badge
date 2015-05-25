@@ -4,12 +4,11 @@ ruby "2.2.2"
 gem 'activesupport'
 gem 'versionomy'
 gem 'rack'
-gem 'celluloid', git: "https://github.com/celluloid/celluloid.git"
-gem 'celluloid-io', git: "https://github.com/celluloid/celluloid-io.git"
+gem 'celluloid', "~> 0.16.0"
+gem 'celluloid-io', "~> 0.16.2"
 
 gem 'reel', git: "https://github.com/celluloid/reel.git"
-gem 'lattice',    github: 'celluloid/lattice'
-gem 'webmachine', github: 'seancribbs/webmachine-ruby'
+gem 'webmachine', git: "https://github.com/seancribbs/webmachine-ruby.git"
 gem 'webmachine-test'
 gem 'unirest'
 

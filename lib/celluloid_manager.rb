@@ -18,8 +18,8 @@ class CelluloidManager
     @job_to_worker = {}
     @worker_to_job = {}
     @worker_supervisor = Celluloid::SupervisionGroup.run!
-    @worker_supervisor.supervise_as(:rubygems_api, RubygemsApi)
-    @worker_supervisor.supervise_as(:badge_downloader, BadgeDownloader)
+    @worker_supervisor.supervise_as(:rubygems_api, RubygemsApi) if Celluloid::Actor[:rubygems_api].blank?
+    @worker_supervisor.supervise_as(:badge_downloader, BadgeDownloader) if Celluloid::Actor[:badge_downloader].blank?
   end
  
  

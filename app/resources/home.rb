@@ -15,7 +15,7 @@ Dir.glob("./config/initializers/**/*.rb") {|file| require file}
 Dir.glob("./lib**/*.rb") {|file| require file}
 
 module Resources 
-  class Home < Lattice::Resource
+  class Home <Webmachine::Resource
   
   
     def allowed_methods
@@ -73,7 +73,7 @@ module Resources
           @condition2.signal(sum)
         end
         CelluloidManager.supervise_as :celluloid_manager if Celluloid::Actor[:celluloid_manager].blank?
-        Celluloid::Actor[:celluloid_manager].async.delegate(blk, params)
+        Celluloid::Actor[:celluloid_manager].delegate(blk, params)
         return @condition2.wait
       end
     end

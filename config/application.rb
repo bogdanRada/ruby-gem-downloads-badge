@@ -1,9 +1,8 @@
-require 'lattice'
-require "lattice/server"
-require File.expand_path("../boot", __FILE__)
+require 'reel'
+require 'webmachine'
 
 # Require your resources here
-require 'resources/home'
+require_relative '../app/resources/home'
 
 class LogListener
   def call(*args)
@@ -21,21 +20,20 @@ class LogListener
 end
 Webmachine::Events.subscribe('wm.dispatch', LogListener.new)
 
-
-module LatticeTest
-  Application = Lattice::Application.new do |app|
-    app.routes do
-      add [:gem, :version, :*], Resources::Home
-      add [:gem, :*], Resources::Home
-      add [], Resources::Home
-    end
-    app.configure do |config|
-      config.adapter = :Reel
-      config.adapter_options = {:AccessLog => [], :Logger => Logger.new('/dev/null')}
-    end
+MyApp = Webmachine::Application.new do |app|
+  # Configure your app like this:
+  app.configure do |config|
+    config.ip = '0.0.0.0'
+    config.port = ENV['PORT'].present? ? ENV['PORT'] : 5000
+    config.adapter = :Reel
+    config.adapter_options = {:AccessLog => [], :Logger => Logger.new('/dev/null')}
+  end
+  # OR add routes this way:
+  app.routes do
+    add [:gem, :version, :*], Resources::Home
+    add [:gem, :*], Resources::Home
+    add [], Resources::Home
   end
 end
-
-Lattice.app = LatticeTest::Application
 
  

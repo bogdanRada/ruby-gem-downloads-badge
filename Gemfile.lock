@@ -1,40 +1,4 @@
 GIT
-  remote: git://github.com/celluloid/lattice.git
-  revision: e27c48b18c4f4130cb131f3b03a74208788fb0a3
-  specs:
-    lattice (0.3.0)
-      activesupport (>= 4.0.0)
-      celluloid (>= 0.15.1)
-      colorize (>= 0.5.0)
-      reel (>= 0.6.0)
-      thor (>= 0.18.0)
-      webmachine (>= 1.2.1)
-
-GIT
-  remote: git://github.com/seancribbs/webmachine-ruby.git
-  revision: 5db75bf761f38b0728b32a06b63e5a6926cd746f
-  specs:
-    webmachine (1.4.0)
-      as-notifications (~> 1.0)
-      i18n (>= 0.4.0)
-      multi_json
-
-GIT
-  remote: https://github.com/celluloid/celluloid-io.git
-  revision: 6ed01f4f702f4901ac5ca3dd12573af8c10f2388
-  specs:
-    celluloid-io (0.16.2)
-      celluloid (>= 0.16.0)
-      nio4r (>= 1.1.0)
-
-GIT
-  remote: https://github.com/celluloid/celluloid.git
-  revision: 9c28a6825cbdf4b916540caad82b17126c1f8945
-  specs:
-    celluloid (0.16.0)
-      timers (~> 4.0.0)
-
-GIT
   remote: https://github.com/celluloid/reel.git
   revision: 7b3d06f7b895ff78e755dc8ab4e7361bbfcf9b1a
   specs:
@@ -45,6 +9,15 @@ GIT
       http_parser.rb (>= 0.6.0)
       rack
       websocket-driver (>= 0.5.1)
+
+GIT
+  remote: https://github.com/seancribbs/webmachine-ruby.git
+  revision: 5db75bf761f38b0728b32a06b63e5a6926cd746f
+  specs:
+    webmachine (1.4.0)
+      as-notifications (~> 1.0)
+      i18n (>= 0.4.0)
+      multi_json
 
 GEM
   remote: https://rubygems.org/
@@ -61,7 +34,11 @@ GEM
     astrolabe (1.3.0)
       parser (>= 2.2.0.pre.3, < 3.0)
     blockenspiel (0.4.5)
-    colorize (0.7.7)
+    celluloid (0.16.0)
+      timers (~> 4.0.0)
+    celluloid-io (0.16.2)
+      celluloid (>= 0.16.0)
+      nio4r (>= 1.1.0)
     domain_name (0.5.24)
       unf (>= 0.0.5, < 1.0.0)
     ffi (1.9.8)
@@ -135,10 +112,9 @@ PLATFORMS
 
 DEPENDENCIES
   activesupport
-  celluloid!
-  celluloid-io!
+  celluloid (~> 0.16.0)
+  celluloid-io (~> 0.16.2)
   foreman
-  lattice!
   phare
   rack
   rb-fsevent
