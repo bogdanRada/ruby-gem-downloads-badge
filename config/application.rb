@@ -12,8 +12,16 @@ class LogListener
     request = event.payload[:request]
     resource = event.payload[:resource]
     code = event.payload[:code]
+    uri = URI(request.uri)
+    
+    if request.method == "POST" && request.query['_method']
+      method = request.query['_method']
+    else
+      method = request.method
+    end
+    
     puts "[%s] method=%s uri=%s code=%d resource=%s time=%.4f" % [
-      Time.now.iso8601, request.method, request.uri.to_s, code, resource,
+      Time.now.iso8601, method, uri.path, code, resource,
       event.duration
     ]
   end
@@ -35,5 +43,5 @@ MyApp = Webmachine::Application.new do |app|
     add [], Resources::Home
   end
 end
-
  
+

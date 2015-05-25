@@ -20,13 +20,10 @@ class BadgeDownloader
     if api. has_errors?
       fetch_image_badge_svg  BadgeDownloader::INVALID_COUNT
     else
-      @condition2 = Celluloid::Condition.new 
       blk = lambda do |sum|
-        @condition2.signal(sum)
+       fetch_image_badge_svg sum
       end
       api.future.fetch_downloads_data(blk)
-      result = @condition2.wait
-      fetch_image_badge_svg result
     end
   end
   
