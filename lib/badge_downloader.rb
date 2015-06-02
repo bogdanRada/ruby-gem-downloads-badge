@@ -39,8 +39,10 @@ private
     http = EventMachine::HttpRequest.new(url).get
     http.errback { |e| puts "Error during fetching data for #{url}: #{e.inspect}" }
     http.callback do
+      unless @output_buffer.closed?
       @output_buffer << http.response
       @output_buffer.close
+      end
     end
   end
 
