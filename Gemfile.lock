@@ -33,7 +33,7 @@ GEM
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
     multi_json (1.11.1)
-    parser (2.3.0.pre.2)
+    parser (2.2.2.5)
       ast (>= 1.1, < 3.0)
     phare (0.7.1)
     powerpack (0.1.1)
@@ -63,7 +63,7 @@ GEM
       ruby-progressbar (~> 1.4)
     ruby-progressbar (1.7.5)
     sass (3.4.14)
-    scss-lint (0.38.0)
+    scss_lint (0.39.0)
       rainbow (~> 2.0)
       sass (~> 3.4.1)
     sinatra (1.4.6)
@@ -106,7 +106,7 @@ DEPENDENCIES
   rb-fsevent
   rerun
   rubocop
-  scss-lint
+  scss_lint
   sinatra
   sinatra-contrib
   sinatra-outputbuffer
