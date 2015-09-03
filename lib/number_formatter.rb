@@ -1,6 +1,6 @@
 # class used for formatting numbers
 class NumberFormatter
-  include Metrics
+  include Helper
   attr_reader :number
 
   def initialize(number, display_metric)

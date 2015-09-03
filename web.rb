@@ -45,7 +45,6 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
           EM::HttpRequest.use RequestMiddleware if settings.development
           @rubygems_api = RubygemsApi.new(params)
           @downloader = BadgeDownloader.new(params, out, @rubygems_api)
-          @downloader.fetch_image_badge_svg
         end
         EM.error_handler do |error|
           puts "Error during event loop : #{error.inspect}"

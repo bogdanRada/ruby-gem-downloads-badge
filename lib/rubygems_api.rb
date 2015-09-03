@@ -1,100 +1,78 @@
+# class used for connecting to runygems.org and downloading info about a gem
 class RubygemsApi
-  attr_accessor :errors, :gem_name, :gem_version, :downloads_count, :display_total
+  include Helper
+  attr_reader :params
 
   def initialize(params)
-    @gem_name = params['gem'].nil? ? nil : params['gem']
-    @gem_version = params['version'].nil? ? nil : params['version']
-    @display_total = !params['type'].nil? && params['type'] == 'total'
-    @errors = []
-
-    @downloads_count = nil
-    parse_gem_version
-  end
-
-  def errors_exist?
-    !@errors.empty? || @gem_name.nil?
+    @params = params
   end
 
   def fetch_downloads_data(&block)
-    return if errors_exist?
-    fetch_gem_data_without_version(&block) if gem_no_version?
-    fetch_specific_version_data(&block) if gem_specific_version?
-    fetch_gem_stable_version_data(&block) if gem_stable_version?
+    block.call(nil) if gem_name.blank? || parse_gem_version.blank?
+    if gem_version.blank?
+      fetch_gem_data_without_version(&block)
+    elsif !gem_stable_version?
+      fetch_specific_version_data(&block)
+    elsif gem_stable_version?
+      fetch_gem_stable_version_data(&block)
+    end
   end
 
-private
+  private
 
-  def gem_no_version?
-    !@gem_name.nil? && @gem_version.nil?
+  def base_url
+    "https://rubygems.org"
   end
 
-  def gem_specific_version?
-    !@gem_name.nil? && !@gem_version.nil? && @gem_version != 'stable'
+  def gem_name
+    params.fetch('gem', nil)
+  end
+
+  def gem_version
+    params.fetch('version', nil)
+  end
+
+  def display_type
+    params.fetch('type', nil)
+  end
+
+  def display_total
+    display_type.present? && display_type == 'total'
   end
 
   def gem_stable_version?
-    !@gem_name.nil? && !@gem_version.nil? && @gem_version == 'stable'
+    gem_version.present? && gem_version == 'stable'
   end
 
   def fetch_gem_stable_version_data(&block)
-    fetch_data("/api/v1/versions/#{@gem_name}.json") do |http_response|
-      unless errors_exist?
+    fetch_data("#{base_url}/api/v1/versions/#{gem_name}.json") do |http_response|
+      unless http_response.blank?
         latest_stable_version_details = get_latest_stable_version_details(http_response)
-        @downloads_count = latest_stable_version_details['downloads_count'] unless latest_stable_version_details.empty?
+        downloads_count = latest_stable_version_details['downloads_count'] unless latest_stable_version_details.empty?
       end
-      block.call
+      block.call downloads_count
     end
   end
 
   def fetch_specific_version_data(&block)
-    fetch_data("/api/v1/downloads/#{@gem_name}-#{@gem_version}.json") do |http_response|
-      unless errors_exist?
-        @downloads_count = http_response['version_downloads']
-        @downloads_count = "#{http_response['total_downloads']}_total" if display_total
+    fetch_data("#{base_url}/api/v1/downloads/#{gem_name}-#{gem_version}.json") do |http_response|
+      unless http_response.blank?
+        downloads_count = http_response['version_downloads']
+        downloads_count = "#{http_response['total_downloads']}_total" if display_total
       end
-      block.call
+      block.call downloads_count
     end
   end
 
   def fetch_gem_data_without_version(&block)
-    fetch_data("/api/v1/gems/#{@gem_name}.json") do |http_response|
-      unless errors_exist?
-        @downloads_count = http_response['version_downloads']
-        @downloads_count = "#{http_response['downloads']}_total" if display_total
+    fetch_data("#{base_url}/api/v1/gems/#{gem_name}.json") do |http_response|
+      unless http_response.blank?
+        downloads_count = http_response['version_downloads']
+        downloads_count = "#{http_response['downloads']}_total" if display_total
       end
-      block.call
+      block.call downloads_count
     end
   end
 
-  def fetch_data(url, &block)
-    return if errors_exist?
-    http = EventMachine::HttpRequest.new("https://rubygems.org#{url}").get
-    http.errback { |e| puts "Error during fetching data #{url} : #{e.inspect}" }
-    http.callback do
-      @res = http.response
-      begin
-        @res = JSON.parse(@res)
-      rescue JSON::ParserError => e
-        @errors << ["Error while parsing response from api : #{e.inspect}"]
-      end
-      block.call @res
-    end
-  end
 
-  def parse_gem_version
-    return if @gem_version.nil? || @gem_version == 'stable'
-    begin
-      Versionomy.parse(@gem_version)
-    rescue Versionomy::Errors::ParseError
-      @errors << ["Error while parsing gem version #{@gem_version} with Versionomy"]
-    end
-  end
-
-  def get_latest_stable_version_details(http_response)
-    versions = http_response.select { |val| val['prerelease'] == false } unless http_response.empty?
-    version_numbers = versions.map { |val| val['number'] } unless versions.empty?
-    sorted_versions = version_numbers.version_sort unless versions.empty?
-    last_version_number = sorted_versions.empty? ? '' : sorted_versions.last
-    last_version_number.empty? ? {} : versions.find { |val| val['number'] == last_version_number }
-  end
 end
