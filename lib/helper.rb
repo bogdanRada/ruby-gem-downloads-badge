@@ -41,15 +41,11 @@ module Helper
     http.callback { block.call http.response }
   end
 
-  def register_disconnect_callback(http)
-    http.disconnect { puts "oops, dropped connection?" }
-  end
 
   def fetch_data(url, &block)
     http = em_request(url).get
     register_error_callback(http)
     register_success_callback(http, &block)
-    register_disconnect_callback(http)
   end
 
   def callback_error(error)

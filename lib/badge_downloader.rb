@@ -1,4 +1,5 @@
 require_relative './number_formatter.rb'
+require_relative './helper'
 # class used to download badges from shields.io
 #
 # @!attribute color
@@ -22,33 +23,21 @@ class BadgeDownloader
   def initialize(params, output_buffer, external_api_details)
     @params = params
     @api_data = external_api_details
-    fetch_image_badge_svg(output_buffer)
-  end
-
-  def fetch_image_badge_svg(output_buffer)
     @api_data.fetch_downloads_data do |downloads|
       fetch_image_shield(downloads, output_buffer)
     end
   end
 
-  def colour
-    @params['color'].blank? ? 'blue' : @params[:color]
-  end
-
   def style_param
-    @params['style']
+    @params.fetch('style', 'flat')
   end
 
   def metric_param
-    @params['style']
-  end
-
-  def style_flat?
-    style_param.blank? || style_param == 'flat'
+    @params.fetch('metric', false)
   end
 
   def style
-    style_flat? ? '' : "?style=#{style_param}"
+    style_param == 'flat' ? '' : "?style=#{style_param}"
   end
 
   def display_metric
@@ -56,7 +45,7 @@ class BadgeDownloader
   end
 
   def build_badge_url(downloads)
-    colour = downloads.blank? ? 'lightgrey' : colour
+    colour = downloads.blank? ? 'lightgrey' : @params.fetch('color', 'blue')
     formatted_number = format_number_of_downloads(downloads)
     "http://img.shields.io/badge/downloads-#{formatted_number}-#{colour}.svg#{style}"
   end

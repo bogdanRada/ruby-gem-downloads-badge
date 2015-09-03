@@ -1,3 +1,4 @@
+require_relative './helper'
 # class used for formatting numbers
 class NumberFormatter
   include Helper

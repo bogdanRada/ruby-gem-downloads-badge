@@ -1,3 +1,4 @@
+require_relative './helper'
 # class used for connecting to runygems.org and downloading info about a gem
 class RubygemsApi
   include Helper
@@ -8,7 +9,7 @@ class RubygemsApi
   end
 
   def fetch_downloads_data(&block)
-    block.call(nil) if gem_name.blank? || parse_gem_version.blank?
+    block.call(nil) unless gem_is_valid?
     if gem_version.blank?
       fetch_gem_data_without_version(&block)
     elsif !gem_stable_version?
@@ -20,20 +21,28 @@ class RubygemsApi
 
   private
 
+  def gem_is_valid?
+    if gem_version.present?
+      parse_gem_version(gem_version).blank? ? false : true
+    else
+      gem_name.present? ? true : false
+    end
+  end
+
   def base_url
-    "https://rubygems.org"
+    'https://rubygems.org'
   end
 
   def gem_name
-    params.fetch('gem', nil)
+    @params.fetch('gem', nil)
   end
 
   def gem_version
-    params.fetch('version', nil)
+    @params.fetch('version', nil)
   end
 
   def display_type
-    params.fetch('type', nil)
+    @params.fetch('type', nil)
   end
 
   def display_total
@@ -74,5 +83,7 @@ class RubygemsApi
     end
   end
 
-
+  def register_success_callback(http, &block)
+    http.callback { block.call parse_json(http.response) }
+  end
 end
