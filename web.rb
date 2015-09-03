@@ -22,7 +22,6 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   set :environment, ENV['RACK_ENV']
   set :development, (settings.environment == 'development')
 
-
   set :static_cache_control, [:no_cache, :must_revalidate, max_age: 0]
   set :static, false # set up static file routing
   set :public_folder, File.join(settings.root, 'static') # set up the static dir (with images/js/css inside)

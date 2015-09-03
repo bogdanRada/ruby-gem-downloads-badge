@@ -6,10 +6,21 @@ class RubygemsApi
 
   def initialize(params)
     @params = params
+    @downloads = nil
   end
 
   def fetch_downloads_data(&block)
-    block.call(nil) unless gem_is_valid?
+    if  gem_is_valid?
+      fetch_dowloads_info(&block)
+    else
+      block.call(nil)
+    end
+  end
+
+
+  private
+
+  def fetch_dowloads_info(&block)
     if gem_version.blank?
       fetch_gem_data_without_version(&block)
     elsif !gem_stable_version?
@@ -18,8 +29,6 @@ class RubygemsApi
       fetch_gem_stable_version_data(&block)
     end
   end
-
-  private
 
   def gem_is_valid?
     if gem_version.present?

@@ -41,7 +41,6 @@ module Helper
     http.callback { block.call http.response }
   end
 
-
   def fetch_data(url, &block)
     http = em_request(url).get
     register_error_callback(http)
@@ -49,7 +48,7 @@ module Helper
   end
 
   def callback_error(error)
-    puts "Error during fetching data #{url} : #{error.inspect}"
+    puts "Error during fetching data  : #{error.inspect}"
   end
 
   def stable_gem_versions(http_response)

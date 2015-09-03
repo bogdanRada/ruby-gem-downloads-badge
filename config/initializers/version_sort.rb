@@ -23,5 +23,4 @@ module_function
   def version_is_float?(version)
     version =~ /\A\d+(\.\d+)?\z/ ? -(version.to_f) : version.downcase
   end
-
 end
