@@ -1,3 +1,4 @@
+$stdout.sync = true
 preload_app true
 worker_processes Integer(ENV['WEB_CONCURRENCY'] || 3)
 
