@@ -11,6 +11,7 @@ gem 'sinatra-settings'
 gem 'sinatra-contrib'
 gem 'rack'
 gem 'async_sinatra'
+gem 'activesupport'
 
 group :development do
   gem 'foreman'

@@ -9,11 +9,14 @@ require 'sinatra/json'
 require 'json'
 require 'securerandom'
 require 'versionomy'
+require 'active_support/core_ext/object/blank'
+require 'active_support/core_ext/hash/keys'
 Dir.glob('./config/initializers/**/*.rb') { |file| require file }
 Dir.glob('./lib**/*.rb') { |file| require file }
 
 require_relative './spec/request_middleware.rb' if ENV['RACK_ENV'] == 'development'
 
+# class that is used to download shields for ruby gems using their name and version
 class RubygemsDownloadShieldsApp < Sinatra::Base
   helpers Sinatra::Streaming
   register Sinatra::Async
