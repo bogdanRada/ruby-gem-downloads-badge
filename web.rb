@@ -12,6 +12,8 @@ require 'versionomy'
 Dir.glob('./config/initializers/**/*.rb') { |file| require file }
 Dir.glob('./lib**/*.rb') { |file| require file }
 
+require_relative './spec/request_middleware.rb' if ENV['RACK_ENV'] == 'development'
+
 class RubygemsDownloadShieldsApp < Sinatra::Base
   helpers Sinatra::Streaming
   register Sinatra::Async

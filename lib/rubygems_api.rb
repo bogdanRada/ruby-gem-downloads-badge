@@ -2,6 +2,8 @@ require_relative './helper'
 # class used for connecting to runygems.org and downloading info about a gem
 class RubygemsApi
   include Helper
+  BASE_URL = 'https://rubygems.org'
+
   attr_reader :params
 
   def initialize(params)
@@ -9,37 +11,28 @@ class RubygemsApi
     @downloads = nil
   end
 
-  def fetch_downloads_data(&block)
-    if  gem_is_valid?
-      fetch_dowloads_info(&block)
+  def fetch_downloads_data(callback)
+    if gem_is_valid?
+      fetch_dowloads_info(callback)
     else
-      block.call(nil)
+      callback.call(nil)
     end
   end
 
+private
 
-  private
-
-  def fetch_dowloads_info(&block)
+  def fetch_dowloads_info(callback)
     if gem_version.blank?
-      fetch_gem_data_without_version(&block)
+      fetch_gem_data_without_version(callback)
     elsif !gem_stable_version?
-      fetch_specific_version_data(&block)
+      fetch_specific_version_data(callback)
     elsif gem_stable_version?
-      fetch_gem_stable_version_data(&block)
+      fetch_gem_stable_version_data(callback)
     end
   end
 
   def gem_is_valid?
-    if gem_version.present?
-      parse_gem_version(gem_version).blank? ? false : true
-    else
-      gem_name.present? ? true : false
-    end
-  end
-
-  def base_url
-    'https://rubygems.org'
+    gem_name.present? || gem_with_version?
   end
 
   def gem_name
@@ -62,37 +55,39 @@ class RubygemsApi
     gem_version.present? && gem_version == 'stable'
   end
 
-  def fetch_gem_stable_version_data(&block)
-    fetch_data("#{base_url}/api/v1/versions/#{gem_name}.json") do |http_response|
-      unless http_response.blank?
-        latest_stable_version_details = get_latest_stable_version_details(http_response)
-        downloads_count = latest_stable_version_details['downloads_count'] unless latest_stable_version_details.empty?
-      end
-      block.call downloads_count
+  def gem_valid_version?
+    gem_version.present? && parse_gem_version(gem_version).present?
+  end
+
+  def gem_with_version?
+    gem_name.present? && gem_version.present? && (gem_stable_version? || gem_valid_version?)
+  end
+
+  def fetch_gem_stable_version_data(callback)
+    fetch_data("#{RubygemsApi::BASE_URL}/api/v1/versions/#{gem_name}.json", callback) do |http_response|
+      latest_stable_version_details = get_latest_stable_version_details(http_response)
+      downloads_count = latest_stable_version_details['downloads_count'] unless latest_stable_version_details.blank?
+      callback.call downloads_count
     end
   end
 
-  def fetch_specific_version_data(&block)
-    fetch_data("#{base_url}/api/v1/downloads/#{gem_name}-#{gem_version}.json") do |http_response|
-      unless http_response.blank?
-        downloads_count = http_response['version_downloads']
-        downloads_count = "#{http_response['total_downloads']}_total" if display_total
-      end
-      block.call downloads_count
+  def fetch_specific_version_data(callback)
+    fetch_data("#{RubygemsApi::BASE_URL}/api/v1/downloads/#{gem_name}-#{gem_version}.json", callback) do |http_response|
+      downloads_count = http_response['version_downloads']
+      downloads_count = "#{http_response['total_downloads']}_total" if display_total
+      callback.call downloads_count
     end
   end
 
-  def fetch_gem_data_without_version(&block)
-    fetch_data("#{base_url}/api/v1/gems/#{gem_name}.json") do |http_response|
-      unless http_response.blank?
-        downloads_count = http_response['version_downloads']
-        downloads_count = "#{http_response['downloads']}_total" if display_total
-      end
-      block.call downloads_count
+  def fetch_gem_data_without_version(callback)
+    fetch_data("#{RubygemsApi::BASE_URL}/api/v1/gems/#{gem_name}.json", callback) do |http_response|
+      downloads_count = http_response['version_downloads']
+      downloads_count = "#{http_response['downloads']}_total" if display_total
+      callback.call downloads_count
     end
   end
 
-  def register_success_callback(http, &block)
-    http.callback { block.call parse_json(http.response) }
+  def callback_before_success(response)
+    parse_json(response)
   end
 end

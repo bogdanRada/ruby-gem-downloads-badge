@@ -22,7 +22,7 @@ class NumberFormatter
     while index >= 0
       limit = metric_power[index]
       if @number > limit
-        return "#{((@number / limit).to_f.round)}#{metric_prefix[index]}"
+        return "#{((@number / limit).to_f.round)}#{metric_prefixes[index]}"
       end
       index -= 1
     end

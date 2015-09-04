@@ -18,14 +18,13 @@ class BadgeDownloader
   # constant that is used to show message for invalid badge
   INVALID_COUNT = 'invalid'
 
-  attr_reader :params,:api_data
+  attr_reader :params, :api_data
 
   def initialize(params, output_buffer, external_api_details)
     @params = params
     @api_data = external_api_details
-    @api_data.fetch_downloads_data do |downloads|
-      fetch_image_shield(downloads, output_buffer)
-    end
+    callback = ->(downloads) { fetch_image_shield(downloads, output_buffer) }
+    @api_data.fetch_downloads_data(callback)
   end
 
   def style_param

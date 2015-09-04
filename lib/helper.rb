@@ -1,6 +1,6 @@
-#module that is used for formatting numbers using metrics
+# module that is used for formatting numbers using metrics
 module Helper
-  module_function
+module_function
 
   def metric_prefixes
     %w(k M G T P E Z Y)
@@ -37,14 +37,25 @@ module Helper
     http.errback { |error| callback_error(error) }
   end
 
-  def register_success_callback(http, &block)
-    http.callback { block.call http.response }
+  def callback_before_success(response)
+    response
   end
 
-  def fetch_data(url, &block)
+  def dispatch_http_response(res, callback, &block)
+    res.blank? ? callback.call(res) : block.call(res)
+  end
+
+  def register_success_callback(http, callback, &block)
+    http.callback do
+      res = callback_before_success(http.response)
+      dispatch_http_response(res, callback, &block)
+    end
+  end
+
+  def fetch_data(url, callback = -> {}, &block)
     http = em_request(url).get
     register_error_callback(http)
-    register_success_callback(http, &block)
+    register_success_callback(http, callback, &block)
   end
 
   def callback_error(error)
@@ -55,27 +66,22 @@ module Helper
     http_response.blank? ? [] : http_response.select { |val| val['prerelease'] == false }
   end
 
-  # Description of method
-  #
-  # @param [Type] http_response describe http_response
-  # @return [Type] description of returned object
-  def all_gem_versions(http_response)
-    versions = stable_gem_versions(http_response)
-    sorted_versions(versions)
-  end
-
   def sorted_versions(versions)
     versions.blank? ? [] : versions.map { |val| val['number'] }.version_sort
   end
 
   def find_version(versions, number)
-    versions.find { |val| val['number'] == number }
+    number.blank? ? {} : versions.find { |val| val['number'] == number }
+  end
+
+  def last_version(sorted_versions)
+    sorted_versions.blank? ? '' : sorted_versions.last
   end
 
   def get_latest_stable_version_details(http_response)
-    sorted_versions = all_gem_versions(http_response)
-    last_version_number = sorted_versions.blank? ? '' : sorted_versions.last
-    last_version_number.empty? ? {} : find_version(versions, number)
+    versions = stable_gem_versions(http_response)
+    sorted_versions = sorted_versions(versions)
+    last_version_number = last_version(sorted_versions)
+    find_version(versions, last_version_number)
   end
-
 end
