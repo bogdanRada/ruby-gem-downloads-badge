@@ -3,6 +3,7 @@ AllCops:
     - washout_builder.gemspec
     - bin/**/*
     - Guardfile
+    - vendor/**/*
 
 Documentation:
   Enabled: false
@@ -65,4 +66,3 @@ Style/ExtraSpacing:
 
 Style/FileName:
   Enabled: false
-

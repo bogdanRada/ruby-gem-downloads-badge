@@ -1,4 +1,5 @@
-#!/usr/bin/env ruby
+$stdout.sync = true
+# !/usr/bin/env ruby
 require 'rubygems'
 require 'bundler'
 Bundler.require :default, (ENV['RACK_ENV'] || 'development').to_sym
@@ -8,18 +9,28 @@ require 'sinatra/json'
 require 'json'
 require 'securerandom'
 require 'versionomy'
+require 'active_support/core_ext/object/blank'
+require 'active_support/core_ext/hash/keys'
 Dir.glob('./config/initializers/**/*.rb') { |file| require file }
 Dir.glob('./lib**/*.rb') { |file| require file }
 
+require_relative './spec/request_middleware.rb' if ENV['RACK_ENV'] == 'development'
+
+# class that is used to download shields for ruby gems using their name and version
 class RubygemsDownloadShieldsApp < Sinatra::Base
   helpers Sinatra::Streaming
   register Sinatra::Async
 
+  set :root, File.dirname(__FILE__) # You must set app root
+  enable :logging
+  set :environments, %w(development test production webdev)
+  set :environment, ENV['RACK_ENV']
+  set :development, (settings.environment == 'development')
+
   set :static_cache_control, [:no_cache, :must_revalidate, max_age: 0]
   set :static, false # set up static file routing
-  set :public_folder, File.expand_path('../static', __FILE__) # set up the static dir (with images/js/css inside)
-
-  set :views, File.expand_path('../views', __FILE__) # set up the views dir
+  set :public_folder, File.join(settings.root, 'static') # set up the static dir (with images/js/css inside)
+  set :views, File.join(settings.root, 'views') # set up the views dir
 
   before do
     content_type 'image/svg+xml;  Content-Encoding: gzip; charset=utf-8; '
@@ -35,13 +46,13 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
     else
       stream :keep_open do |out|
         EM.run do
+          EM::HttpRequest.use RequestMiddleware if settings.development
           @rubygems_api = RubygemsApi.new(params)
           @downloader = BadgeDownloader.new(params, out, @rubygems_api)
-          @downloader.fetch_image_badge_svg
         end
-        EM.error_handler do |e|
-          puts "Error during event loop : #{e.inspect}"
-          puts e.backtrace
+        EM.error_handler do |error|
+          puts "Error during event loop : #{error.inspect}"
+          puts error.backtrace
         end
       end
     end
