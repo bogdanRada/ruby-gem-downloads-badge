@@ -182,7 +182,6 @@ DEPENDENCIES
   phare
   rack
   rack-handlers
-  rack-test
   rainbows
   rb-fsevent
   redcarpet

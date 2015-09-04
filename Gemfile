@@ -13,7 +13,7 @@ gem 'rack'
 gem 'async_sinatra'
 gem 'activesupport'
 
-group :development do
+group :development, :test do
   gem 'foreman'
   gem 'rerun'
   gem 'rb-fsevent'
@@ -25,11 +25,8 @@ group :development do
   gem 'redcarpet'
   gem 'github-markup'
   gem 'inch'
-end
 
-group :test do
   gem 'rspec'
-  gem 'rack-test'
   gem 'simplecov'
   gem 'simplecov-summary'
   gem 'mocha'
