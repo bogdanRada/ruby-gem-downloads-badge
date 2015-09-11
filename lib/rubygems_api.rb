@@ -71,6 +71,7 @@ class RubygemsApi
   def gem_name
     @params.fetch('gem', nil)
   end
+
   # Returns the gem version from the params , otherwise nil
   #
   # @return [String, nil] Returns the gem version from the params , otherwise nil
@@ -128,6 +129,7 @@ class RubygemsApi
       callback.call downloads_count
     end
   end
+
   # Method that downloads information about a specifc version of a gem and send the count to the callback
   # The count defers depending if we need to display total amount or not
   #
