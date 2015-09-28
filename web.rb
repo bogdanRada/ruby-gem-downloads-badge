@@ -11,6 +11,8 @@ require 'securerandom'
 require 'versionomy'
 require 'active_support/core_ext/object/blank'
 require 'active_support/core_ext/hash/keys'
+require 'active_support/duration.rb'
+require 'active_support/core_ext/time/zones.rb'
 Dir.glob('./config/initializers/**/*.rb') { |file| require file }
 Dir.glob('./lib**/*.rb') { |file| require file }
 
@@ -37,7 +39,8 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
     headers('Pragma' => 'no-cache')
     #    etag SecureRandom.hex
     #    last_modified(Time.now - 60)
-    expires Time.now - 1, :no_cache, :must_revalidate, max_age: 0
+     Time.zone = 'UTC'
+    expires Time.zone.now - 1, :no_cache, :must_revalidate, max_age: 0
   end
 
   aget '/?:gem?/?:version?' do
