@@ -5,7 +5,9 @@ http://ruby-gem-downloads-badge.herokuapp.com/ - gem downloads shields
 
 Clean and simple gem download badge, [courtesy of shields.io](https://github.com/badges/shields), that displays the downloads number of your gem. By default will display the downloads count of the latest version of the gem provided.
 
-##Use In your README.md, just add an image with the base URL (`http://ruby-gem-downloads-badge.herokuapp.com/`) followed by the gem name and the version, for example :
+##Use
+
+In your README.md, just add an image with the base URL (`http://ruby-gem-downloads-badge.herokuapp.com/`) followed by the gem name and the version, for example :
 
 You will then get a nice and pretty SVG with the downloads count of the gem provided:
 
