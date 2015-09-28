@@ -51,7 +51,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
 
   configure do
     FileUtils.mkdir_p(settings.log_directory) unless File.directory?(settings.log_directory)
-    FileUtils.touch(settings.access_log) unless File.exist?(settings.access_log)
+    FileUtils.touch(settings.access_log) unless File.file?(settings.access_log)
     use ::Rack::CommonLogger, access_logger
   end
 
