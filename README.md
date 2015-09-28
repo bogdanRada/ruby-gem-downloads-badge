@@ -1,7 +1,11 @@
 http://ruby-gem-downloads-badge.herokuapp.com/ - gem downloads shields
 ======================================================================
 
-[![Dependency Status](https://gemnasium.com/bogdanRada/ruby-gem-downloads-badge.svg)](https://gemnasium.com/bogdanRada/ruby-gem-downloads-badge)[![Inline docs](http://inch-ci.org/github/bogdanRada/ruby-gem-downloads-badge.svg?branch=master)](http://inch-ci.org/github/bogdanRada/ruby-gem-downloads-badge)[![Maintenance Status](http://stillmaintained.com/bogdanRada/ruby-gem-downloads-badge.png)](https://github.com/bogdanRada/ruby-gem-downloads-badge)
+[![Dependency Status](https://gemnasium.com/bogdanRada/ruby-gem-downloads-badge.svg)](https://gemnasium.com/bogdanRada/ruby-gem-downloads-badge)
+
+[![Inline docs](http://inch-ci.org/github/bogdanRada/ruby-gem-downloads-badge.svg?branch=master)](http://inch-ci.org/github/bogdanRada/ruby-gem-downloads-badge)
+
+[![Maintenance Status](http://stillmaintained.com/bogdanRada/ruby-gem-downloads-badge.png)](https://github.com/bogdanRada/ruby-gem-downloads-badge)
 
 Clean and simple gem download badge, [courtesy of shields.io](https://github.com/badges/shields), that displays the downloads number of your gem. By default will display the downloads count of the latest version of the gem provided.
 
