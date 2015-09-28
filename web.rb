@@ -39,7 +39,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
     headers('Pragma' => 'no-cache')
     #    etag SecureRandom.hex
     #    last_modified(Time.now - 60)
-     Time.zone = 'UTC'
+    Time.zone = 'UTC'
     expires Time.zone.now - 1, :no_cache, :must_revalidate, max_age: 0
   end
 
