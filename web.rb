@@ -37,7 +37,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
     headers('Pragma' => 'no-cache')
     #    etag SecureRandom.hex
     #    last_modified(Time.now - 60)
-    expires Time.now - 1, :no_cache, :must_revalidate, max_age: 0
+    expires Time.zone.now - 1, :no_cache, :must_revalidate, max_age: 0
   end
 
   aget '/?:gem?/?:version?' do
