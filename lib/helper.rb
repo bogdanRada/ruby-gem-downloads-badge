@@ -123,7 +123,7 @@ module_function
   #
   # @return [Logger]
   def logger
-    RubygemsDownloadShieldsApp.settings.access_logger
+    RubygemsDownloadShieldsApp.settings.logger
   end
 
   # Method that is used to react when an error happens in a HTTP request

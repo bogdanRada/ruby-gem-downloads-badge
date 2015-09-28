@@ -45,13 +45,12 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   }
 
   set :log_directory,  File.join(settings.root, 'log')
-  set :access_log,  File.join(settings.log_directory, "#{settings.environment}.log")
+  FileUtils.mkdir_p(settings.log_directory) unless File.directory?(settings.log_directory)
+  set :access_log,  File.open(File.join(settings.log_directory, "#{settings.environment}.log"), 'a+')
   set :access_logger, ::Logger.new(settings.access_log)
   set :logger, settings.access_logger
 
   configure do
-    FileUtils.mkdir_p(settings.log_directory) unless File.directory?(settings.log_directory)
-    FileUtils.touch(settings.access_log) unless File.file?(settings.access_log)
     use ::Rack::CommonLogger, access_logger
   end
 
@@ -70,8 +69,8 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
     else
       stream :keep_open do |out|
         EM.error_handler do |error|
-          access_logger.debug "Error during event loop : #{error.inspect}"
-          access_logger.debug error.backtrace
+          logger.debug "Error during event loop : #{error.inspect}"
+          logger.debug error.backtrace
         end
         EM.run do
           EM::HttpRequest.use RequestMiddleware if settings.development
