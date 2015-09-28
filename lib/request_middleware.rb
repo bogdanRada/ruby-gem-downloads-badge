@@ -1,12 +1,14 @@
 # middleware used only in development for testing purposes
+require_relative './helper'
 class RequestMiddleware
+  include Helper
   def request(client, head, body)
-    puts "HTTP request to #{client.req.uri}".inspect
+    logger.debug "HTTP request to #{client.req.uri}".inspect
     [head, body]
   end
 
   def response(resp)
-    puts resp.response
+    logger.debug resp.response
     resp
   end
 end

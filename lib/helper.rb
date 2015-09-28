@@ -119,13 +119,20 @@ module_function
     register_success_callback(http, callback, &block)
   end
 
+  # Method that returns the logger used by the application
+  #
+  # @return [Logger]
+  def logger
+    RubygemsDownloadShieldsApp.settings.access_logger
+  end
+
   # Method that is used to react when an error happens in a HTTP request
   # and prints out an error message
   #
   # @param [Object] error The error that was raised by the HTTP request
   # @return [void]
   def callback_error(error)
-    puts "Error during fetching data  : #{error.inspect}"
+    logger.debug "Error during fetching data  : #{error.inspect}"
   end
 
   # Given an aray of gem versions , will filter them and return only the stable versions

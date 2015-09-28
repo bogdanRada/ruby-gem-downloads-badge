@@ -13,10 +13,11 @@ require 'active_support/core_ext/object/blank'
 require 'active_support/core_ext/hash/keys'
 require 'active_support/duration.rb'
 require 'active_support/core_ext/time/zones.rb'
+
 Dir.glob('./config/initializers/**/*.rb') { |file| require file }
 Dir.glob('./lib**/*.rb') { |file| require file }
 
-require_relative './spec/request_middleware.rb' if ENV['RACK_ENV'] == 'development'
+require_relative './lib/request_middleware.rb' if ENV['RACK_ENV'] == 'development'
 
 # class that is used to download shields for ruby gems using their name and version
 class RubygemsDownloadShieldsApp < Sinatra::Base
@@ -27,12 +28,29 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   enable :logging
   set :environments, %w(development test production webdev)
   set :environment, ENV['RACK_ENV']
+  set :raise_errors, true
+  set :dump_errors, (settings.environment == 'development') ? true : false
+  set :show_exceptions, (settings.environment == 'development') ? true : false
   set :development, (settings.environment == 'development')
 
   set :static_cache_control, [:no_cache, :must_revalidate, max_age: 0]
   set :static, false # set up static file routing
   set :public_folder, File.join(settings.root, 'static') # set up the static dir (with images/js/css inside)
   set :views, File.join(settings.root, 'views') # set up the views dir
+
+  ::Logger.class_eval {
+    alias_method :write, :<<
+    alias_method :puts, :<<
+  }
+
+  set :log_directory,  File.join(settings.root, 'log')
+  set :access_log,  File.join(settings.log_directory, "#{settings.environment}.log")
+  set :access_logger, ::Logger.new(settings.access_log)
+
+  configure do
+    FileUtils.mkdir_p(settings.log_directory) unless File.directory?(settings.log_directory)
+    use ::Rack::CommonLogger, access_logger
+  end
 
   before do
     content_type 'image/svg+xml;  Content-Encoding: gzip; charset=utf-8; '
@@ -54,8 +72,8 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
           @downloader = BadgeDownloader.new(params, out, @rubygems_api)
         end
         EM.error_handler do |error|
-          puts "Error during event loop : #{error.inspect}"
-          puts error.backtrace
+          logger.debug "Error during event loop : #{error.inspect}"
+          logger.debug error.backtrace
         end
       end
     end
