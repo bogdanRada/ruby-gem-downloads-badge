@@ -28,10 +28,11 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   enable :logging
   set :environments, %w(development test production webdev)
   set :environment, ENV['RACK_ENV']
-  set :raise_errors, true
-  set :dump_errors, (settings.environment == 'development') ? true : false
-  set :show_exceptions, (settings.environment == 'development') ? true : false
   set :development, (settings.environment == 'development')
+  set :raise_errors, true
+  set :dump_errors, settings.development
+  set :show_exceptions, settings.development
+
 
   set :static_cache_control, [:no_cache, :must_revalidate, max_age: 0]
   set :static, false # set up static file routing
@@ -46,6 +47,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   set :log_directory,  File.join(settings.root, 'log')
   set :access_log,  File.join(settings.log_directory, "#{settings.environment}.log")
   set :access_logger, ::Logger.new(settings.access_log)
+  set :logger, settings.access_logger
 
   configure do
     FileUtils.mkdir_p(settings.log_directory) unless File.directory?(settings.log_directory)
@@ -66,16 +68,17 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
       send_file File.join(settings.public_folder, 'favicon.ico'), disposition: 'inline', type: 'image/x-icon'
     else
       stream :keep_open do |out|
+        EM.error_handler do |error|
+          access_logger.debug "Error during event loop : #{error.inspect}"
+          access_logger.debug error.backtrace
+        end
         EM.run do
           EM::HttpRequest.use RequestMiddleware if settings.development
           @rubygems_api = RubygemsApi.new(params)
           @downloader = BadgeDownloader.new(params, out, @rubygems_api)
         end
-        EM.error_handler do |error|
-          logger.debug "Error during event loop : #{error.inspect}"
-          logger.debug error.backtrace
-        end
       end
     end
   end
+
 end
