@@ -1,3 +1,5 @@
+require 'rubygems'
+require 'bundler/setup'
 require 'rspec/core'
 require 'rspec/core/rake_task'
 require 'coveralls/rake/task'

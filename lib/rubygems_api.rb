@@ -8,7 +8,7 @@ class RubygemsApi
   # the base url to which the API will connect for fetching information about gems
   BASE_URL = 'https://rubygems.org'
 
-  attr_reader :params
+  attr_reader :params, :downloads
 
   # Method used to instantiate an instance of RubygemsApi class with the params received from URL
   #
@@ -18,19 +18,19 @@ class RubygemsApi
   # @option params [String] :type The type of display , if we want to display total downloads, this will have value 'total'
   # @return [void]
   def initialize(params)
-    @params = params
+    @params = params.stringify_keys
     @downloads = nil
   end
 
   # Method that checks if the gem is valid , and if it is will fetch the infromation about the gem
   # and pass the callback to the method . If is not valid the callback will be called with nil value
-  # @see #gem_is_valid?
+  # @see #valid?
   # @see #fetch_dowloads_info
   #
   # @param [Lambda] callback The callback that needs to be executed after the information is downloaded
   # @return [void]
   def fetch_downloads_data(callback)
-    if gem_is_valid?
+    if valid?
       fetch_dowloads_info(callback)
     else
       callback.call(nil)
@@ -61,7 +61,7 @@ class RubygemsApi
   # @see  #gem_with_version?
   #
   # @return [Boolean] Returns true if the gem is valid
-  def gem_is_valid?
+  def valid?
     gem_name.present? || gem_with_version?
   end
 
