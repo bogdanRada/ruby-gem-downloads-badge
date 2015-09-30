@@ -18,15 +18,21 @@ group :development, :test do
   gem 'rerun'
   gem 'rb-fsevent'
 
+  gem 'overcommit'
+  gem 'brakeman'
+  gem 'reek'
   gem 'rubocop'
   gem 'phare'
+
   gem 'yard'
   gem 'yard-rspec'
   gem 'redcarpet'
   gem 'github-markup'
+
   gem 'inch'
 
   gem 'rspec'
+  gem 'rack-test'
   gem 'simplecov'
   gem 'simplecov-summary'
   gem 'mocha'
