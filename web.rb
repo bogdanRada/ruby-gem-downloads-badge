@@ -1,8 +1,10 @@
 $stdout.sync = true
+ENV['RACK_ENV'] ||= 'development'
 # !/usr/bin/env ruby
 require 'rubygems'
 require 'bundler'
-Bundler.require :default, (ENV['RACK_ENV'] || 'development').to_sym
+
+Bundler.require :default, ENV['RACK_ENV'].to_sym
 
 require 'sinatra/streaming'
 require 'sinatra/json'

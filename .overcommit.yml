@@ -133,7 +133,7 @@ PreCommit:
       - 'Berksfile.lock'
 
   Brakeman:
-    enabled: true
+    enabled: false
     description: 'Checking for security vulnerabilities'
     required_executable: 'brakeman'
     flags: ['--exit-on-warn', '--quiet', '--summary', '--only-files']
