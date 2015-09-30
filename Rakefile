@@ -1,8 +1,5 @@
 require 'rubygems'
 require 'bundler/setup'
-require 'rake'
-require 'rake/clean'
-require 'rake/testtask'
 require 'rspec/core'
 require 'rspec/core/rake_task'
 require 'coveralls/rake/task'
