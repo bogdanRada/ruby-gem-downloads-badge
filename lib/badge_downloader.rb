@@ -88,6 +88,13 @@ class BadgeDownloader
       print_to_output_buffer(http_response, @output_buffer)
     end
   end
+  
+  def register_success_callback(http, callback, &block)
+    http.stream {|chunk| @output_buffer << chunk}
+    http.callback do
+      @output_buffer << http.response
+    end
+  end
 
   # Method that is used for formatting the number of downloads , if the number is blank, will return invalid,
   # otherwise will format the number using the configuration from params, either using metrics or delimiters
