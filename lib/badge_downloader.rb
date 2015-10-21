@@ -26,11 +26,10 @@ class BadgeDownloader
   # @param [Sinatra::Stream] output_buffer describe output_buffer
   # @param [RubygemsApi] external_api_details describe external_api_details
   # @return [void]
-  def initialize(params, output_buffer, external_api_details)
+  def initialize(params, output_buffer, downloads)
     @params = params
-    @api_data = external_api_details
-    callback = ->(downloads) { fetch_image_shield(downloads, output_buffer) }
-    @api_data.fetch_downloads_data(callback)
+    @output_buffer = output_buffer
+    fetch_image_shield(downloads)
   end
 
   # Fetches the param style from the params , and if is not present will return by default 'flat'
@@ -71,7 +70,7 @@ class BadgeDownloader
   def build_badge_url(downloads)
     colour = downloads.blank? ? 'lightgrey' : @params.fetch('color', 'blue')
     formatted_number = format_number_of_downloads(downloads)
-    "http://img.shields.io/badge/downloads-#{formatted_number}-#{colour}.svg#{style}"
+    "https://img.shields.io/badge/downloads-#{formatted_number}-#{colour}.svg#{style}"
   end
 
   # Method that is used for building the URL for fetching the SVG Image, and actually
@@ -83,10 +82,10 @@ class BadgeDownloader
   # @param [Number] downloads The number of downloads that will have to be displayed
   # @param [Sinatra::Stream] output_buffer describe output_buffer
   # @return [void]
-  def fetch_image_shield(downloads, output_buffer)
+  def fetch_image_shield(downloads)
     url = build_badge_url(downloads)
     fetch_data(url) do |http_response|
-      print_to_output_buffer(http_response, output_buffer)
+      print_to_output_buffer(http_response, @output_buffer)
     end
   end
 
@@ -98,6 +97,6 @@ class BadgeDownloader
   # @param [Type] downloads The number of downloads that will have to be displayed
   # @return [String] If the downloads argument is blank will return invalid, otherwise will format the numbere either with metrics or delimiters
   def format_number_of_downloads(downloads)
-    downloads.blank? ? BadgeDownloader::INVALID_COUNT : NumberFormatter.new(downloads, display_metric).formatted_display
+    downloads.blank? ? BadgeDownloader::INVALID_COUNT : NumberFormatter.new(downloads, display_metric)
   end
 end

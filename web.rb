@@ -56,7 +56,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   end
 
   before do
-    content_type 'image/svg+xml;  Content-Encoding: gzip; charset=utf-8; '
+    #content_type 'image/svg+xml;  Content-Encoding: gzip; charset=utf-8; '
     headers('Pragma' => 'no-cache')
     #    etag SecureRandom.hex
     #    last_modified(Time.now - 60)
@@ -70,13 +70,14 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
     else
       stream :keep_open do |out|
         EM.error_handler do |error|
-          logger.debug "Error during event loop : #{error.inspect}"
-          logger.debug error.backtrace
+          puts "Error during event loop : #{error.inspect}"
+          puts error.backtrace
         end
         EM.run do
-          EM::HttpRequest.use RequestMiddleware if settings.development
-          @rubygems_api = RubygemsApi.new(params)
-          @downloader = BadgeDownloader.new(params, out, @rubygems_api)
+          #EM::HttpRequest.use RequestMiddleware if settings.development
+          @rubygems_api = RubygemsApi.new(params, ->(downloads) {
+              BadgeDownloader.new(params, out, downloads)
+          })
         end
       end
     end

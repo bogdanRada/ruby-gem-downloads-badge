@@ -58,8 +58,8 @@ module_function
   #
   # @param [String] url The URL that will be used in the HTTP request
   # @return [EventMachine::HttpRequest] Returns an http request object
-  def em_request(url)
-    EventMachine::HttpRequest.new(url)
+  def em_request(url, method)
+    EventMachine::HttpRequest.new(url, ssl: { cipher_list: 'ALL', verify_peer: false, ssl_version: :SSLv3 }).send(method, redirects: 5)
   end
 
   # This method is used to reqister a error callback to a HTTP request object
@@ -114,7 +114,11 @@ module_function
   # @param [Proc] block If the response is not blank, the block will receive the response
   # @return [void]
   def fetch_data(url, callback = -> {}, &block)
-    http = em_request(url).get
+    http = em_request(url, "get")
+    p http.inspect
+    http.headers do
+      p [:headers, http.response_header]
+    end
     register_error_callback(http)
     register_success_callback(http, callback, &block)
   end

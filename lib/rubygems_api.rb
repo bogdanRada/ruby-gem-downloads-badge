@@ -17,9 +17,10 @@ class RubygemsApi
   # @option params [String]:version The version of the gem
   # @option params [String] :type The type of display , if we want to display total downloads, this will have value 'total'
   # @return [void]
-  def initialize(params)
+  def initialize(params, callback)
     @params = params.stringify_keys
     @downloads = nil
+    fetch_downloads_data(callback)
   end
 
   # Method that checks if the gem is valid , and if it is will fetch the infromation about the gem
