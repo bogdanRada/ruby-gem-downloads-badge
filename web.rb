@@ -9,6 +9,7 @@ Bundler.require :default, ENV['RACK_ENV'].to_sym
 require 'sinatra/streaming'
 require 'sinatra/json'
 require 'json'
+require 'net/http'
 require 'securerandom'
 require 'versionomy'
 require 'active_support/core_ext/object/blank'
@@ -75,8 +76,9 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
         end
         EM.run do
           EM::HttpRequest.use RequestMiddleware if settings.development
-          @rubygems_api = RubygemsApi.new(params)
-          @downloader = BadgeDownloader.new(params, out, @rubygems_api)
+          @rubygems_api = RubygemsApi.new(params, ->(downloads) {
+              BadgeDownloader.new(params, out, downloads)
+          })
         end
       end
     end

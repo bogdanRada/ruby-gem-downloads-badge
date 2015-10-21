@@ -18,6 +18,7 @@ class NumberFormatter
   def initialize(number, display_metric)
     @number = number.present? ? number : 0
     @display_metric = display_metric
+    formatted_display
   end
 
   # Returns the number as a string

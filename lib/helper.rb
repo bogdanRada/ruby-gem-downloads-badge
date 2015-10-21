@@ -58,8 +58,27 @@ module_function
   #
   # @param [String] url The URL that will be used in the HTTP request
   # @return [EventMachine::HttpRequest] Returns an http request object
-  def em_request(url)
-    EventMachine::HttpRequest.new(url)
+  def em_request(url, method)
+    options = {
+          :connect_timeout => 5,        # default connection setup timeout
+          :inactivity_timeout => 10,    # default connection inactivity (post-setup) timeout
+         ssl: { 
+            cipher_list: 'ALL', 
+            verify_peer: false, 
+          },
+          :head => {
+            "ACCEPT" => '*/*',
+              "Connection" => "keep-alive"
+          }
+      }
+    request_options = {
+          :redirects => 5,              # follow 3XX redirects up to depth 5
+         :keepalive => true,           # enable keep-alive (don't send Connection:close header)
+          :head => {
+              "ACCEPT" => '*/*'
+          }
+      }
+    EventMachine::HttpRequest.new(url, options).send(method, request_options)
   end
 
   # This method is used to reqister a error callback to a HTTP request object
@@ -114,7 +133,7 @@ module_function
   # @param [Proc] block If the response is not blank, the block will receive the response
   # @return [void]
   def fetch_data(url, callback = -> {}, &block)
-    http = em_request(url).get
+    http = em_request(url, "get")
     register_error_callback(http)
     register_success_callback(http, callback, &block)
   end
@@ -123,7 +142,11 @@ module_function
   #
   # @return [Logger]
   def logger
-    RubygemsDownloadShieldsApp.settings.logger
+    app_settings.logger
+  end
+  
+  def app_settings
+    RubygemsDownloadShieldsApp.settings
   end
 
   # Method that is used to react when an error happens in a HTTP request
