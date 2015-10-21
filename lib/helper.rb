@@ -115,10 +115,6 @@ module_function
   # @return [void]
   def fetch_data(url, callback = -> {}, &block)
     http = em_request(url, "get")
-    p http.inspect
-    http.headers do
-      p [:headers, http.response_header]
-    end
     register_error_callback(http)
     register_success_callback(http, callback, &block)
   end

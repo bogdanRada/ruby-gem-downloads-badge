@@ -56,7 +56,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   end
 
   before do
-    #content_type 'image/svg+xml;  Content-Encoding: gzip; charset=utf-8; '
+    content_type 'image/svg+xml;  Content-Encoding: gzip; charset=utf-8; '
     headers('Pragma' => 'no-cache')
     #    etag SecureRandom.hex
     #    last_modified(Time.now - 60)
@@ -74,7 +74,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
           puts error.backtrace
         end
         EM.run do
-          #EM::HttpRequest.use RequestMiddleware if settings.development
+          EM::HttpRequest.use RequestMiddleware if settings.development
           @rubygems_api = RubygemsApi.new(params, ->(downloads) {
               BadgeDownloader.new(params, out, downloads)
           })
