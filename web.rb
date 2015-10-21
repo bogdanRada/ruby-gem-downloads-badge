@@ -9,6 +9,7 @@ Bundler.require :default, ENV['RACK_ENV'].to_sym
 require 'sinatra/streaming'
 require 'sinatra/json'
 require 'json'
+require 'net/http'
 require 'securerandom'
 require 'versionomy'
 require 'active_support/core_ext/object/blank'
@@ -70,8 +71,8 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
     else
       stream :keep_open do |out|
         EM.error_handler do |error|
-          puts "Error during event loop : #{error.inspect}"
-          puts error.backtrace
+          logger.debug "Error during event loop : #{error.inspect}"
+          logger.debug error.backtrace
         end
         EM.run do
           EM::HttpRequest.use RequestMiddleware if settings.development

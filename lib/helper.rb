@@ -65,20 +65,17 @@ module_function
          ssl: { 
             cipher_list: 'ALL', 
             verify_peer: false, 
-          #  ssl_version: :SSLv3 
           },
           :head => {
             "ACCEPT" => '*/*',
-              "Connection" => "keep-alive",
-            "HTTP_REFERRER" => "https://img.shields.io"
+              "Connection" => "keep-alive"
           }
       }
     request_options = {
           :redirects => 5,              # follow 3XX redirects up to depth 5
          :keepalive => true,           # enable keep-alive (don't send Connection:close header)
           :head => {
-              "ACCEPT" => '*/*',
-              "HTTP_REFERRER" => "https://img.shields.io"
+              "ACCEPT" => '*/*'
           }
       }
     EventMachine::HttpRequest.new(url, options).send(method, request_options)
