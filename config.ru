@@ -1,2 +1,2 @@
-load 'web.rb'
+load 'lib/web.rb'
 run RubygemsDownloadShieldsApp

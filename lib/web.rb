@@ -20,14 +20,14 @@ require 'active_support/core_ext/time/zones.rb'
 Dir.glob('./config/initializers/**/*.rb') { |file| require file }
 Dir.glob('./lib**/*.rb') { |file| require file }
 
-require_relative './lib/request_middleware.rb' if ENV['RACK_ENV'] == 'development'
+require_relative './request_middleware.rb' if ENV['RACK_ENV'] == 'development'
 
 # class that is used to download shields for ruby gems using their name and version
 class RubygemsDownloadShieldsApp < Sinatra::Base
   helpers Sinatra::Streaming
   register Sinatra::Async
 
-  set :root, File.dirname(__FILE__) # You must set app root
+  set :root, File.dirname(File.dirname(__FILE__)) # You must set app root
   enable :logging
   set :environments, %w(development test production webdev)
   set :environment, ENV['RACK_ENV']
@@ -71,14 +71,15 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
     else
       stream :keep_open do |out|
         EM.error_handler do |error|
-          logger.debug "Error during event loop : #{error.inspect}"
-          logger.debug error.backtrace
+          puts "Error during event loop : #{error.inspect}"
+          puts error.backtrace
         end
         EM.run do
           EM::HttpRequest.use RequestMiddleware if settings.development
-          @rubygems_api = RubygemsApi.new(params, ->(downloads) {
-              BadgeDownloader.new(params, out, downloads)
-          })
+          callback = lambda do |downloads|
+            BadgeDownloader.new(params, out, downloads)
+          end
+          @rubygems_api = RubygemsApi.new(params, callback)
         end
       end
     end
