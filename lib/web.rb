@@ -17,6 +17,7 @@ require 'active_support/core_ext/hash/keys'
 require 'active_support/duration.rb'
 require 'active_support/core_ext/time/zones.rb'
 require 'sinatra/asset_pipeline'
+require 'typhoeus'
 
 Dir.glob('./config/initializers/**/*.rb') { |file| require file }
 Dir.glob('./lib**/*.rb') { |file| require file }
@@ -93,11 +94,13 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
         end
         EM.run do
           EM::HttpRequest.use RequestMiddleware if settings.development
-          badge_callback = lambda do |response|
-            html = erb(:badge, :locals =>{:svg_image => response.to_json})
+          badge_callback = lambda do |responses|
+            locals =  responses.inject({}) {|hash,response|
+              hash[response[:extension]] = ""+h(response[:body]).to_s;hash
+            }
+            html = erb(:badge, :locals =>locals)
             print_to_output_buffer(html, output_buffer)
           end
-
           callback = lambda do |downloads|
             BadgeDownloader.new(params, downloads, badge_callback)
           end

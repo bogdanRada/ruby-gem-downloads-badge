@@ -13,6 +13,7 @@ gem 'sinatra-contrib'
 gem 'rack'
 gem 'async_sinatra'
 gem 'activesupport'
+gem 'typhoeus'
 
 gem 'uglifier'
 gem 'therubyracer', require: 'v8', platform: :ruby

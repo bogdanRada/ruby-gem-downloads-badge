@@ -2,29 +2,37 @@
 <html>
 <head>
   <meta charset=utf-8 />
+  <script src="/assets/jquery.js"></script>
   <script src="/assets/rgbcolor.js"></script>
   <script src="/assets/canvg.js"></script>
   <script src="/assets/modernizr.js"></script>
+</head>
+<body>
+
+
   <script type="text/javascript">
   if (!Modernizr.svg) {
     if (Modernizr.canvas) {
       var canvas = document.createElement("canvas");
       canvas.setAttribute("style", "height:500px;width:300px;");
-      canvg(canvas, <%= svg_image %>);
+      canvg(canvas,"<%= svg %>");
       document.body.appendChild(canvas);
     } else {
-      // Do something else, perhaps a fallback to PNG?
+      var svgObj = document.createElement('object');
+      svgObj.setAttribute('type', 'image/png');
+      svgObj.setAttribute('data', 'data:image/png',"<%= svg %>");
+      svgObj.setAttribute('height', '500');
+      svgObj.setAttribute('width', '300');
+      document.body.appendChild(svgObj);
     }
   } else {
     var svgObj = document.createElement('object');
     svgObj.setAttribute('type', 'image/svg+xml');
-    svgObj.setAttribute('data', 'data:image/svg+xml,' + <%= svg_image %>);
+    svgObj.setAttribute('data', 'data:image/svg+xml',"<%= svg %>");
     svgObj.setAttribute('height', '500');
     svgObj.setAttribute('width', '300');
     document.body.appendChild(svgObj);
   }
-  </script>
-</head>
-<body>
+  </script>  
 </body>
 </html>

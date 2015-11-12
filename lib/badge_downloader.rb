@@ -82,9 +82,9 @@ class BadgeDownloader < CoreApi
   # Method used to build the shield URL for fetching the SVG image
   # @see #format_number_of_downloads
   # @return [String] The URL that will be used in fetching the SVG image from shields.io server
-  def build_badge_url
+  def build_badge_url(extension = image_extension)
     colour = @downloads.blank? ? 'lightgrey' : @params.fetch('color', 'blue')
-    "https://img.shields.io/badge/#{status_param}-#{format_number_of_downloads}-#{colour}.#{image_extension}#{style}"
+    "https://img.shields.io/badge/#{status_param}-#{format_number_of_downloads}-#{colour}.#{extension}#{style}"
   end
 
   # Method that is used for building the URL for fetching the SVG Image, and actually
@@ -95,16 +95,29 @@ class BadgeDownloader < CoreApi
   #
   # @return [void]
   def fetch_image_shield
-    url = build_badge_url
-    fetch_data(url) do |http_response|
-      @callback.call(http_response)
+    urls = [{:url => build_badge_url, :extension => "svg"}]
+    urls <<  {:url => build_badge_url("png"), :extension => "png" } if image_extension == "svg"
+    fetch_data(urls) do |http_responses|
+      @callback.call(http_responses)
     end
   end
 
-  def fetch_data(url, callback = -> {}, &block)
-    uri = URI(url)
-    response = Net::HTTP.get(uri)
-    res = callback_before_success(response)
+  def fetch_data(urls, callback = -> {}, &block)
+    # uri = URI(url)
+    # response = Net::HTTP.get(uri)
+    Typhoeus::Config.verbose = true
+    Typhoeus::Config.memoize = true
+    hydra = Typhoeus::Hydra.new(max_concurrency: 1)
+    requests = urls.map { |url|
+      request = Typhoeus::Request.new(url[:url], followlocation: true, ssl_verifypeer: false, ssl_verifyhost: 0, :headers => {"BADGE_TYPE" => url[:extension]})
+      hydra.queue(request)
+      request
+    }
+    hydra.run
+    responses = requests.map { |request|
+      {:extension => request.options[:headers]["BADGE_TYPE"], :body => request.response.body }
+    }
+    res = callback_before_success(responses)
     dispatch_http_response(res, callback, &block)
   end
 

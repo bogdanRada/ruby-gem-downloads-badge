@@ -11,6 +11,12 @@ module_function
     %w(k M G T P E Z Y)
   end
 
+
+  def h(text)
+      Rack::Utils.escape_html(text)
+end
+
+
   # Returns the metric powers of all metric prefixes . This method is used in metric display of numbers
   # @see #metric_prefixes
   # @return [Array<Number>] An array of metric powers that correspont to each metric prefix
