@@ -1,7 +1,21 @@
 require 'spec_helper'
 describe RubygemsApi do
-  let(:params) { { gem: 'rails', version: 'stable', tyoe: 'total' } }
-  let(:subject) { RubygemsApi.new(params) }
+  let(:out) { StringIO.new }
+  let(:downloads) { '1234' }
+  let(:params) do
+    {
+      gem: 'rails',
+      version: 'stable',
+      type: 'total'
+    }
+  end
+  let(:badge_downloader) { BadgeDownloader.new(params, out, downloads) }
+  let(:callback) { ->(_downloads) { badge_downloader } }
+  let(:subject) { RubygemsApi.new(params, callback) }
+
+  before(:each) do
+    
+  end
 
   it 'responds to init_record' do
     expect(subject).to respond_to :params

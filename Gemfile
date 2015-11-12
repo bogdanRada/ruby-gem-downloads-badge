@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 
 ruby '2.2.3'
 gem 'sinatra'
+gem 'sinatra-asset-pipeline'
 gem 'rack-handlers'
 gem 'rainbows'
 gem 'em-http-request'
@@ -13,16 +14,14 @@ gem 'rack'
 gem 'async_sinatra'
 gem 'activesupport'
 
+gem 'uglifier'
+gem 'therubyracer', require: 'v8', platform: :ruby
+gem 'yui-compressor'
+
 group :development, :test do
   gem 'foreman'
   gem 'rerun'
   gem 'rb-fsevent'
-
-  gem 'overcommit'
-  gem 'brakeman'
-  gem 'reek'
-  gem 'rubocop'
-  gem 'phare'
 
   gem 'yard'
   gem 'yard-rspec'

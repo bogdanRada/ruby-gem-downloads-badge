@@ -10,12 +10,14 @@ require_relative './helper'
 #   @return [Stream] The Sinatra Stream to which the badge will be inserted into
 # @!attribute downloads
 #   @return [Hash] THe downloads count that will need to be displayed on the badge
+# @!attribute default_extension
+#   @return [Hash] THe default extension used for the badge
 class BadgeDownloader < CoreApi
   include Helper
   # constant that is used to show message for invalid badge
   INVALID_COUNT = 'invalid'
 
-  attr_reader :params, :output_buffer, :downloads
+  attr_reader :params, :callback, :downloads, :default_extension
 
   # Initializes the instance with the params from controller, and will try to download the information about the rubygems
   # and then will try to download the badge to the output stream
@@ -29,10 +31,11 @@ class BadgeDownloader < CoreApi
   # @param [Sinatra::Stream] output_buffer describe output_buffer
   # @param [Number] downloads describe external_api_details
   # @return [void]
-  def initialize(params, output_buffer, downloads)
+  def initialize(params, downloads, callback)
     @params = params
-    @output_buffer = output_buffer
     @downloads = downloads
+    @callback = callback
+    @default_extension = 'svg'
     fetch_image_shield
   end
 
@@ -41,6 +44,15 @@ class BadgeDownloader < CoreApi
   # @return [String] Returns the param style from params , otherwise will return by default 'flat'
   def style_param
     @params.fetch('style', 'flat')
+  end
+
+  def status_param
+    @params.fetch('status', 'downloads')
+  end
+
+  def image_extension
+    extension = @params.fetch('extension', @default_extension)
+    %w(svg png).include?(extension) ? extension : @default_extension
   end
 
   # Fetches the param metric from the params , and if is not present will return by default 'false'
@@ -72,7 +84,7 @@ class BadgeDownloader < CoreApi
   # @return [String] The URL that will be used in fetching the SVG image from shields.io server
   def build_badge_url
     colour = @downloads.blank? ? 'lightgrey' : @params.fetch('color', 'blue')
-    "https://img.shields.io/badge/downloads-#{format_number_of_downloads}-#{colour}.svg#{style}"
+    "https://img.shields.io/badge/#{status_param}-#{format_number_of_downloads}-#{colour}.#{image_extension}#{style}"
   end
 
   # Method that is used for building the URL for fetching the SVG Image, and actually
@@ -85,7 +97,7 @@ class BadgeDownloader < CoreApi
   def fetch_image_shield
     url = build_badge_url
     fetch_data(url) do |http_response|
-      print_to_output_buffer(http_response, @output_buffer)
+      @callback.call(http_response)
     end
   end
 
