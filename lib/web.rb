@@ -93,6 +93,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
         content_type "#{mime_type};  Content-Encoding: gzip; charset=utf-8; "
       else
         content_type 'image/svg+xml;  Content-Encoding: gzip; charset=utf-8; '
+        params[:extension] = "svg"
       end
     else
       content_type 'image/svg+xml;  Content-Encoding: gzip; charset=utf-8; '
