@@ -119,7 +119,8 @@ class BadgeDownloader < CoreApi
     #    uri = URI(url)
     # response = Net::HTTP.get(uri)
     Typhoeus::Config.verbose = app_settings.development? ? true : false
-    Typhoeus::Config.memoize = true
+    Typhoeus::Config.memoize = false
+    Typhoeus::Config.cache = false
     hydra = Typhoeus::Hydra.new(max_concurrency: 1)
     requests = urls.map do |url|
       request = Typhoeus::Request.new(url, followlocation: true, ssl_verifypeer: false, ssl_verifyhost: 0)
