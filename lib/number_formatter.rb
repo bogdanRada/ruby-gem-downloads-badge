@@ -6,7 +6,7 @@ require_relative './helper'
 #   @return [Number] The number that will be formatted in different format
 class NumberFormatter
   include Helper
-  attr_reader :number
+  attr_reader :number, :text, :display_metric
 
   # Method used for instantiating the NumberFormatter with the number that will be used
   # and a boolean value that will decide if we format in metric format or using delimiters
@@ -18,14 +18,17 @@ class NumberFormatter
   def initialize(number, display_metric)
     @number = number.present? ? number : 0
     @display_metric = display_metric
-    formatted_display
+    if @number.to_s =~ /(\d+)(.*)/m
+      @number = Regexp.last_match(1).to_i
+      @text = Regexp.last_match(2)
+    end
   end
 
   # Returns the number as a string
   #
   # @return [String] Returns the number as a string
   def to_s
-    @number.to_s
+    formatted_display
   end
 
   # Method that is used to decide which format to use depending on the instance
@@ -47,11 +50,10 @@ class NumberFormatter
     while index >= 0
       limit = metric_power[index]
       if @number > limit
-        return "#{((@number / limit).to_f.round)}#{metric_prefixes[index]}"
+        return "#{((@number / limit).to_f.round)}#{metric_prefixes[index]}#{@text}"
       end
       index -= 1
     end
-    @number.to_s
   end
 
   # Description of method
@@ -62,8 +64,8 @@ class NumberFormatter
   def number_with_delimiter(delimiter = ',', separator = '.')
     parts = @number.to_s.split('.')
     parts[0].gsub!(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1#{delimiter}")
-    parts.join separator
+    "#{parts.join separator}#{@text}".to_s
   rescue
-    @number
+    @number.to_s
   end
 end
