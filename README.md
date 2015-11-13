@@ -101,14 +101,6 @@ Available colors are (gem is rails):
 |    blue     |    ![](http://ruby-gem-downloads-badge.herokuapp.com/rails?color=blue&style=flat)     |
 |   ff69b4    |   ![](http://ruby-gem-downloads-badge.herokuapp.com/rails?color=ff69b4&style=flat)    |
 
-If you specify a version that is not valid like this, you will see a invalid image:
-
-```
-![](http://ruby-gem-downloads-badge.herokuapp.com/rails/4.1.dsad)
-```
-
-![](http://ruby-gem-downloads-badge.herokuapp.com/rails/4.1.dsad)
-
 If you want something else written on the badge you can use:
 
 ```
@@ -116,6 +108,14 @@ If you want something else written on the badge you can use:
 ```
 
 ![](http://ruby-gem-downloads-badge.herokuapp.com/rails?status=something-else)
+
+If you specify a version that is not valid like this, you will see a invalid image:
+
+```
+![](http://ruby-gem-downloads-badge.herokuapp.com/rails/4.1.dsad)
+```
+
+![](http://ruby-gem-downloads-badge.herokuapp.com/rails/4.1.dsad)
 
 ---
 
