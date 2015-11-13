@@ -17,6 +17,7 @@ require 'active_support/core_ext/hash/keys'
 require 'active_support/duration.rb'
 require 'active_support/core_ext/time/zones.rb'
 require 'typhoeus'
+require 'addressable/uri'
 
 Dir.glob('./config/initializers/**/*.rb') { |file| require file }
 Dir.glob('./lib**/*.rb') { |file| require file }
@@ -78,7 +79,8 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
         EM.run do
           EM::HttpRequest.use RequestMiddleware if settings.development
           callback = lambda do |downloads|
-            BadgeDownloader.new(params, out, downloads)
+            original_params = CGI::parse(request.query_string)
+            BadgeDownloader.new(params, original_params, out, downloads)
           end
           @rubygems_api = RubygemsApi.new(params, callback)
         end
@@ -88,16 +90,15 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
 
   def set_content_type
     if params[:extension].present?
-      mime_type  = Rack::Mime::MIME_TYPES[".#{params[:extension]}"]
+      mime_type = Rack::Mime::MIME_TYPES[".#{params[:extension]}"]
       if mime_type.present?
         content_type "#{mime_type};  Content-Encoding: gzip; charset=utf-8; "
       else
         content_type 'image/svg+xml;  Content-Encoding: gzip; charset=utf-8; '
-        params[:extension] = "svg"
+        params[:extension] = 'svg'
       end
     else
       content_type 'image/svg+xml;  Content-Encoding: gzip; charset=utf-8; '
     end
   end
-
 end
