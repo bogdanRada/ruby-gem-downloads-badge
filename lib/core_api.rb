@@ -10,7 +10,7 @@ class CoreApi
       ssl: {
         cipher_list: 'ALL',
         verify_peer: false,
-        ssl_version: 'TLSv1'
+        ssl_version: 'TLSv1.2'
       },
       head: {
         'ACCEPT' => '*/*',

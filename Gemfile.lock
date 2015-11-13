@@ -63,7 +63,6 @@ GEM
     listen (3.0.4)
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
-    media-magic (0.0.2)
     metaclass (0.0.4)
     method_source (0.8.2)
     mime-types (2.6.2)
@@ -198,7 +197,6 @@ DEPENDENCIES
   foreman
   github-markup
   inch
-  media-magic
   mocha
   rack
   rack-handlers
