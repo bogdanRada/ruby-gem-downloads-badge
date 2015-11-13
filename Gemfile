@@ -12,6 +12,7 @@ gem 'sinatra-contrib'
 gem 'rack'
 gem 'async_sinatra'
 gem 'activesupport'
+gem 'typhoeus'
 
 group :development, :test do
   gem 'foreman'

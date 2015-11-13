@@ -15,7 +15,7 @@ class BadgeDownloader < CoreApi
   # constant that is used to show message for invalid badge
   INVALID_COUNT = 'invalid'
 
-  attr_reader :params, :output_buffer, :downloads
+  attr_reader :params, :output_buffer, :downloads, :hostname
 
   # Initializes the instance with the params from controller, and will try to download the information about the rubygems
   # and then will try to download the badge to the output stream
@@ -33,6 +33,7 @@ class BadgeDownloader < CoreApi
     @params = params
     @output_buffer = output_buffer
     @downloads = downloads
+    @hostname = "img.shields.io"
     fetch_image_shield
   end
 
@@ -67,12 +68,26 @@ class BadgeDownloader < CoreApi
     metric_param.present? && metric_param.to_s.downcase == 'true'
   end
 
+  # Method that is used to fetch the status of the badge
+  #
+  # @return [String] Returns the status of the badge
+  def status_param
+    @params.fetch('status', 'downloads')
+  end
+
+  # Method that is used to set the image extension
+  #
+  # @return [String] Returns the status of the badge
+  def image_extension
+    @params.fetch('extension', 'svg')
+  end
+
   # Method used to build the shield URL for fetching the SVG image
   # @see #format_number_of_downloads
   # @return [String] The URL that will be used in fetching the SVG image from shields.io server
-  def build_badge_url
+  def build_badge_url(extension = image_extension)
     colour = @downloads.blank? ? 'lightgrey' : @params.fetch('color', 'blue')
-    "https://img.shields.io/badge/downloads-#{format_number_of_downloads}-#{colour}.svg#{style}"
+    "https://#{@hostname}/badge/#{status_param}-#{format_number_of_downloads}-#{colour}.#{extension}#{style}"
   end
 
   # Method that is used for building the URL for fetching the SVG Image, and actually
@@ -83,18 +98,33 @@ class BadgeDownloader < CoreApi
   #
   # @return [void]
   def fetch_image_shield
-    url = build_badge_url
-    fetch_data(url) do |http_response|
+    fetch_data(build_badge_url) do |http_response|
       print_to_output_buffer(http_response, @output_buffer)
     end
   end
 
-  def fetch_data(url, callback = -> {}, &block)
-    uri = URI(url)
-    response = Net::HTTP.get(uri)
-    res = callback_before_success(response)
-    dispatch_http_response(res, callback, &block)
+
+
+  def fetch_data(urls, callback = -> {}, &block)
+    urls = urls.is_a?(Array) ? urls : [urls]
+    #    uri = URI(url)
+    # response = Net::HTTP.get(uri)
+    Typhoeus::Config.verbose = app_settings.development? ? true : false
+    Typhoeus::Config.memoize = true
+    hydra = Typhoeus::Hydra.new(max_concurrency: 1)
+    requests = urls.map { |url|
+      request = Typhoeus::Request.new(url, followlocation: true, ssl_verifypeer: false, ssl_verifyhost: 0)
+      hydra.queue(request)
+      request
+    }
+    hydra.run
+    responses = requests.map { |request|
+      request.response.body
+    }
+    res = callback_before_success(responses)
+    dispatch_http_response(res.first, callback, &block)
   end
+
 
   # Method that is used for formatting the number of downloads , if the number is blank, will return invalid,
   # otherwise will format the number using the configuration from params, either using metrics or delimiters
