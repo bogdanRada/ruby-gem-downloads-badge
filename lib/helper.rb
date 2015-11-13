@@ -15,7 +15,7 @@ module_function
   # @see #metric_prefixes
   # @return [Array<Number>] An array of metric powers that correspont to each metric prefix
   def metric_power
-    metric_prefixes.map.with_index { |_item, index| (1000**(index + 1)) }
+    metric_prefixes.map.with_index { |_item, index| (1000**(index + 1)).to_i }
   end
 
   # Method that is used to parse a string as JSON , if it fails will return nil
