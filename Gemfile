@@ -14,6 +14,7 @@ gem 'rack'
 gem 'async_sinatra'
 gem 'activesupport'
 gem 'typhoeus'
+gem 'media-magic'
 
 gem 'uglifier'
 gem 'therubyracer', require: 'v8', platform: :ruby

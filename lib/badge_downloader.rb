@@ -14,6 +14,7 @@ require_relative './helper'
 #   @return [Hash] THe default extension used for the badge
 class BadgeDownloader < CoreApi
   include Helper
+  include MediaMagic::Operations
   # constant that is used to show message for invalid badge
   INVALID_COUNT = 'invalid'
 
@@ -115,7 +116,7 @@ class BadgeDownloader < CoreApi
     }
     hydra.run
     responses = requests.map { |request|
-      {:extension => request.options[:headers]["BADGE_TYPE"], :body => request.response.body }
+      {:extension => request.options[:headers]["BADGE_TYPE"], :body => Base64.encode64(request.response.body) }
     }
     res = callback_before_success(responses)
     dispatch_http_response(res, callback, &block)

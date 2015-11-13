@@ -18,7 +18,7 @@ require 'active_support/duration.rb'
 require 'active_support/core_ext/time/zones.rb'
 require 'sinatra/asset_pipeline'
 require 'typhoeus'
-
+require 'media-magic'
 Dir.glob('./config/initializers/**/*.rb') { |file| require file }
 Dir.glob('./lib**/*.rb') { |file| require file }
 
@@ -96,7 +96,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
           EM::HttpRequest.use RequestMiddleware if settings.development
           badge_callback = lambda do |responses|
             locals =  responses.inject({}) {|hash,response|
-              hash[response[:extension]] = ""+h(response[:body]).to_s;hash
+              hash[response[:extension]] = response[:body];hash
             }
             html = erb(:badge, :locals =>locals)
             print_to_output_buffer(html, output_buffer)
