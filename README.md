@@ -17,6 +17,14 @@ You will then get a nice and pretty SVG with the downloads count of the gem prov
 
 ![](http://ruby-gem-downloads-badge.herokuapp.com/rails)
 
+Or you can use any extension you like like this:
+
+```
+  ![](http://ruby-gem-downloads-badge.herokuapp.com/rails?extension=png)
+```
+
+![](http://ruby-gem-downloads-badge.herokuapp.com/rails?extension=png)
+
 You can also specify the version of the gem, for example:
 
 ```
@@ -92,6 +100,14 @@ Available colors are (gem is rails):
 |  lightgray  |  ![](http://ruby-gem-downloads-badge.herokuapp.com/rails?color=lightgray&style=flat)  |
 |    blue     |    ![](http://ruby-gem-downloads-badge.herokuapp.com/rails?color=blue&style=flat)     |
 |   ff69b4    |   ![](http://ruby-gem-downloads-badge.herokuapp.com/rails?color=ff69b4&style=flat)    |
+
+If you want something else written on the badge you can use:
+
+```
+![](http://ruby-gem-downloads-badge.herokuapp.com/rails?label=something-else)
+```
+
+![](http://ruby-gem-downloads-badge.herokuapp.com/rails?label=something-else)
 
 If you specify a version that is not valid like this, you will see a invalid image:
 

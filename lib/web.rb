@@ -18,6 +18,7 @@ require 'active_support/duration.rb'
 require 'active_support/core_ext/time/zones.rb'
 require 'sinatra/asset_pipeline'
 require 'typhoeus'
+require 'addressable/uri'
 
 Dir.glob('./config/initializers/**/*.rb') { |file| require file }
 Dir.glob('./lib**/*.rb') { |file| require file }
@@ -70,7 +71,6 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   end
 
   before do
-    #  content_type 'image/svg+xml;  Content-Encoding: gzip; charset=utf-8; '
     headers('Pragma' => 'no-cache')
     #    etag SecureRandom.hex
     #    last_modified(Time.now - 60)
@@ -87,6 +87,8 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
         send_file File.join(settings.public_folder, 'favicon.ico'), disposition: 'inline', type: 'image/x-icon'
       end
     else
+    #  set_content_type
+    content_type "text/html; charset=utf-8; "
       stream :keep_open do |output_buffer|
         EM.error_handler do |error|
           puts "Error during event loop : #{error.inspect}"
@@ -102,11 +104,26 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
             print_to_output_buffer(html, output_buffer)
           end
           callback = lambda do |downloads|
-            BadgeDownloader.new(params, downloads, badge_callback)
+            original_params = CGI::parse(request.query_string)
+            BadgeDownloader.new(params, original_params, downloads, badge_callback)
           end
           @rubygems_api = RubygemsApi.new(params, callback)
         end
       end
+    end
+  end
+
+  def set_content_type
+    if params[:extension].present?
+      mime_type = Rack::Mime::MIME_TYPES[".#{params[:extension]}"]
+      if mime_type.present?
+        content_type "#{mime_type};  Content-Encoding: gzip; charset=utf-8; "
+      else
+        content_type 'image/svg+xml;  Content-Encoding: gzip; charset=utf-8; '
+        params[:extension] = 'svg'
+      end
+    else
+      content_type 'image/svg+xml;  Content-Encoding: gzip; charset=utf-8; '
     end
   end
 end
