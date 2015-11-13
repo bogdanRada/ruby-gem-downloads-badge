@@ -18,6 +18,7 @@ require 'active_support/duration.rb'
 require 'active_support/core_ext/time/zones.rb'
 require 'sinatra/asset_pipeline'
 require 'typhoeus'
+
 Dir.glob('./config/initializers/**/*.rb') { |file| require file }
 Dir.glob('./lib**/*.rb') { |file| require file }
 

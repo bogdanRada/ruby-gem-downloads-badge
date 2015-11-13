@@ -15,9 +15,11 @@ gem 'async_sinatra'
 gem 'activesupport'
 gem 'typhoeus'
 
+
 gem 'uglifier'
 gem 'therubyracer', require: 'v8', platform: :ruby
 gem 'yui-compressor'
+
 
 group :development, :test do
   gem 'foreman'

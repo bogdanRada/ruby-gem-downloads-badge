@@ -17,7 +17,7 @@ class BadgeDownloader < CoreApi
   # constant that is used to show message for invalid badge
   INVALID_COUNT = 'invalid'
 
-  attr_reader :params, :callback, :downloads, :default_extension
+  attr_reader :params, :callback, :downloads, :hostname
 
   # Initializes the instance with the params from controller, and will try to download the information about the rubygems
   # and then will try to download the badge to the output stream
@@ -35,7 +35,7 @@ class BadgeDownloader < CoreApi
     @params = params
     @downloads = downloads
     @callback = callback
-    @default_extension = 'svg'
+    @hostname = "img.shields.io"
     fetch_image_shield
   end
 
@@ -51,8 +51,7 @@ class BadgeDownloader < CoreApi
   end
 
   def image_extension
-    extension = @params.fetch('extension', @default_extension)
-    %w(svg png).include?(extension) ? extension : @default_extension
+    extension = @params.fetch('extension', "svg")
   end
 
   # Fetches the param metric from the params , and if is not present will return by default 'false'
@@ -79,12 +78,26 @@ class BadgeDownloader < CoreApi
     metric_param.present? && metric_param.to_s.downcase == 'true'
   end
 
+  # Method that is used to fetch the status of the badge
+  #
+  # @return [String] Returns the status of the badge
+  def status_param
+    @params.fetch('status', 'downloads')
+  end
+
+  # Method that is used to set the image extension
+  #
+  # @return [String] Returns the status of the badge
+  def image_extension
+    @params.fetch('extension', 'svg')
+  end
+
   # Method used to build the shield URL for fetching the SVG image
   # @see #format_number_of_downloads
   # @return [String] The URL that will be used in fetching the SVG image from shields.io server
   def build_badge_url(extension = image_extension)
     colour = @downloads.blank? ? 'lightgrey' : @params.fetch('color', 'blue')
-    "https://img.shields.io/badge/#{status_param}-#{format_number_of_downloads}-#{colour}.#{extension}#{style}"
+    "https://#{@hostname}/badge/#{status_param}-#{format_number_of_downloads}-#{colour}.#{extension}#{style}"
   end
 
   # Method that is used for building the URL for fetching the SVG Image, and actually
@@ -95,21 +108,23 @@ class BadgeDownloader < CoreApi
   #
   # @return [void]
   def fetch_image_shield
-    urls = [{:url => build_badge_url, :extension => "svg"}]
+    urls = [{:url => build_badge_url, :extension => image_extension}]
     urls <<  {:url => build_badge_url("png"), :extension => "png" } if image_extension == "svg"
     fetch_data(urls) do |http_responses|
       @callback.call(http_responses)
     end
   end
 
+
   def fetch_data(urls, callback = -> {}, &block)
-    # uri = URI(url)
+    urls = urls.is_a?(Array) ? urls : [urls]
+    #    uri = URI(url)
     # response = Net::HTTP.get(uri)
-    Typhoeus::Config.verbose = true
+    Typhoeus::Config.verbose = app_settings.development? ? true : false
     Typhoeus::Config.memoize = true
     hydra = Typhoeus::Hydra.new(max_concurrency: 1)
     requests = urls.map { |url|
-      request = Typhoeus::Request.new(url[:url], followlocation: true, ssl_verifypeer: false, ssl_verifyhost: 0, :headers => {"BADGE_TYPE" => url[:extension]})
+       request = Typhoeus::Request.new(url[:url], followlocation: true, ssl_verifypeer: false, ssl_verifyhost: 0, :headers => {"BADGE_TYPE" => url[:extension]})
       hydra.queue(request)
       request
     }
@@ -120,6 +135,7 @@ class BadgeDownloader < CoreApi
     res = callback_before_success(responses)
     dispatch_http_response(res, callback, &block)
   end
+
 
   # Method that is used for formatting the number of downloads , if the number is blank, will return invalid,
   # otherwise will format the number using the configuration from params, either using metrics or delimiters
