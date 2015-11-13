@@ -104,10 +104,10 @@ Available colors are (gem is rails):
 If you want something else written on the badge you can use:
 
 ```
-![](http://ruby-gem-downloads-badge.herokuapp.com/rails?status=something-else)
+![](http://ruby-gem-downloads-badge.herokuapp.com/rails?label=something-else)
 ```
 
-![](http://ruby-gem-downloads-badge.herokuapp.com/rails?status=something-else)
+![](http://ruby-gem-downloads-badge.herokuapp.com/rails?label=something-else)
 
 If you specify a version that is not valid like this, you will see a invalid image:
 

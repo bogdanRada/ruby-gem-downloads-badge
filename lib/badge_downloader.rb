@@ -72,7 +72,7 @@ class BadgeDownloader < CoreApi
   #
   # @return [String] Returns the status of the badge
   def status_param
-    @params.fetch('status', 'downloads').gsub("-", "_")
+    @params.fetch('label', 'downloads').gsub("-", "_")
   end
 
   # Method that is used to set the image extension
