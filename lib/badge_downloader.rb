@@ -135,8 +135,8 @@ class BadgeDownloader < CoreApi
     responses = requests.map do |request|
       request.response.body
     end
-    res = callback_before_success(responses)
-    dispatch_http_response(res.first, callback, &block)
+    res = callback_before_success(responses.join(''))
+    dispatch_http_response(res, callback, &block)
   end
 
   # Method that is used for formatting the number of downloads , if the number is blank, will return invalid,
