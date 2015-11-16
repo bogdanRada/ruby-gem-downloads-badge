@@ -22,6 +22,19 @@ class NumberFormatter
     @params = params
   end
 
+
+  def for_rubygems_api?
+     @params['api'] == "rubygems"
+  end
+
+  def can_display_metric?
+    for_rubygems_api? && @params.fetch('metric', false).present?
+  end
+
+  def can_display_total?
+    for_rubygems_api? && display_total
+  end
+
   # Method that is used to decide which format to use depending on the instance
   # variable display_metric. if the variable is true will display using metrics otherwise
   # using delimiters
@@ -30,7 +43,9 @@ class NumberFormatter
   #
   # @return [String] Returns the number formatted with metrics if 'display_metric' instance variable is true, otherwise using delimiters
   def to_s
-    @params.fetch('metric', false).present? ? number_with_metric : number_with_delimiter
+   nr =   can_display_metric? ? number_with_metric : number_with_delimiter
+   text = can_display_total? ? "_#{@params.fetch('total_label', 'total').tr('-', '_')}" : ''
+   "#{nr}_#{text}"
   end
 
   # Method used to print a number using metrics

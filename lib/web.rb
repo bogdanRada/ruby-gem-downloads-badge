@@ -71,7 +71,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
       send_file File.join(settings.public_folder, 'favicon.ico'), disposition: 'inline', type: 'image/x-icon'
     else
       em_request_badge do |out|
-        RubygemsApi.new(params, badge_callback(out))
+        RubygemsApi.new(params, badge_callback(out, {"api" => "rubygems"}))
       end
     end
   end
@@ -80,7 +80,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
     em_request_badge do |out|
       RepoSizeApi.new(
         params,
-        badge_callback(out, 'label' => params.fetch('label', 'repo_size'))
+        badge_callback(out, "api" => "github", 'label' => params.fetch('label', 'repo_size'))
       )
     end
   end

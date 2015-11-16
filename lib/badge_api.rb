@@ -113,8 +113,6 @@ class BadgeApi < CoreApi
   #
   # @return [String] If the downloads argument is blank will return invalid, otherwise will format the numbere either with metrics or delimiters
   def format_number_of_downloads
-    text = display_total ? "_#{params.fetch('total_label', 'total').tr('-', '_')}" : ''
-    nr_downloadds = @downloads.blank? ? BadgeApi::INVALID_COUNT : NumberFormatter.new(@downloads, @params)
-    "#{nr_downloadds}#{text}"
+     @downloads.blank? ? BadgeApi::INVALID_COUNT : NumberFormatter.new(@downloads, @params)
   end
 end
