@@ -10,6 +10,8 @@ require_relative './helper'
 #   @return [Stream] The Sinatra Stream to which the badge will be inserted into
 # @!attribute downloads
 #   @return [Hash] THe downloads count that will need to be displayed on the badge
+# @!attribute hostname
+#   @return [String] THe hostname from where the badges are fetched from
 class BadgeDownloader < CoreApi
   include Helper
   # constant that is used to show message for invalid badge
@@ -45,22 +47,24 @@ class BadgeDownloader < CoreApi
     @params.fetch('style', 'flat')
   end
 
+  # Fetches the link params from the original params used for social badges
+  #
+  # @return [String] Returns the link param otherwise empty string
   def link_param
     @original_params.fetch('link', '')
   end
 
-  # Fetches the param metric from the params , and if is not present will return by default 'false'
+  # Checks if the badge is a social badge and if the params contains links and returns the links for the badge
   #
-  # @return [String] Returns the param metric from params , otherwise will return by default 'false'
-  def metric_param
-    @params.fetch('metric', false)
-  end
-
+  # @return [String] Returns the links used for social badges
   def style_additionals
     return if style_param != 'social' || link_param.blank?
     "&link=#{link_param[0]}&link=#{link_param[1]}"
   end
 
+  # Checks if any additional params are present in URL and adds them to the URL constructed for the badge
+  #
+  # @return [String] Returns the URL query string used for displaying the badge
   def additional_params
     additionals = {
       'logo': params.fetch('logo', ''),
@@ -69,14 +73,6 @@ class BadgeDownloader < CoreApi
     }.delete_if { |_key, value| value.blank? }
     additionals = additionals.to_query
     "#{additionals}#{style_additionals}"
-  end
-
-  # Method that is used to determine if the number should be formatted using metrics or delimiters
-  # by checking if the metric param is true
-  #
-  # @return [Boolean] Returns true if the key 'metric' from params is present and is true, otherwise false
-  def display_metric
-    metric_param.present? && metric_param.to_s.downcase == 'true'
   end
 
   # Method that is used to fetch the status of the badge
@@ -114,6 +110,14 @@ class BadgeDownloader < CoreApi
     end
   end
 
+  # Method that fetch the data from a URL using parallel requests
+  # @see #callback_before_success
+  # @see #dispatch_http_response
+  #
+  # @param [Array<String>] urls The urls used to fetch data from in parallel
+  # @param [Lambda] callback The callback that will be called if the response is blank
+  # @param [Proc] block If the response is not blank, the block will receive the response
+  # @return [void]
   def fetch_data(urls, callback = -> {}, &block)
     urls = urls.is_a?(Array) ? urls : [urls]
     #    uri = URI(url)
@@ -142,6 +146,8 @@ class BadgeDownloader < CoreApi
   #
   # @return [String] If the downloads argument is blank will return invalid, otherwise will format the numbere either with metrics or delimiters
   def format_number_of_downloads
-    @downloads.blank? ? BadgeDownloader::INVALID_COUNT : NumberFormatter.new(@downloads, display_metric)
+    text = display_total ? "_#{params.fetch('total_label', 'total').tr('-', '_')}" : ''
+    nr_downloadds = @downloads.blank? ? BadgeDownloader::INVALID_COUNT : NumberFormatter.new(@downloads, @params)
+    "#{nr_downloadds}#{text}"
   end
 end

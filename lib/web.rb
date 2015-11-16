@@ -88,6 +88,10 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
     end
   end
 
+  # Method that is used to determine the proper content type based on 'extension' key from params
+  # and sets the content type
+  #
+  # @return [void]
   def set_content_type
     if params[:extension].present?
       mime_type = Rack::Mime::MIME_TYPES[".#{params[:extension]}"]

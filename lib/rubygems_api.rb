@@ -83,20 +83,6 @@ class RubygemsApi < CoreApi
     @params.fetch('version', nil)
   end
 
-  # Returns the display_type from the params , otherwise nil
-  #
-  # @return [String, nil] Returns the display_type  from the params , otherwise nil
-  def display_type
-    @params.fetch('type', nil)
-  end
-
-  # Method that checks if we need to display the total downloads
-  #
-  # @return [Boolean] Returns true if we need to display the total downloads
-  def display_total
-    display_type.present? && display_type == 'total'
-  end
-
   # Method that checks if the version is 'stable'
   #
   # @return [Boolean] Returns true if the version is 'stable'
@@ -142,7 +128,7 @@ class RubygemsApi < CoreApi
   def fetch_specific_version_data(callback)
     fetch_data("#{RubygemsApi::BASE_URL}/api/v1/downloads/#{gem_name}-#{gem_version}.json", callback) do |http_response|
       downloads_count = http_response['version_downloads']
-      downloads_count = "#{http_response['total_downloads']}_total" if display_total
+      downloads_count = http_response['total_downloads'] if display_total
       callback.call downloads_count
     end
   end
@@ -155,7 +141,7 @@ class RubygemsApi < CoreApi
   def fetch_gem_data_without_version(callback)
     fetch_data("#{RubygemsApi::BASE_URL}/api/v1/gems/#{gem_name}.json", callback) do |http_response|
       downloads_count = http_response['version_downloads']
-      downloads_count = "#{http_response['downloads']}_total" if display_total
+      downloads_count = http_response['downloads'] if display_total
       callback.call downloads_count
     end
   end

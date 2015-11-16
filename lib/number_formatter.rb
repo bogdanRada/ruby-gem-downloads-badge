@@ -4,31 +4,22 @@ require_relative './helper'
 #
 # @!attribute number
 #   @return [Number] The number that will be formatted in different format
+# @!attribute params
+#   @return [Hash] The params that are used for formatting the number display
 class NumberFormatter
   include Helper
-  attr_reader :number, :text, :display_metric
+  attr_reader :number, :params
 
   # Method used for instantiating the NumberFormatter with the number that will be used
   # and a boolean value that will decide if we format in metric format or using delimiters
   # If the number is blank the number will be set to 0
   #
   # @param [Number] number  The number that will be formatted in different format
-  # @param [Boolean] display_metric A boolean value that will decide if we format using metrics or delimiters
+  # @param [Hash] params A boolean value that will decide if we format using metrics or delimiters
   # @return [void]
-  def initialize(number, display_metric)
+  def initialize(number, params)
     @number = number.present? ? number : 0
-    @display_metric = display_metric
-    if @number.to_s =~ /(\d+)(.*)/m
-      @number = Regexp.last_match(1).to_i
-      @text = Regexp.last_match(2)
-    end
-  end
-
-  # Returns the number as a string
-  #
-  # @return [String] Returns the number as a string
-  def to_s
-    formatted_display
+    @params = params
   end
 
   # Method that is used to decide which format to use depending on the instance
@@ -38,8 +29,8 @@ class NumberFormatter
   # @see #number_with_delimiter
   #
   # @return [String] Returns the number formatted with metrics if 'display_metric' instance variable is true, otherwise using delimiters
-  def formatted_display
-    @display_metric ? number_with_metric : number_with_delimiter
+  def to_s
+    @params.fetch('metric', false).present? ? number_with_metric : number_with_delimiter
   end
 
   # Method used to print a number using metrics
@@ -50,7 +41,7 @@ class NumberFormatter
     while index >= 0
       limit = metric_power[index]
       if @number > limit
-        return "#{((@number / limit).to_f.round)}#{metric_prefixes[index]}#{@text}"
+        return "#{((@number / limit).to_f.round)}#{metric_prefixes[index]}"
       end
       index -= 1
     end
@@ -64,7 +55,7 @@ class NumberFormatter
   def number_with_delimiter(delimiter = ',', separator = '.')
     parts = @number.to_s.split('.')
     parts[0].gsub!(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1#{delimiter}")
-    "#{parts.join separator}#{@text}".to_s
+    parts.join separator
   rescue
     @number.to_s
   end

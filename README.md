@@ -9,7 +9,7 @@ Clean and simple gem download badge, [courtesy of shields.io](https://github.com
 
 In your README.md, just add an image with the base URL (`http://ruby-gem-downloads-badge.herokuapp.com/`) followed by the gem name and the version, for example :
 
-You will then get a nice and pretty SVG with the downloads count of the gem provided:
+You will then get a nice and pretty **SVG** with the downloads count of the gem provided:
 
 ```
   ![](http://ruby-gem-downloads-badge.herokuapp.com/rails)
@@ -17,7 +17,7 @@ You will then get a nice and pretty SVG with the downloads count of the gem prov
 
 ![](http://ruby-gem-downloads-badge.herokuapp.com/rails)
 
-Or you can use any extension you like like this:
+Or you can use any extension you like like this (e.g. **PNG**, **JSON**\):
 
 ```
   ![](http://ruby-gem-downloads-badge.herokuapp.com/rails?extension=png)
@@ -49,31 +49,15 @@ You can also specify to display the total downloads count for a version like thi
 
 ![](http://ruby-gem-downloads-badge.herokuapp.com/rails/4.1.0?type=total)
 
-If you want a flat image, you can add `&style=flat` at the end of the url.
+You can also customize the message displayed when using **type=total** params by using this:
 
 ```
-![](http://ruby-gem-downloads-badge.herokuapp.com/rails?style=flat)
+  ![](http://ruby-gem-downloads-badge.herokuapp.com/rails?type=total&total_label=total-awesome)
 ```
 
-![](http://ruby-gem-downloads-badge.herokuapp.com/rails?style=flat)
+![](http://ruby-gem-downloads-badge.herokuapp.com/rails?type=total&total_label=total-awesome)
 
-If you want a plastic image, you can add `&style=plastic` at the end of the url.
-
-```
-![](http://ruby-gem-downloads-badge.herokuapp.com/rails?style=plastic)
-```
-
-![](http://ruby-gem-downloads-badge.herokuapp.com/rails?style=plastic)
-
-If you want a flat-square image, you can add `&style=flat-square` at the end of the url.
-
-```
-![](http://ruby-gem-downloads-badge.herokuapp.com/rails?style=flat-square)
-```
-
-![](http://ruby-gem-downloads-badge.herokuapp.com/rails?style=flat-square)
-
-If you want the downloads count to use metrics,, you can add `&metric=true` at the end of the url.
+If you want the downloads count to use **metrics**,, you can add `&metric=true` at the end of the url.
 
 ```
 ![](http://ruby-gem-downloads-badge.herokuapp.com/rails?metric=true)
@@ -101,6 +85,25 @@ Available colors are (gem is rails):
 |    blue     |    ![](http://ruby-gem-downloads-badge.herokuapp.com/rails?color=blue&style=flat)     |
 |   ff69b4    |   ![](http://ruby-gem-downloads-badge.herokuapp.com/rails?color=ff69b4&style=flat)    |
 
+If you want to style of the badge just append `&style=STYLE_NAME`.to the image URL. By default, the badge is **flat**
+
+Available styles are:
+
+| Style Name  |                                   Badge                                    |
+|:-----------:|:--------------------------------------------------------------------------:|
+|    flat     |    ![](http://ruby-gem-downloads-badge.herokuapp.com/rails?style=flat)     |
+|   plastic   |   ![](http://ruby-gem-downloads-badge.herokuapp.com/rails?style=plastic)   |
+| flat-square | ![](http://ruby-gem-downloads-badge.herokuapp.com/rails?style=flat-square) |
+|   social    |   ![](http://ruby-gem-downloads-badge.herokuapp.com/rails?style=social)    |
+
+For social badges you can also use links for both sides of the badge like this:
+
+```
+![](http://ruby-gem-downloads-badge.herokuapp.com/rails?style=social&link=http://google.com&link=http://yahoo.com)
+```
+
+![](http://ruby-gem-downloads-badge.herokuapp.com/rails?style=social&link=http://google.com&link=http://yahoo.com)
+
 If you want something else written on the badge you can use:
 
 ```
@@ -108,6 +111,14 @@ If you want something else written on the badge you can use:
 ```
 
 ![](http://ruby-gem-downloads-badge.herokuapp.com/rails?label=something-else)
+
+You can change the logo width by using this:
+
+```
+![](http://ruby-gem-downloads-badge.herokuapp.com/rails?logoWidth=80)
+```
+
+![](http://ruby-gem-downloads-badge.herokuapp.com/rails?logoWidth=80)
 
 If you specify a version that is not valid like this, you will see a invalid image:
 
