@@ -63,7 +63,7 @@ class CoreApi
   # @param [EventMachine::HttpRequest] http The HTTP object that will be used for reqisteringt the error callback
   # @return [void]
   def register_error_callback(http)
-    http.errback { |error| callback_error(http,error) }
+    http.errback { |error| callback_error(error) }
   end
 
   # Callback that is used before returning the response the the instance
@@ -122,7 +122,7 @@ class CoreApi
   #
   # @param [Object] error The error that was raised by the HTTP request
   # @return [void]
-  def callback_error(http,error)
+  def callback_error(error)
     logger.debug "Error during fetching data  : #{error.inspect}"
   end
 end
