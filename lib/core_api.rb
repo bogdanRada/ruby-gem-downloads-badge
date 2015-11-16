@@ -1,7 +1,16 @@
 require_relative './helper'
 # module that is used for formatting numbers using metrics
+#
+# @!attribute params
+#   @return [Hash] THe params received from URL
+# @!attribute hostname
+#   @return [String] THe hostname from where the badges are fetched from
+# @!attribute base_url
+#   @return [String] THe base_url of the API
 class CoreApi
   include Helper
+
+  attr_reader :params, :hostname, :base_url
   # Returns the display_type from the params , otherwise nil
   #
   # @return [String, nil] Returns the display_type  from the params , otherwise nil
@@ -26,7 +35,7 @@ class CoreApi
       ssl: {
         cipher_list: 'ALL',
         verify_peer: false,
-        ssl_version: "TLSv1",
+        ssl_version: 'TLSv1',
         sni_hostname: @hostname
       },
       head: {
@@ -68,7 +77,7 @@ class CoreApi
   # @param [Lambda] callback The callback that will be called if the response is blank
   # @param [Proc] block If the response is not blank, the block will receive the response
   # @return [void]
-  def fetch_data(url, options ={}, &block)
+  def fetch_data(url, options = {}, &block)
     options = options.stringify_keys
     http = em_request(url, options)
     register_error_callback(http)
@@ -96,18 +105,6 @@ class CoreApi
   # @return [String] Returns the response
   def callback_before_success(response)
     response
-  end
-
-  # Dispatches the response either to the final callback or to the block that will use the response
-  # and then call the callback
-  #
-  # @param [String] res The response string that will be dispatched
-  # @param [Lambda] callback The callback that is used to dispatch further the response
-  # @param [Proc] block The block that is used for parsing response and then calling the callback
-  # @return [void]
-  def dispatch_http_response(res, options, &block)
-    callback = options.fetch('callback', nil)
-    (res.blank? && callback.present?) ? callback.call(res) : block.call(res)
   end
 
   # This method is used to reqister a error callback to a HTTP request object

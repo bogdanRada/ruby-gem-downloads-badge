@@ -70,20 +70,47 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
     if !params[:gem].nil? && params[:gem].include?('favicon')
       send_file File.join(settings.public_folder, 'favicon.ico'), disposition: 'inline', type: 'image/x-icon'
     else
-      set_content_type
-      stream :keep_open do |out|
-        EM.error_handler do |error|
-          puts "Error during event loop : #{error.inspect}"
-          puts error.backtrace
-        end
-        EM.run do
-          EM::HttpRequest.use RequestMiddleware if settings.development
-          callback = lambda do |downloads|
-            original_params = CGI::parse(request.query_string)
-            BadgeDownloader.new(params, original_params, out, downloads)
-          end
-          @rubygems_api = RubygemsApi.new(params, callback)
-        end
+      em_request_badge do |out|
+        RubygemsApi.new(params, badge_callback(out))
+      end
+    end
+  end
+
+  aget '/repo_size/*' do
+    em_request_badge do |out|
+      RepoSizeApi.new(
+        params,
+        badge_callback(out, 'label' => params.fetch('label', 'repo_size'))
+      )
+    end
+  end
+
+  # Method that fetch the badge
+  #
+  # @param [Sinatra::Stream] out The stream where the response is added to
+  # @param [Hash] additional_params The additional params needed for the badge
+  # @return [Lambda] The lambda that is used as callback to other APIS
+  def badge_callback(out, additional_params = {})
+    lambda do |downloads|
+      original_params = CGI::parse(request.query_string)
+      BadgeApi.new(params.merge(additional_params), original_params, out, downloads)
+    end
+  end
+
+  # Method that fetch the badge
+  #
+  # @param [Block] block The block that is executed after Eventmachine starts
+  # @return [void]
+  def em_request_badge(&block)
+    set_content_type
+    stream :keep_open do |out|
+      EM.error_handler do |error|
+        puts "Error during event loop : #{error.inspect}"
+        puts error.backtrace
+      end
+      EM.run do
+        EM::HttpRequest.use RequestMiddleware if settings.development
+        block.call(out)
       end
     end
   end

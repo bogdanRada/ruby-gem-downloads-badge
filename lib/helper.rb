@@ -11,6 +11,34 @@ module_function
     %w(k M G T P E Z Y)
   end
 
+  # Dispatches the response either to the final callback or to the block that will use the response
+  # and then call the callback
+  #
+  # @param [String] res The response string that will be dispatched
+  # @param [Hash] options The callback that is used to dispatch further the response
+  # @param [Proc] block The block that is used for parsing response and then calling the callback
+  # @return [void]
+  def dispatch_http_response(res, options, &block)
+    callback = options.fetch('callback', nil)
+    (res.blank? && callback.present?) ? callback.call(res) : block.call(res)
+  end
+
+  # Formats a number as a filesize
+  #
+  # @param [Integer] size The size that needs transformed to filesize format
+  # @return [String] The filesize of the number
+  def format_to_filesize(size)
+    {
+      'b'  => 1024,
+      'kb' => 1024**2,
+      'mb' => 1024**3,
+      'gb' => 1024**4,
+      'tb' => 1024**5
+    }.each_pair do |name, byte_size|
+      return "#{(size.to_f / (byte_size / 1024)).round(2)} #{name}" if size < byte_size
+    end
+  end
+
   # Returns the metric powers of all metric prefixes . This method is used in metric display of numbers
   # @see #metric_prefixes
   # @return [Array<Number>] An array of metric powers that correspont to each metric prefix
@@ -91,7 +119,6 @@ module_function
   def app_settings
     RubygemsDownloadShieldsApp.settings
   end
-
 
   # Method that is used to return the last item from an array of strings.
   # Will return empty string if array is blank

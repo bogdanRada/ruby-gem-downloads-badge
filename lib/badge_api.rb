@@ -2,20 +2,17 @@ require_relative './number_formatter.rb'
 require_relative './core_api'
 # class used to download badges from shields.io
 #
-# @!attribute params
-#   @return [Hash] THe params received from URL
-#
+# @!attribute original_params
+#   @return [Hash] THe original params received from URL
 # @!attribute output_buffer
 #   @return [Stream] The Sinatra Stream to which the badge will be inserted into
 # @!attribute downloads
 #   @return [Hash] THe downloads count that will need to be displayed on the badge
-# @!attribute hostname
-#   @return [String] THe hostname from where the badges are fetched from
-class BadgeDownloader < CoreApi
+class BadgeApi < CoreApi
   # constant that is used to show message for invalid badge
   INVALID_COUNT = 'invalid'
 
-  attr_reader :params, :output_buffer, :downloads, :hostname
+  attr_reader :output_buffer, :downloads, :original_params
 
   # Initializes the instance with the params from controller, and will try to download the information about the rubygems
   # and then will try to download the badge to the output stream
@@ -117,7 +114,7 @@ class BadgeDownloader < CoreApi
   # @return [String] If the downloads argument is blank will return invalid, otherwise will format the numbere either with metrics or delimiters
   def format_number_of_downloads
     text = display_total ? "_#{params.fetch('total_label', 'total').tr('-', '_')}" : ''
-    nr_downloadds = @downloads.blank? ? BadgeDownloader::INVALID_COUNT : NumberFormatter.new(@downloads, @params)
+    nr_downloadds = @downloads.blank? ? BadgeApi::INVALID_COUNT : NumberFormatter.new(@downloads, @params)
     "#{nr_downloadds}#{text}"
   end
 end

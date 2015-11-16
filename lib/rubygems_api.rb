@@ -1,14 +1,12 @@
 require_relative './core_api'
 # class used for connecting to runygems.org and downloading info about a gem
 #
-# @!attribute params
-#   @return [Hash] The params received from URL
-# @!attribute downloads
-#   @return [Number] The downloads count of the specified gem and version
+# @!attribute callback
+#   @return [Proc] The callback that is executed after info is fetched
 class RubygemsApi < CoreApi
   # the base url to which the API will connect for fetching information about gems
 
-  attr_reader :params, :downloads
+  attr_reader :callback
 
   # Method used to instantiate an instance of RubygemsApi class with the params received from URL
   #
@@ -16,13 +14,14 @@ class RubygemsApi < CoreApi
   # @option params [String] :gem The name of the gem
   # @option params [String]:version The version of the gem
   # @option params [String] :type The type of display , if we want to display total downloads, this will have value 'total'
+  # @param [Proc] callback The callback that is executed after info is fetched
   # @return [void]
   def initialize(params, callback)
     @params = params.stringify_keys
-    @downloads = nil
+    @callback = callback
     @hostname = 'rubygems.org'
     @base_url = "https://#{@hostname}"
-    fetch_downloads_data(callback)
+    fetch_downloads_data
   end
 
   # Method that checks if the gem is valid , and if it is will fetch the infromation about the gem
@@ -32,11 +31,11 @@ class RubygemsApi < CoreApi
   #
   # @param [Lambda] callback The callback that needs to be executed after the information is downloaded
   # @return [void]
-  def fetch_downloads_data(callback)
+  def fetch_downloads_data
     if valid?
-      fetch_dowloads_info(callback)
+      fetch_dowloads_info
     else
-      callback.call(nil)
+      @callback.call(nil)
     end
   end
 
@@ -47,15 +46,14 @@ class RubygemsApi < CoreApi
   # @see #fetch_specific_version_data
   # @see #fetch_gem_stable_version_data
   #
-  # @param [Lambda] callback The callback that needs to be executed after the information is downloaded
   # @return [void]
-  def fetch_dowloads_info(callback)
+  def fetch_dowloads_info
     if gem_version.blank?
-      fetch_gem_data_without_version(callback)
+      fetch_gem_data_without_version
     elsif !gem_stable_version?
-      fetch_specific_version_data(callback)
+      fetch_specific_version_data
     elsif gem_stable_version?
-      fetch_gem_stable_version_data(callback)
+      fetch_gem_stable_version_data
     end
   end
 
@@ -109,39 +107,36 @@ class RubygemsApi < CoreApi
   # Method that downloads all the versions of a gem, finds the latest stable version and sends the downloads count to the callback
   # The count defers depending if we need to display total amount or not
   #
-  # @param [Lambda] callback The callback that needs to be executed after the information is downloaded
   # @return [void]
-  def fetch_gem_stable_version_data(callback)
-    fetch_data("#{@base_url}/api/v1/versions/#{gem_name}.json", {"callback" =>callback}) do |http_response|
+  def fetch_gem_stable_version_data
+    fetch_data("#{@base_url}/api/v1/versions/#{gem_name}.json", 'callback' => @callback) do |http_response|
       latest_stable_version_details = get_latest_stable_version_details(http_response)
       downloads_count = latest_stable_version_details['downloads_count'] unless latest_stable_version_details.blank?
-      callback.call downloads_count
+      @callback.call downloads_count
     end
   end
 
   # Method that downloads information about a specifc version of a gem and send the count to the callback
   # The count defers depending if we need to display total amount or not
   #
-  # @param [Lambda] callback The callback that needs to be executed after the information is downloaded
   # @return [void]
-  def fetch_specific_version_data(callback)
-    fetch_data("#{@base_url}/api/v1/downloads/#{gem_name}-#{gem_version}.json",  {"callback" =>callback}) do |http_response|
+  def fetch_specific_version_data
+    fetch_data("#{@base_url}/api/v1/downloads/#{gem_name}-#{gem_version}.json", 'callback' => @callback) do |http_response|
       downloads_count = http_response['version_downloads']
       downloads_count = http_response['total_downloads'] if display_total
-      callback.call downloads_count
+      @callback.call downloads_count
     end
   end
 
   # Method that downloads information about the latest version and sends the count to the callback
   # The count defers depending if we need to display total amount or not
   #
-  # @param [Lambda] callback The callback that needs to be executed after the information is downloaded
   # @return [void]
-  def fetch_gem_data_without_version(callback)
-    fetch_data("#{@base_url}/api/v1/gems/#{gem_name}.json",  {"callback" =>callback}) do |http_response|
+  def fetch_gem_data_without_version
+    fetch_data("#{@base_url}/api/v1/gems/#{gem_name}.json", 'callback' => @callback) do |http_response|
       downloads_count = http_response['version_downloads']
       downloads_count = http_response['downloads'] if display_total
-      callback.call downloads_count
+      @callback.call downloads_count
     end
   end
 
