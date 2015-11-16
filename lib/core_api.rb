@@ -54,8 +54,9 @@ class CoreApi
   #
   # @param [String] url The URL that will be used in the HTTP request
   # @return [EventMachine::HttpRequest] Returns an http request object
-  def em_request(url, method)
-    EventMachine::HttpRequest.new(url, em_connection_options).send(method, em_request_options)
+  def em_request(url, options)
+    em_request = EventMachine::HttpRequest.new(url, em_connection_options)
+    em_request.send(options.fetch('http_method', 'get'), em_request_options)
   end
 
   # This method is used to reqister a error callback to a HTTP request object
@@ -112,7 +113,7 @@ class CoreApi
   # @return [void]
   def fetch_data(url, options ={}, &block)
     options = options.stringify_keys
-    http = em_request(url, options.fetch('http_method', 'get'))
+    http = em_request(url, options)
     register_error_callback(http)
     register_success_callback(http, options, &block)
   end
