@@ -4,6 +4,20 @@ module Helper
 
 module_function
 
+# Returns the display_type from the params , otherwise nil
+#
+# @return [String, nil] Returns the display_type  from the params , otherwise nil
+def display_type
+  @params.fetch('type', nil)
+end
+
+# Method that checks if we need to display the total downloads
+#
+# @return [Boolean] Returns true if we need to display the total downloads
+def display_total
+  display_type.present? && display_type == 'total'
+end
+
   # The prefixes that can be used in metric display
   #
   # @return [Array<String>] Returns the metric prefixes array that can be used in metric display

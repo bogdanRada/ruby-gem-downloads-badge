@@ -11,19 +11,6 @@ class CoreApi
   include Helper
 
   attr_reader :params, :hostname, :base_url
-  # Returns the display_type from the params , otherwise nil
-  #
-  # @return [String, nil] Returns the display_type  from the params , otherwise nil
-  def display_type
-    @params.fetch('type', nil)
-  end
-
-  # Method that checks if we need to display the total downloads
-  #
-  # @return [Boolean] Returns true if we need to display the total downloads
-  def display_total
-    display_type.present? && display_type == 'total'
-  end
 
   # Returns the connection options used for connecting to API's
   #
