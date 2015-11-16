@@ -76,14 +76,14 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
     end
   end
 
-  aget '/repo_size/*' do
-    em_request_badge do |out|
-      RepoSizeApi.new(
-        params,
-        badge_callback(out, "api" => "github", 'label' => params.fetch('label', 'repo_size'))
-      )
-    end
-  end
+  # aget '/repo_size/*' do
+  #   em_request_badge do |out|
+  #     RepoSizeApi.new(
+  #       params,
+  #       badge_callback(out, "api" => "github", 'label' => params.fetch('label', 'repo_size'))
+  #     )
+  #   end
+  # end
 
   # Method that fetch the badge
   #
