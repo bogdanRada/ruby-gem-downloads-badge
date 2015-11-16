@@ -24,9 +24,9 @@ class CoreApi
       connect_timeout: 5,        # default connection setup timeout
       inactivity_timeout: 10,    # default connection inactivity (post-setup) timeout
       ssl: {
-         cipher_list: 'ALL',
-         verify_peer: false,
-         :ssl_version => "TLSv1",
+        cipher_list: 'ALL',
+        verify_peer: false,
+        ssl_version: "TLSv1",
         sni_hostname: @hostname
       },
       head: {
