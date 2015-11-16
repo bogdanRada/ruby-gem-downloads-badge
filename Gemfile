@@ -5,7 +5,7 @@ gem 'sinatra'
 gem 'rack-handlers'
 gem 'rainbows'
 gem 'em-http-request'
-gem 'eventmachine'
+gem 'eventmachine', github: "eventmachine/eventmachine"
 gem 'versionomy'
 gem 'sinatra-outputbuffer'
 gem 'sinatra-settings'

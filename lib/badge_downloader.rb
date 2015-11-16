@@ -35,6 +35,7 @@ class BadgeDownloader < CoreApi
     @output_buffer = output_buffer
     @downloads = downloads
     @hostname = 'img.shields.io'
+    @base_url = "https://#{@hostname}"
     fetch_image_shield
   end
 
@@ -92,7 +93,7 @@ class BadgeDownloader < CoreApi
   # @return [String] The URL that will be used in fetching the SVG image from shields.io server
   def build_badge_url(extension = image_extension)
     colour = @downloads.blank? ? 'lightgrey' : @params.fetch('color', 'blue')
-    "https://#{@hostname}/badge/#{status_param}-#{format_number_of_downloads}-#{colour}.#{extension}?#{additional_params}"
+    "#{@base_url}/badge/#{status_param}-#{format_number_of_downloads}-#{colour}.#{extension}?#{additional_params}"
   end
 
   # Method that is used for building the URL for fetching the SVG Image, and actually
@@ -103,7 +104,7 @@ class BadgeDownloader < CoreApi
   #
   # @return [void]
   def fetch_image_shield
-    fetch_typhoeus_data(build_badge_url) do |http_response|
+    fetch_data(build_badge_url) do |http_response|
       print_to_output_buffer(http_response, @output_buffer)
     end
   end
