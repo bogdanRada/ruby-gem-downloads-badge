@@ -59,12 +59,35 @@ class CoreApi
     em_request.send(options.fetch('http_method', 'get'), em_request_options)
   end
 
-  # This method is used to reqister a error callback to a HTTP request object
-  # @see #callback_error
-  # @param [EventMachine::HttpRequest] http The HTTP object that will be used for reqisteringt the error callback
+  # Method that fetch the data from a URL and registers the error and success callback to the HTTP object
+  # @see #em_request
+  # @see #register_error_callback
+  # @see #register_success_callback
+  #
+  # @param [url] url The URL that is used to fetch data from
+  # @param [Lambda] callback The callback that will be called if the response is blank
+  # @param [Proc] block If the response is not blank, the block will receive the response
   # @return [void]
-  def register_error_callback(http)
-    http.errback { |error| callback_error(error) }
+  def fetch_data(url, options ={}, &block)
+    options = options.stringify_keys
+    http = em_request(url, options)
+    register_error_callback(http)
+    register_success_callback(http, options, &block)
+  end
+
+  # Method that is used to register a success callback to a http object
+  # @see #callback_before_success
+  # @see #dispatch_http_response
+  #
+  # @param [EventMachine::HttpRequest] http The HTTP object that will be used for registering the success callback
+  # @param [Lambda] callback The callback that will be called if the response is blank
+  # @param [Proc] block If the response is not blank, the block will receive the response
+  # @return [void]
+  def register_success_callback(http, options, &block)
+    http.callback do
+      res = callback_before_success(http.response)
+      dispatch_http_response(res, options, &block)
+    end
   end
 
   # Callback that is used before returning the response the the instance
@@ -87,35 +110,12 @@ class CoreApi
     (res.blank? && callback.present?) ? callback.call(res) : block.call(res)
   end
 
-  # Method that is used to register a success callback to a http object
-  # @see #callback_before_success
-  # @see #dispatch_http_response
-  #
-  # @param [EventMachine::HttpRequest] http The HTTP object that will be used for registering the success callback
-  # @param [Lambda] callback The callback that will be called if the response is blank
-  # @param [Proc] block If the response is not blank, the block will receive the response
+  # This method is used to reqister a error callback to a HTTP request object
+  # @see #callback_error
+  # @param [EventMachine::HttpRequest] http The HTTP object that will be used for reqisteringt the error callback
   # @return [void]
-  def register_success_callback(http, options, &block)
-    http.callback do
-      res = callback_before_success(http.response)
-      dispatch_http_response(res, options, &block)
-    end
-  end
-
-  # Method that fetch the data from a URL and registers the error and success callback to the HTTP object
-  # @see #em_request
-  # @see #register_error_callback
-  # @see #register_success_callback
-  #
-  # @param [url] url The URL that is used to fetch data from
-  # @param [Lambda] callback The callback that will be called if the response is blank
-  # @param [Proc] block If the response is not blank, the block will receive the response
-  # @return [void]
-  def fetch_data(url, options ={}, &block)
-    options = options.stringify_keys
-    http = em_request(url, options)
-    register_error_callback(http)
-    register_success_callback(http, options, &block)
+  def register_error_callback(http)
+    http.errback { |error| callback_error(error) }
   end
 
   # Method that is used to react when an error happens in a HTTP request
