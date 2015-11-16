@@ -33,9 +33,12 @@ module_function
       'kb' => 1024**2,
       'mb' => 1024**3,
       'gb' => 1024**4,
-      'tb' => 1024**5
+      'tb' => 1024**5,
+      'pb' => 1024**6,
+      'eb' => 1024**7,
     }.each_pair do |name, byte_size|
-      return "#{(size.to_f / (byte_size / 1024)).round(2)} #{name}" if size < byte_size
+      next if size >= byte_size
+      return "%.2f %s" % [ (size.to_f / (byte_size / 1024)).round(3), name ]
     end
   end
 
