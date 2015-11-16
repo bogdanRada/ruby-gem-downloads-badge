@@ -81,8 +81,9 @@ class CoreApi
   # @param [Lambda] callback The callback that is used to dispatch further the response
   # @param [Proc] block The block that is used for parsing response and then calling the callback
   # @return [void]
-  def dispatch_http_response(res, callback, &block)
-    res.blank? ? callback.call(res) : block.call(res)
+  def dispatch_http_response(res, options, &block)
+    callback = options.fetch('callback', nil)
+    (res.blank? && callback.present?) ? callback.call(res) : block.call(res)
   end
 
   # Method that is used to register a success callback to a http object
@@ -96,7 +97,7 @@ class CoreApi
   def register_success_callback(http, options, &block)
     http.callback do
       res = callback_before_success(http.response)
-      dispatch_http_response(res, options.fetch('callback', -> {}), &block)
+      dispatch_http_response(res, options, &block)
     end
   end
 
