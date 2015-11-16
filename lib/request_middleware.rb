@@ -9,9 +9,9 @@ class RequestMiddleware
   # @return [Array<Hash,String>] Returns the http headers and the body
   def request(client, head, body)
     puts "HTTP request to #{client.req.uri}".inspect
-    puts [:client, client.inspect]
-    puts [:headers, head.inspect]
-    puts [:body, body.inspect]
+    puts [:request_client, client.inspect]
+    puts [:request_headers, head.inspect]
+    puts [:request_body, body.inspect]
     [head, body]
   end
 
@@ -21,9 +21,9 @@ class RequestMiddleware
   # @param [EventMachine::HttpResponse] resp The Http response received from API
   # @return [EventMachine::HttpResponse]
   def response(resp)
-    puts [:headers, resp.response_header.inspect]
-    puts [:status, resp.response_header.status]
-    puts [:response, resp.inspect]
+    puts [:response_headers, resp.response_header.inspect]
+    puts [:response_status, resp.response_header.status]
+    puts [:response_object, resp.inspect]
     puts [:response_body, resp.response.inspect]
     resp
   end
