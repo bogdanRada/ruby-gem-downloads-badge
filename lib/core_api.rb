@@ -143,7 +143,7 @@ class CoreApi
   # @see #callback_before_success
   # @see #dispatch_http_response
   #
-  # @param [EventMachine::HttpRequest] http The HTTP object that will be used for registering the success callback
+  # @param [Typhoeus::Request] http The HTTP object that will be used for registering the success callback
   # @param [Lambda] callback The callback that will be called if the response is blank
   # @param [Proc] block If the response is not blank, the block will receive the response
   # @return [void]
