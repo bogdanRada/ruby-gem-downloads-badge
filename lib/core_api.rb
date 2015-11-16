@@ -1,5 +1,7 @@
+require_relative './helper'
 # module that is used for formatting numbers using metrics
 class CoreApi
+  include Helper
   # Returns the display_type from the params , otherwise nil
   #
   # @return [String, nil] Returns the display_type  from the params , otherwise nil
@@ -119,5 +121,47 @@ class CoreApi
   # @return [void]
   def callback_error(error)
     logger.debug "Error during fetching data  : #{error.inspect}"
+  end
+
+  # Method that fetch the data from a URL using parallel requests
+  # @see #callback_before_success
+  # @see #dispatch_http_response
+  #
+  # @param [Array<String>] urls The urls used to fetch data from in parallel
+  # @param [Lambda] callback The callback that will be called if the response is blank
+  # @param [Proc] block If the response is not blank, the block will receive the response
+  # @return [void]
+  def fetch_typhoeus_data(url, callback = -> {}, &block)
+    hydra = http_hydra
+    request = Typhoeus::Request.new(url, followlocation: true, ssl_verifypeer: false, ssl_verifyhost: 0)
+    register_callbacks(request, callback, &block)
+    hydra.queue(request)
+    hydra.run
+  end
+
+  # Method that is used to register a success callback to a http object
+  # @see #callback_before_success
+  # @see #dispatch_http_response
+  #
+  # @param [EventMachine::HttpRequest] http The HTTP object that will be used for registering the success callback
+  # @param [Lambda] callback The callback that will be called if the response is blank
+  # @param [Proc] block If the response is not blank, the block will receive the response
+  # @return [void]
+  def register_callbacks(http, callback, &block)
+    http.on_complete do |response|
+      if response.success?
+        res = callback_before_success(http.response.body)
+        dispatch_http_response(res, callback, &block)
+      elsif response.timed_out?
+        # aw hell no
+        callback_error('Got a time out')
+      elsif response.code == 0
+        # Could not get an http response, something's wrong.
+        callback_error(response.return_message)
+      else
+        # Received a non-successful http response.
+        callback_error('HTTP request failed: ' + response.code.to_s)
+      end
+    end
   end
 end

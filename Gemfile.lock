@@ -238,6 +238,7 @@ DEPENDENCIES
   brakeman
   coveralls
   em-http-request
+  eventmachine
   foreman
   github-markup
   inch

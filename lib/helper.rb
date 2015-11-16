@@ -92,6 +92,24 @@ module_function
     RubygemsDownloadShieldsApp.settings
   end
 
+  # Method that is used set the configuration for Typhoeus Requests
+  #
+  # @return [void]
+  def http_config
+    Typhoeus::Config.verbose = app_settings.development? ? true : false
+    Typhoeus::Config.memoize = true
+    Typhoeus::Config.cache = false
+  end
+
+  # Method that constructs the typhoes Hydra that queues the requests
+  # @see Typhoeus::Hydra#initialize
+  #
+  # @return [Typhoeus::Hydra] The Hydra object that has all requests in a queue
+  def http_hydra
+    http_config
+    Typhoeus::Hydra.new(max_concurrency: 1)
+  end
+
   # Method that is used to return the last item from an array of strings.
   # Will return empty string if array is blank
   #

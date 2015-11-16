@@ -1,5 +1,4 @@
 require_relative './core_api'
-require_relative './helper'
 # class used for connecting to runygems.org and downloading info about a gem
 #
 # @!attribute params
@@ -7,7 +6,6 @@ require_relative './helper'
 # @!attribute downloads
 #   @return [Number] The downloads count of the specified gem and version
 class RubygemsApi < CoreApi
-  include Helper
   # the base url to which the API will connect for fetching information about gems
   BASE_URL = 'https://rubygems.org'
 

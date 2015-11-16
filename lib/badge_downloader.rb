@@ -1,6 +1,5 @@
 require_relative './number_formatter.rb'
 require_relative './core_api'
-require_relative './helper'
 # class used to download badges from shields.io
 #
 # @!attribute params
@@ -13,7 +12,6 @@ require_relative './helper'
 # @!attribute hostname
 #   @return [String] THe hostname from where the badges are fetched from
 class BadgeDownloader < CoreApi
-  include Helper
   # constant that is used to show message for invalid badge
   INVALID_COUNT = 'invalid'
 
@@ -105,38 +103,9 @@ class BadgeDownloader < CoreApi
   #
   # @return [void]
   def fetch_image_shield
-    fetch_data(build_badge_url) do |http_response|
+    fetch_typhoeus_data(build_badge_url) do |http_response|
       print_to_output_buffer(http_response, @output_buffer)
     end
-  end
-
-  # Method that fetch the data from a URL using parallel requests
-  # @see #callback_before_success
-  # @see #dispatch_http_response
-  #
-  # @param [Array<String>] urls The urls used to fetch data from in parallel
-  # @param [Lambda] callback The callback that will be called if the response is blank
-  # @param [Proc] block If the response is not blank, the block will receive the response
-  # @return [void]
-  def fetch_data(urls, callback = -> {}, &block)
-    urls = urls.is_a?(Array) ? urls : [urls]
-    #    uri = URI(url)
-    # response = Net::HTTP.get(uri)
-    Typhoeus::Config.verbose = app_settings.development? ? true : false
-    Typhoeus::Config.memoize = true
-    Typhoeus::Config.cache = false
-    hydra = Typhoeus::Hydra.new(max_concurrency: 1)
-    requests = urls.map do |url|
-      request = Typhoeus::Request.new(url, followlocation: true, ssl_verifypeer: false, ssl_verifyhost: 0)
-      hydra.queue(request)
-      request
-    end
-    hydra.run
-    responses = requests.map do |request|
-      request.response.body
-    end
-    res = callback_before_success(responses.join(''))
-    dispatch_http_response(res, callback, &block)
   end
 
   # Method that is used for formatting the number of downloads , if the number is blank, will return invalid,
