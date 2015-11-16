@@ -93,10 +93,10 @@ class CoreApi
   # @param [Lambda] callback The callback that will be called if the response is blank
   # @param [Proc] block If the response is not blank, the block will receive the response
   # @return [void]
-  def register_success_callback(http, callback, &block)
+  def register_success_callback(http, options, &block)
     http.callback do
       res = callback_before_success(http.response)
-      dispatch_http_response(res, callback, &block)
+      dispatch_http_response(res, options.fetch('callback', -> {}), &block)
     end
   end
 
@@ -109,10 +109,11 @@ class CoreApi
   # @param [Lambda] callback The callback that will be called if the response is blank
   # @param [Proc] block If the response is not blank, the block will receive the response
   # @return [void]
-  def fetch_data(url, callback = -> {}, &block)
-    http = em_request(url, 'get')
+  def fetch_data(url, options ={}, &block)
+    options = options.stringify_keys
+    http = em_request(url, options.fetch('http_method', 'get'))
     register_error_callback(http)
-    register_success_callback(http, callback, &block)
+    register_success_callback(http, options, &block)
   end
 
   # Method that is used to react when an error happens in a HTTP request
