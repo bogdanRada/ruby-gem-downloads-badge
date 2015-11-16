@@ -21,6 +21,8 @@ class RequestMiddleware
   # @param [EventMachine::HttpResponse] resp The Http response received from API
   # @return [EventMachine::HttpResponse]
   def response(resp)
+    puts [:headers, resp.response_header.inspect]
+    puts [:status, resp.response_header.status]
     puts [:response, resp.inspect]
     puts [:response_body, resp.response.inspect]
     resp
