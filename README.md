@@ -128,6 +128,14 @@ If you specify a version that is not valid like this, you will see a invalid ima
 
 ![](http://ruby-gem-downloads-badge.herokuapp.com/rails/4.1.dsad)
 
+To display repo size of gem you can use this url **/repo_size/GITHUB_USERNAME/GITHUB_REPOSITORY**:
+
+```
+![](http://ruby-gem-downloads-badge.herokuapp.com/repo_size/rails/rails)
+```
+
+![](http://ruby-gem-downloads-badge.herokuapp.com/repo_size/rails/rails)
+
 ---
 
 **This repository was created by bogdanRada - but is completely built off of [shields.io](http://github.com/badges/shields) - go check them out! Having a problem? [Open an issue.](http://github.com/bogdanRada/gem-downloads-badge/issues)**
