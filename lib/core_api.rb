@@ -10,12 +10,13 @@ require_relative './helper'
 class CoreApi
   include Helper
 
-  attr_reader :params, :hostname, :base_url
+  attr_reader :params
 
   # Returns the connection options used for connecting to API's
   #
   # @return [Hash] Returns the connection options used for connecting to API's
-  def em_connection_options
+  def em_connection_options(url)
+    uri = Addressable::URI.parse(url)
     {
       connect_timeout: 5,        # default connection setup timeout
       inactivity_timeout: 10,    # default connection inactivity (post-setup) timeout
@@ -23,7 +24,7 @@ class CoreApi
         cipher_list: 'ALL',
         verify_peer: false,
         ssl_version: 'TLSv1',
-        sni_hostname: @hostname
+        sni_hostname: uri.host
       },
       head: {
         'ACCEPT' => '*/*',
@@ -51,7 +52,7 @@ class CoreApi
   # @param [String] url The URL that will be used in the HTTP request
   # @return [EventMachine::HttpRequest] Returns an http request object
   def em_request(url, options)
-    em_request = EventMachine::HttpRequest.new(url, em_connection_options)
+    em_request = EventMachine::HttpRequest.new(url, em_connection_options(url))
     em_request.send(options.fetch('http_method', 'get'), em_request_options)
   end
 

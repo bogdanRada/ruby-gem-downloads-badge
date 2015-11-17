@@ -90,7 +90,7 @@ class BadgeApi < CoreApi
   # @return [String] The URL that will be used in fetching the SVG image from shields.io server
   def build_badge_url(extension = image_extension)
     colour = @downloads.blank? ? 'lightgrey' : @params.fetch('color', 'blue')
-    "#{@base_url}/badge/#{status_param}-#{format_number_of_downloads}-#{colour}.#{extension}?#{additional_params}"
+    "https://img.shields.io/badge/#{status_param}-#{format_number_of_downloads}-#{colour}.#{extension}?#{additional_params}"
   end
 
   # Method that is used for building the URL for fetching the SVG Image, and actually

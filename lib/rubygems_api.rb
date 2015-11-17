@@ -5,6 +5,7 @@ require_relative './core_api'
 #   @return [Proc] The callback that is executed after info is fetched
 class RubygemsApi < CoreApi
   # the base url to which the API will connect for fetching information about gems
+  BASE_URL = "https://rubygems.org"
 
   attr_reader :callback
 
@@ -19,8 +20,6 @@ class RubygemsApi < CoreApi
   def initialize(params, callback)
     @params = params.stringify_keys
     @callback = callback
-    @hostname = 'rubygems.org'
-    @base_url = "https://#{@hostname}"
     fetch_downloads_data
   end
 
@@ -109,7 +108,7 @@ class RubygemsApi < CoreApi
   #
   # @return [void]
   def fetch_gem_stable_version_data
-    fetch_data("#{@base_url}/api/v1/versions/#{gem_name}.json", 'callback' => @callback) do |http_response|
+    fetch_data("#{RubygemsApi::BASE_URL}/api/v1/versions/#{gem_name}.json", 'callback' => @callback) do |http_response|
       latest_stable_version_details = get_latest_stable_version_details(http_response)
       downloads_count = latest_stable_version_details['downloads_count'] unless latest_stable_version_details.blank?
       @callback.call downloads_count
@@ -121,7 +120,7 @@ class RubygemsApi < CoreApi
   #
   # @return [void]
   def fetch_specific_version_data
-    fetch_data("#{@base_url}/api/v1/downloads/#{gem_name}-#{gem_version}.json", 'callback' => @callback) do |http_response|
+    fetch_data("#{RubygemsApi::BASE_URL}/api/v1/downloads/#{gem_name}-#{gem_version}.json", 'callback' => @callback) do |http_response|
       downloads_count = http_response['version_downloads']
       downloads_count = http_response['total_downloads'] if display_total
       @callback.call downloads_count
@@ -133,7 +132,7 @@ class RubygemsApi < CoreApi
   #
   # @return [void]
   def fetch_gem_data_without_version
-    fetch_data("#{@base_url}/api/v1/gems/#{gem_name}.json", 'callback' => @callback) do |http_response|
+    fetch_data("#{RubygemsApi::BASE_URL}/api/v1/gems/#{gem_name}.json", 'callback' => @callback) do |http_response|
       downloads_count = http_response['version_downloads']
       downloads_count = http_response['downloads'] if display_total
       @callback.call downloads_count
