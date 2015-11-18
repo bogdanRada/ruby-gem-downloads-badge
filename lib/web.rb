@@ -92,7 +92,6 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   # @return [Lambda] The lambda that is used as callback to other APIS
   def badge_callback(out, additional_params = {})
     lambda do |downloads|
-      set_content_type
       original_params = CGI::parse(request.query_string)
       BadgeApi.new(params.merge(additional_params), original_params, out, downloads)
     end
@@ -114,6 +113,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   # @param [Block] block The block that is executed after stream is open
   # @return [void]
   def use_stream(&block)
+    set_content_type
     stream :keep_open do |out|
       block.call(out)
     end
