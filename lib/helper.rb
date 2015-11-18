@@ -1,9 +1,9 @@
 # module that is used for formatting numbers using metrics
 module Helper
-
 # function that makes the methods incapsulated as utility functions
 
 module_function
+
 delegate :settings, to: :RubygemsDownloadShieldsApp
 delegate :logger, to: :settings
 
@@ -113,7 +113,6 @@ end
 def find_version(versions, number)
   number.blank? ? {} : versions.find { |val| val['number'] == number }
 end
-
 
 # Method that is used to return the last item from an array of strings.
 # Will return empty string if array is blank
