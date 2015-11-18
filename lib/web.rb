@@ -145,7 +145,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   #
   # @return [void]
   def set_content_type
-    params[:extension] = params.fetch(:extension, 'svg')
+    params[:extension] = params.fetch('extension', 'svg')
     mime_type = Rack::Mime::MIME_TYPES[".#{params[:extension]}"]
     content_type "#{mime_type};Content-Encoding: gzip; charset=utf-8;"
   end
