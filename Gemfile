@@ -22,7 +22,6 @@ group :development, :test do
 
   gem 'reek'
   gem 'rubocop'
-  gem 'phare'
 
   gem 'yard'
   gem 'yard-rspec'

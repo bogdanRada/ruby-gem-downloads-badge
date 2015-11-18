@@ -12,12 +12,10 @@ class RequestMiddleware
   def request(client, head, body)
     puts "############## HTTP REQUEST  #####################\n"
     puts JSON.pretty_generate(
-      {
-        headers: head,
-        url: client.req.uri,
-        body: body,
-        object: client.inspect
-      }
+      headers: head,
+      url: client.req.uri,
+      body: body,
+      object: client.inspect
     )
     [head, body]
   end
@@ -31,15 +29,10 @@ class RequestMiddleware
     puts "############## HTTP RESPONSE  #####################\n"
     headers = resp.response_header
     puts JSON.pretty_generate(
-      {
-        headers: headers,
-        status: headers.status,
-        body: force_utf8_encoding(resp.response.to_s.inspect),
-      }
+      headers: headers,
+      status: headers.status,
+      body: force_utf8_encoding(resp.response.to_s.inspect)
     )
     resp
   end
-
-
-
 end
