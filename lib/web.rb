@@ -124,8 +124,8 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   # @return [void]
   def register_em_error_handler
     EM.error_handler do |error|
-      puts "Error during event loop : #{error.inspect}"
-      puts error.backtrace
+      logger.debug "Error during event loop : #{error.inspect}"
+      logger.debug error.backtrace
     end
   end
 
