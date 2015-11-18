@@ -1,8 +1,11 @@
 # module that is used for formatting numbers using metrics
 module Helper
+
 # function that makes the methods incapsulated as utility functions
 
 module_function
+delegate :settings, to: :RubygemsDownloadShieldsApp
+delegate :logger, to: :settings
 
 # Returns the display_type from the params , otherwise nil
 #
@@ -111,19 +114,6 @@ def find_version(versions, number)
   number.blank? ? {} : versions.find { |val| val['number'] == number }
 end
 
-# Method that returns the logger used by the application
-#
-# @return [Logger]
-def logger
-  app_settings.logger
-end
-
-# Method that returns the settings used by the application
-#
-# @return [Object]
-def app_settings
-  RubygemsDownloadShieldsApp.settings
-end
 
 # Method that is used to return the last item from an array of strings.
 # Will return empty string if array is blank
