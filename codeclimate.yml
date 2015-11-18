@@ -43,9 +43,8 @@ engines:
 
  ratings:
    paths:
-   - config/**
-   - lib/**
-   - web.rb
+   - Gemfile.lock
+   - "**.rb"
 
 # You can globally exclude files from being analyzed by any engine using the
 # exclude_paths key.
@@ -53,3 +52,5 @@ engines:
 exclude_paths:
   - bin/**/*
   - vendor/**/*
+  - spec/**/*
+  - test/**/*
