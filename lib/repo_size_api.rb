@@ -1,17 +1,17 @@
 require_relative './core_api'
-# class used for connecting to runygems.org and downloading info about a gem
+# class used for connecting to github api and retrieves information about repository
 #
 # @!attribute callback
-#   @return [Proc] The callback that is executed after info is fetched
+#   @return [Proc] The callback that is executed after the info is fetched from Github API
 class RepoSizeApi < CoreApi
   # the base url to which the API will connect for fetching information about gems
 
   attr_reader :callback
 
   # Method used to instantiate an instance of RubygemsApi class with the params received from URL
-  #
+  # @see #fetch_repo_data
   # @param [Hash] params The params received from URL
-  # @param [Proc] callback The callback that is executed after info is fetched
+  # @param [Proc] callback The callback that is executed after the info is fetched from Github API
   # @return [void]
   def initialize(params, callback)
     @params = params.stringify_keys
@@ -22,7 +22,7 @@ class RepoSizeApi < CoreApi
   # Method that checks if the gem is valid , and if it is will fetch the infromation about the gem
   # and pass the callback to the method . If is not valid the callback will be called with nil value
   # @see #valid?
-  # @see #fetch_dowloads_info
+  # @see #fetch_info
   #
   # @param [Lambda] callback The callback that needs to be executed after the information is downloaded
   # @return [void]
@@ -34,24 +34,18 @@ class RepoSizeApi < CoreApi
     end
   end
 
-  # This method will decide what API method need to be called, depending if we want the latest stable version,
-  # a specific version or the latest one and passs the callback to the method call
-  # @see #fetch_gem_data_without_version
-  # @see #gem_stable_version?
-  # @see #fetch_specific_version_data
-  # @see #fetch_gem_stable_version_data
+  # This method fetches data from Github api and returns the size in
   #
-  # @param [Lambda] callback The callback that needs to be executed after the information is downloaded
   # @return [void]
   def fetch_info
     fetch_data("https://api.github.com/repos/#{gem_path}", 'callback' => @callback) do |http_response|
-      @callback.call format_to_filesize(http_response['size'].to_i)
+      @callback.call http_response['size'].to_i
     end
   end
 
   # Method that is used to determine if the gem is valid by checking his name and version
   # THe name is required and the version need to checked if is stable or sintactically valid
-  # @see  #gem_with_version?
+  # @see  #gem_path
   #
   # @return [Boolean] Returns true if the gem is valid
   def valid?

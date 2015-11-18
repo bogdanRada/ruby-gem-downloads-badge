@@ -20,8 +20,6 @@ group :development, :test do
   gem 'rerun'
   gem 'rb-fsevent'
 
-  gem 'overcommit'
-  gem 'brakeman'
   gem 'reek'
   gem 'rubocop'
   gem 'phare'

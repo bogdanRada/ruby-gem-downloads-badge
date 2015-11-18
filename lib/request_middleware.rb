@@ -8,10 +8,15 @@ class RequestMiddleware
   # @param [String, nil] body The body sent to API
   # @return [Array<Hash,String>] Returns the http headers and the body
   def request(client, head, body)
-    puts "HTTP request to #{client.req.uri}".inspect
-    puts [:request_client, client.inspect]
-    puts [:request_headers, head.inspect]
-    puts [:request_body, body.inspect]
+    puts 'HTTP request'
+    puts JSON.pretty_generate(
+      {
+        headers: head,
+        url: client.req.uri,
+        body: body,
+        object: client.inspect
+      }
+    )
     [head, body]
   end
 
@@ -21,10 +26,15 @@ class RequestMiddleware
   # @param [EventMachine::HttpResponse] resp The Http response received from API
   # @return [EventMachine::HttpResponse]
   def response(resp)
-    puts [:response_headers, resp.response_header.inspect]
-    puts [:response_status, resp.response_header.status]
-    puts [:response_object, resp.inspect]
-    puts [:response_body, resp.response.inspect]
+    puts 'HTTP response'
+    headers = resp.response_header
+    puts JSON.pretty_generate(
+      {
+        headers: headers,
+        status: headers.status,
+        body: resp.response,
+      }
+    )
     resp
   end
 end

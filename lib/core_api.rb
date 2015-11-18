@@ -15,16 +15,14 @@ class CoreApi
   # Returns the connection options used for connecting to API's
   #
   # @return [Hash] Returns the connection options used for connecting to API's
-  def em_connection_options(url)
-    uri = Addressable::URI.parse(url)
+  def em_connection_options
     {
       connect_timeout: 5,        # default connection setup timeout
       inactivity_timeout: 10,    # default connection inactivity (post-setup) timeout
       ssl: {
         cipher_list: 'ALL',
         verify_peer: false,
-        ssl_version: 'TLSv1',
-        sni_hostname: uri.host
+        ssl_version: 'TLSv1'
       },
       head: {
         'ACCEPT' => '*/*',
@@ -52,7 +50,9 @@ class CoreApi
   # @param [String] url The URL that will be used in the HTTP request
   # @return [EventMachine::HttpRequest] Returns an http request object
   def em_request(url, options)
-    em_request = EventMachine::HttpRequest.new(url, em_connection_options(url))
+    uri = Addressable::URI.parse(url)
+    conn_options = em_connection_options.merge(ssl: { sni_hostname: uri.host })
+    em_request = EventMachine::HttpRequest.new(url, conn_options)
     em_request.send(options.fetch('http_method', 'get'), em_request_options)
   end
 

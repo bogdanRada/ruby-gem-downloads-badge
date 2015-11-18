@@ -71,20 +71,19 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
       send_file File.join(settings.public_folder, 'favicon.ico'), disposition: 'inline', type: 'image/x-icon'
     else
       em_request_badge do |out|
-        RubygemsApi.new(params, badge_callback(out, {"api" => "rubygems"}))
+        RubygemsApi.new(params, badge_callback(out, 'api' => 'rubygems'))
       end
     end
   end
 
-   aget '/repo_size/*' do
-      em_request_badge do |out|
-        RepoSizeApi.new(
-          params,
-          badge_callback(out, "api" => "github", 'label' => params.fetch('label', 'repo_size'))
-        )
-      end
+  aget '/repo_size/*' do
+    em_request_badge do |out|
+      RepoSizeApi.new(
+        params,
+        badge_callback(out, 'api' => 'github', 'label' => params.fetch('label', 'repo_size'))
+      )
     end
-
+  end
 
   # Method that fetch the badge
   #
@@ -93,6 +92,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   # @return [Lambda] The lambda that is used as callback to other APIS
   def badge_callback(out, additional_params = {})
     lambda do |downloads|
+      set_content_type
       original_params = CGI::parse(request.query_string)
       BadgeApi.new(params.merge(additional_params), original_params, out, downloads)
     end
@@ -103,16 +103,40 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   # @param [Block] block The block that is executed after Eventmachine starts
   # @return [void]
   def em_request_badge(&block)
-    set_content_type
+    use_stream do |out|
+      register_em_error_handler
+      run_eventmachine(out, &block)
+    end
+  end
+
+  # Method that opens the stream and executes a block
+  #
+  # @param [Block] block The block that is executed after stream is open
+  # @return [void]
+  def use_stream(&block)
     stream :keep_open do |out|
-      EM.error_handler do |error|
-        puts "Error during event loop : #{error.inspect}"
-        puts error.backtrace
-      end
-      EM.run do
-        EM::HttpRequest.use RequestMiddleware if settings.development
-        block.call(out)
-      end
+      block.call(out)
+    end
+  end
+
+  # Method that registers a error handler on Eventmachine
+  #
+  # @return [void]
+  def register_em_error_handler
+    EM.error_handler do |error|
+      puts "Error during event loop : #{error.inspect}"
+      puts error.backtrace
+    end
+  end
+
+  # Method that runs a block after eventmachine starts
+  # @param [Sinatra::Stream] out The stream where the response will be appended
+  # @param [Block] block The block that is executed after eventmachine starts running
+  # @return [void]
+  def run_eventmachine(out, &block)
+    EM.run do
+      EM::HttpRequest.use RequestMiddleware if settings.development
+      block.call(out)
     end
   end
 
@@ -121,16 +145,8 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   #
   # @return [void]
   def set_content_type
-    if params[:extension].present?
-      mime_type = Rack::Mime::MIME_TYPES[".#{params[:extension]}"]
-      if mime_type.present?
-        content_type "#{mime_type};  Content-Encoding: gzip; charset=utf-8; "
-      else
-        content_type 'image/svg+xml;  Content-Encoding: gzip; charset=utf-8; '
-        params[:extension] = 'svg'
-      end
-    else
-      content_type 'image/svg+xml;  Content-Encoding: gzip; charset=utf-8; '
-    end
+    params[:extension] = params.fetch(:extension, 'svg')
+    mime_type = Rack::Mime::MIME_TYPES[".#{params[:extension]}"]
+    content_type "#{mime_type};Content-Encoding: gzip; charset=utf-8;"
   end
 end

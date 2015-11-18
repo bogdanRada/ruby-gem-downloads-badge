@@ -31,8 +31,6 @@ class BadgeApi < CoreApi
     @original_params = original_params
     @output_buffer = output_buffer
     @downloads = downloads
-    @hostname = 'img.shields.io'
-    @base_url = "https://#{@hostname}"
     fetch_image_shield
   end
 
@@ -113,6 +111,6 @@ class BadgeApi < CoreApi
   #
   # @return [String] If the downloads argument is blank will return invalid, otherwise will format the numbere either with metrics or delimiters
   def format_number_of_downloads
-     @downloads.blank? ? BadgeApi::INVALID_COUNT : NumberFormatter.new(@downloads, @params)
+    @downloads.blank? ? BadgeApi::INVALID_COUNT : NumberFormatter.new(@downloads, @params)
   end
 end

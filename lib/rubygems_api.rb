@@ -5,7 +5,7 @@ require_relative './core_api'
 #   @return [Proc] The callback that is executed after info is fetched
 class RubygemsApi < CoreApi
   # the base url to which the API will connect for fetching information about gems
-  BASE_URL = "https://rubygems.org"
+  BASE_URL = 'https://rubygems.org'
 
   attr_reader :callback
 

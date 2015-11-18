@@ -19,7 +19,7 @@ task :all do |_t|
   if ENV['TRAVIS']
     exec(' bundle exec phare &&  bundle exec rspec  && bundle exec rake coveralls:push')
   else
-    exec(' bundle exec rubocop -a . && bundle exec phare && bundle exec rspec')
+    exec(' bundle exec rubocop -a . && bundle exec phare && bundle exec reek && bundle exec rspec')
   end
 end
 
