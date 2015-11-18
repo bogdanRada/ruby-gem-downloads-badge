@@ -12,6 +12,13 @@
 # For a list of all available engines, see here:
 # http://docs.codeclimate.com/article/296-engines-available-engines
 
+languages:
+  Ruby: true
+  JavaScript: true
+  PHP: true
+  Python: true
+
+
 engines:
 # to turn on an engine, add it here and set enabled to `true`
 # to turn off an engine, set enabled to `false` or remove it
@@ -54,3 +61,4 @@ exclude_paths:
   - vendor/**/*
   - spec/**/*
   - test/**/*
+  - "codeclimate.yml"
