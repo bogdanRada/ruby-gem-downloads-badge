@@ -107,9 +107,8 @@ class NumberFormatter
   # @param [String] name The name of the bytesize
   # @return [String] Returns the format of the bytes with two decimal points followed by the name
   def byte_format(bytes, name)
-    format('%.2f %s', (@number.to_f / (bytes / 1024)).round(2), name)
+    format('%.1f %s', (@number.to_f / (bytes / 1024)).round(1), name)
   end
-
   # Formats a number as a filesize
   # @see #byte_format
   # @return [String] The filesize of the number
@@ -121,7 +120,9 @@ class NumberFormatter
       'gb' => 1024**4,
       'tb' => 1024**5,
       'pb' => 1024**6,
-      'eb' => 1024**7
+      'eb' => 1024**7,
+      'zb' => 1024**8,
+      'yb' => 1024**9
     }.each_pair do |name, bytes|
       next if @number >= bytes
       return byte_format(bytes, name)
