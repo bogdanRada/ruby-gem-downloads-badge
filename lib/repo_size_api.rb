@@ -49,7 +49,7 @@ class RepoSizeApi < CoreApi
   #
   # @return [Boolean] Returns true if the gem is valid
   def valid?
-    gem_path.present?
+    gem_path.present? && gem_path.scan('/').length  == 1
   end
 
   # This method is used to fetch the repo path from URL
