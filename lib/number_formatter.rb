@@ -107,7 +107,7 @@ class NumberFormatter
   # @param [String] name The name of the bytesize
   # @return [String] Returns the format of the bytes with two decimal points followed by the name
   def byte_format(bytes, name)
-    format('%.1f %s', (@number.to_f / (bytes / 1024)).round(1), name)
+    format('%g %s', (@number.to_f / (bytes / 1024)).round(1), name)
   end
   # Formats a number as a filesize
   # @see #byte_format
