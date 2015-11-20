@@ -63,7 +63,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
     #    etag SecureRandom.hex
     #    last_modified(Time.now - 60)
     Time.zone = 'UTC'
-    expires Time.zone.now - 1, :no_cache, :must_revalidate, max_age: 0
+    expires Time.zone.now - 1, :no_cache,:no_store, :must_revalidate, max_age: 0
   end
 
   aget '/?:gem?/?:version?' do
