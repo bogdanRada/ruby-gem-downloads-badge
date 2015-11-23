@@ -34,6 +34,11 @@ class RepoSizeApi < CoreApi
     end
   end
 
+
+  def em_request_options
+    super.merge(:head=>{"Authorization" => "token #{ENV['GITHUB_API_KEY']}"  })
+  end
+
   # This method fetches data from Github api and returns the size in
   #
   # @return [void]
