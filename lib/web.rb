@@ -22,7 +22,7 @@ require 'addressable/uri'
 Dir.glob('./config/initializers/**/*.rb') { |file| require file }
 Dir.glob('./lib**/*.rb') { |file| require file }
 
-require_relative './request_middleware.rb' if ENV['RACK_ENV'] == 'development'
+require_relative './request_middleware.rb'
 
 # class that is used to download shields for ruby gems using their name and version
 class RubygemsDownloadShieldsApp < Sinatra::Base
@@ -127,7 +127,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   # @return [void]
   def run_eventmachine(out, &block)
     EM.run do
-      EM::HttpRequest.use RequestMiddleware if settings.development
+      EM::HttpRequest.use RequestMiddleware
       block.call(out)
     end
   end
