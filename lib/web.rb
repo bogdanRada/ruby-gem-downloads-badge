@@ -16,7 +16,6 @@ require 'active_support/core_ext/object/blank'
 require 'active_support/core_ext/hash/keys'
 require 'active_support/duration.rb'
 require 'active_support/core_ext/time/zones.rb'
-require 'typhoeus'
 require 'addressable/uri'
 
 Dir.glob('./config/initializers/**/*.rb') { |file| require file }
