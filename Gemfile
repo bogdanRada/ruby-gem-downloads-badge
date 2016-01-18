@@ -19,9 +19,6 @@ group :development, :test do
   gem 'rerun'
   gem 'rb-fsevent'
 
-  gem 'reek'
-  gem 'rubocop'
-
   gem 'yard'
   gem 'yard-rspec'
   gem 'redcarpet'
