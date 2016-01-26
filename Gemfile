@@ -5,7 +5,7 @@ gem 'sinatra'
 gem 'rack-handlers'
 gem 'rainbows'
 gem 'em-http-request'
-gem 'eventmachine', github: 'eventmachine/eventmachine'
+gem 'eventmachine', github: 'eventmachine/eventmachine', branch: '5e8606edcf930fbe09cc232fe2880bff9ab3e696'
 gem 'versionomy'
 gem 'sinatra-outputbuffer'
 gem 'sinatra-settings'
@@ -20,7 +20,7 @@ group :development, :test do
   gem 'rerun'
   gem 'rb-fsevent'
   gem 'rake'
-  
+
   gem 'yard'
   gem 'yard-rspec'
   gem 'redcarpet'

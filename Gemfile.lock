@@ -1,13 +1,14 @@
 GIT
   remote: git://github.com/eventmachine/eventmachine.git
   revision: 5e8606edcf930fbe09cc232fe2880bff9ab3e696
+  branch: 5e8606edcf930fbe09cc232fe2880bff9ab3e696
   specs:
     eventmachine (1.2.0.dev.1)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (4.2.5)
+    activesupport (4.2.5.1)
       i18n (~> 0.7)
       json (~> 1.7, >= 1.7.7)
       minitest (~> 5.1)
