@@ -17,8 +17,8 @@ class CoreApi
   # @return [Hash] Returns the connection options used for connecting to API's
   def em_connection_options
     {
-      connect_timeout: 5,        # default connection setup timeout
-      inactivity_timeout: 10,    # default connection inactivity (post-setup) timeout
+      connect_timeout: 30,        # default connection setup timeout
+      inactivity_timeout: 60,    # default connection inactivity (post-setup) timeout
       ssl: {
         cipher_list: 'ALL',
         verify_peer: false,
