@@ -21,7 +21,8 @@ require 'addressable/uri'
 Dir.glob('./config/initializers/**/*.rb') { |file| require file }
 Dir.glob('./lib**/*.rb') { |file| require file }
 
-require_relative './request_middleware.rb'
+require_relative './request_middleware'
+require_relative './cookies/cookie_persist'
 
 # class that is used to download shields for ruby gems using their name and version
 class RubygemsDownloadShieldsApp < Sinatra::Base
@@ -127,6 +128,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   def run_eventmachine(out, &block)
     EM.run do
       EM::HttpRequest.use RequestMiddleware
+      EM::HttpRequest.use CookiePersist
       block.call(out)
     end
   end

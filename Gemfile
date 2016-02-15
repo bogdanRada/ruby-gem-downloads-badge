@@ -13,7 +13,7 @@ gem 'sinatra-contrib'
 gem 'rack'
 gem 'async_sinatra'
 gem 'activesupport'
-
+gem 'addressable'
 
 group :development, :test do
   gem 'foreman'

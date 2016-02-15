@@ -56,6 +56,14 @@ class CoreApi
     em_request.send(options.fetch('http_method', 'get'), em_request_options)
   end
 
+  def persist_cookies(http)
+    http.headers { |head|
+      cookie_string =  head[EM::HttpClient::SET_COOKIE]
+      puts cookie_string.inspect
+      CookiePersist.cookies << cookie_string
+    }
+  end
+
   # Method that fetch the data from a URL and registers the error and success callback to the HTTP object
   # @see #em_request
   # @see #register_error_callback
@@ -68,6 +76,7 @@ class CoreApi
   def fetch_data(url, options = {}, &block)
     options = options.stringify_keys
     http = em_request(url, options)
+    #persist_cookies(http)
     register_error_callback(http)
     register_success_callback(http, options, &block)
   end
