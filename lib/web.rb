@@ -22,7 +22,6 @@ Dir.glob('./config/initializers/**/*.rb') { |file| require file }
 Dir.glob('./lib**/*.rb') { |file| require file }
 
 require_relative './request_middleware'
-require_relative './cookies/cookie_persist'
 
 # class that is used to download shields for ruby gems using their name and version
 class RubygemsDownloadShieldsApp < Sinatra::Base
@@ -42,6 +41,14 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   set :static, false # set up static file routing
   set :public_folder, File.join(settings.root, 'static') # set up the static dir (with images/js/css inside)
   set :views, File.join(settings.root, 'views') # set up the views dir
+  set :request_cookies, Thread.current[:cookies] ||= []
+
+
+  def self.cookie_hash
+    CookieHash.new.tap { |hsh|
+      settings.request_cookies.uniq.each { |c| hsh.add_cookies(c) }
+    }
+  end
 
   ::Logger.class_eval do
     alias_method :write, :<<
@@ -128,7 +135,6 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   def run_eventmachine(out, &block)
     EM.run do
       EM::HttpRequest.use RequestMiddleware
-      EM::HttpRequest.use CookiePersist
       block.call(out)
     end
   end

@@ -59,8 +59,7 @@ class CoreApi
   def persist_cookies(http)
     http.headers { |head|
       cookie_string =  head[EM::HttpClient::SET_COOKIE]
-      puts cookie_string.inspect
-      CookiePersist.cookies << cookie_string
+      CookiePersist.cookies << cookie_string if cookie_string.present?
     }
   end
 
@@ -76,7 +75,7 @@ class CoreApi
   def fetch_data(url, options = {}, &block)
     options = options.stringify_keys
     http = em_request(url, options)
-    #persist_cookies(http)
+    persist_cookies(http)
     register_error_callback(http)
     register_success_callback(http, options, &block)
   end
