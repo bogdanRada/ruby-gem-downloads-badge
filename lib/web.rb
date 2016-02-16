@@ -24,7 +24,7 @@ Dir.glob('./lib**/*.rb') { |file| require file }
 
 require_relative './request_middleware'
 require_relative './cookie_hash'
-require 'thread'
+
 
 
 # class that is used to download shields for ruby gems using their name and version
@@ -46,10 +46,15 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   set :static, false # set up static file routing
   set :public_folder, File.join(settings.root, 'static') # set up the static dir (with images/js/css inside)
   set :views, File.join(settings.root, 'views') # set up the views dir
-  set :request_cookies, {}
 
 
 
+  def self.request_cookies_mapper
+     Thread.current[:request_cookies] ||= {}
+  end
+
+  set :request_cookies, RubygemsDownloadShieldsApp.request_cookies_mapper
+  
   def self.cookie_hash(url)
     CookieHash.new.tap { |hsh|
       settings.request_cookies[url].uniq.each { |c| hsh.add_cookies(c) }
@@ -64,7 +69,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   set :log_directory, File.join(settings.root, 'log')
   FileUtils.mkdir_p(settings.log_directory) unless File.directory?(settings.log_directory)
   set :access_log, File.open(File.join(settings.log_directory, "#{settings.environment}.log"), 'a+')
-  set :access_logger, ::Logger.new(settings.access_log)
+  set :access_logger, development ? ::Logger.new(STDOUT) : ::Logger.new(settings.access_log)
   set :logger, settings.access_logger
 
   configure do
@@ -79,7 +84,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
     expires Time.zone.now - 1, :no_cache,:no_store, :must_revalidate, max_age: 0
   end
 
-  aget '/?:gem?/?:version?' do
+  get '/?:gem?/?:version?' do
     settings.logger.debug("Sinatra runing in #{Thread.current}")
     if !params[:gem].nil? && params[:gem].include?('favicon')
       send_file File.join(settings.public_folder, 'favicon.ico'), disposition: 'inline', type: 'image/x-icon'

@@ -13,6 +13,7 @@ class RequestMiddleware
   def request(client, head, body)
     puts "############## HTTP REQUEST  #####################\n"
     puts JSON.pretty_generate(
+      request_cookies: request_cookies,
       headers: head,
       url: client.req.uri,
       body: body,

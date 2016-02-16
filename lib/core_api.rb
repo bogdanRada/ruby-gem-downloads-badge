@@ -56,20 +56,20 @@ class CoreApi
     em_request.send(options.fetch('http_method', 'get'), em_request_options(options))
   end
 
-  def build_full_path(uri)
-    path = uri.path.to_s
-    path << "?#{uri.query}" if uri.query.present?
-    path << "##{uri.fragment}" if uri.fragment.present?
-    path
-  end
-
-  def persist_cookies(http, full_url)
+  def persist_cookies(http, url)
     http.headers { |head|
       cookie_string =  head[EM::HttpClient::SET_COOKIE]
-      puts [request_cookies, cookie_string].inspect
-      request_cookies[full_url] << cookie_string if cookie_string.present?
-      puts request_cookies.inspect
+      request_cookies[url] = []
+      request_cookies[url] << cookie_string if cookie_string.present?
     }
+  end
+
+  def add_cookie_header(options)
+    base_url = options['base_url']
+    puts base_url.inspect
+    options[:head] = {}
+    options[:head]['cookie'] = cookie_hash(base_url).to_cookie_string if request_cookies[base_url].present?
+    base_url
   end
 
   # Method that fetch the data from a URL and registers the error and success callback to the HTTP object
@@ -83,10 +83,9 @@ class CoreApi
   # @return [void]
   def fetch_data(url, options = {}, &block)
     options = options.stringify_keys
-    full_url =  build_full_path(url)
-    #options[:head]['cookie'] = cookie_hash(full_url).to_cookie_string if request_cookies[full_url].present?
+    base_url = add_cookie_header(options)
     http = em_request(url, options)
-  #  persist_cookies(http, full_url)
+    persist_cookies(http, base_url)
     register_error_callback(http)
     register_success_callback(http, options, &block)
   end
