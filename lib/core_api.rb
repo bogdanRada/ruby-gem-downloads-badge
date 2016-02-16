@@ -34,13 +34,13 @@ class CoreApi
   # Returns the request options used for connecting to API's
   #
   # @return [Hash] Returns the request options used for connecting to API's
-  def em_request_options
+  def em_request_options(options = {})
     {
       redirects: 5,              # follow 3XX redirects up to depth 5
       keepalive: true,           # enable keep-alive (don't send Connection:close header)
-      head: {
+      head: (options[:head] || {}).merge(
         'ACCEPT' => '*/*'
-      }
+      )
     }
   end
 
@@ -53,14 +53,23 @@ class CoreApi
     uri = Addressable::URI.parse(url)
     conn_options = em_connection_options.merge(ssl: { sni_hostname: uri.host })
     em_request = EventMachine::HttpRequest.new(url, conn_options)
-    em_request.send(options.fetch('http_method', 'get'), em_request_options)
+    em_request.send(options.fetch('http_method', 'get'), em_request_options(options))
   end
 
-  def persist_cookies(http)
+  def persist_cookies(http, url)
     http.headers { |head|
       cookie_string =  head[EM::HttpClient::SET_COOKIE]
-      request_cookies << cookie_string if cookie_string.present?
+      request_cookies[url] = []
+      request_cookies[url] << cookie_string if cookie_string.present?
     }
+  end
+
+  def add_cookie_header(options)
+    base_url = options['base_url']
+    puts base_url.inspect
+    options[:head] = {}
+    options[:head]['cookie'] = cookie_hash(base_url).to_cookie_string if request_cookies[base_url].present?
+    base_url
   end
 
   # Method that fetch the data from a URL and registers the error and success callback to the HTTP object
@@ -74,8 +83,9 @@ class CoreApi
   # @return [void]
   def fetch_data(url, options = {}, &block)
     options = options.stringify_keys
+    base_url = add_cookie_header(options)
     http = em_request(url, options)
-    persist_cookies(http)
+    persist_cookies(http, base_url)
     register_error_callback(http)
     register_success_callback(http, options, &block)
   end

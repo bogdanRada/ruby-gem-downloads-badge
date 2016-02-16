@@ -1,5 +1,4 @@
 require_relative './helper'
-require_relative './cookie_hash'
 # middleware used only in development for testing purposes
 class RequestMiddleware
   include Helper
@@ -13,9 +12,8 @@ class RequestMiddleware
   # @return [Array<Hash,String>] Returns the http headers and the body
   def request(client, head, body)
     puts "############## HTTP REQUEST  #####################\n"
-    head['cookie'] = cookie_hash.to_cookie_string if request_cookies.present?
     puts JSON.pretty_generate(
-      request_cookies: request_cookies.inspect,
+      request_cookies: request_cookies,
       headers: head,
       url: client.req.uri,
       body: body,

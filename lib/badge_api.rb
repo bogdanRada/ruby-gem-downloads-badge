@@ -12,6 +12,8 @@ class BadgeApi < CoreApi
   # constant that is used to show message for invalid badge
   INVALID_COUNT = 'invalid'
 
+  BASE_URL = 'https://img.shields.io'
+
   attr_reader :output_buffer, :downloads, :original_params
 
   # Initializes the instance with the params from controller, and will try to download the information about the rubygems
@@ -88,7 +90,7 @@ class BadgeApi < CoreApi
   # @return [String] The URL that will be used in fetching the SVG image from shields.io server
   def build_badge_url(extension = image_extension)
     colour = @downloads.blank? ? 'lightgrey' : @params.fetch('color', 'blue')
-    "https://img.shields.io/badge/#{status_param}-#{format_number_of_downloads}-#{colour}.#{extension}?#{additional_params}"
+    "#{BadgeApi::BASE_URL}/badge/#{status_param}-#{format_number_of_downloads}-#{colour}.#{extension}?#{additional_params}"
   end
 
   # Method that is used for building the URL for fetching the SVG Image, and actually
@@ -99,7 +101,7 @@ class BadgeApi < CoreApi
   #
   # @return [void]
   def fetch_image_shield
-    fetch_data(build_badge_url) do |http_response|
+    fetch_data(build_badge_url, 'base_url' => BadgeApi::BASE_URL) do |http_response|
       print_to_output_buffer(http_response, @output_buffer)
     end
   end

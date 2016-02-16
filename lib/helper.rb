@@ -5,7 +5,7 @@ module Helper
 module_function
 
 delegate :settings, :cookie_hash, to: :RubygemsDownloadShieldsApp
-delegate :logger, :request_cookies, to: :settings
+delegate :logger,:request_cookies, to: :settings
 # Returns the display_type from the params , otherwise nil
 #
 # @return [String, nil] Returns the display_type  from the params , otherwise nil
