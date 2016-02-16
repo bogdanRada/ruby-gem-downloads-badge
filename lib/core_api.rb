@@ -66,7 +66,6 @@ class CoreApi
 
   def add_cookie_header(options)
     base_url = options['base_url']
-    puts base_url.inspect
     options[:head] = {}
     options[:head]['cookie'] = cookie_hash(base_url).to_cookie_string if request_cookies[base_url].present?
     base_url
