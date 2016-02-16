@@ -34,13 +34,13 @@ class CoreApi
   # Returns the request options used for connecting to API's
   #
   # @return [Hash] Returns the request options used for connecting to API's
-  def em_request_options
+  def em_request_options(options = {})
     {
       redirects: 5,              # follow 3XX redirects up to depth 5
       keepalive: true,           # enable keep-alive (don't send Connection:close header)
-      head: {
+      head: (options[:head] || {}).merge(
         'ACCEPT' => '*/*'
-      }
+      )
     }
   end
 
@@ -53,13 +53,22 @@ class CoreApi
     uri = Addressable::URI.parse(url)
     conn_options = em_connection_options.merge(ssl: { sni_hostname: uri.host })
     em_request = EventMachine::HttpRequest.new(url, conn_options)
-    em_request.send(options.fetch('http_method', 'get'), em_request_options)
+    em_request.send(options.fetch('http_method', 'get'), em_request_options(options))
   end
 
-  def persist_cookies(http)
+  def build_full_path(uri)
+    path = uri.path.to_s
+    path << "?#{uri.query}" if uri.query.present?
+    path << "##{uri.fragment}" if uri.fragment.present?
+    path
+  end
+
+  def persist_cookies(http, full_url)
     http.headers { |head|
       cookie_string =  head[EM::HttpClient::SET_COOKIE]
-      request_cookies << cookie_string if cookie_string.present?
+      puts [request_cookies, cookie_string].inspect
+      request_cookies[full_url] << cookie_string if cookie_string.present?
+      puts request_cookies.inspect
     }
   end
 
@@ -74,8 +83,10 @@ class CoreApi
   # @return [void]
   def fetch_data(url, options = {}, &block)
     options = options.stringify_keys
+    full_url =  build_full_path(url)
+    #options[:head]['cookie'] = cookie_hash(full_url).to_cookie_string if request_cookies[full_url].present?
     http = em_request(url, options)
-    persist_cookies(http)
+  #  persist_cookies(http, full_url)
     register_error_callback(http)
     register_success_callback(http, options, &block)
   end
