@@ -46,15 +46,8 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   set :static, false # set up static file routing
   set :public_folder, File.join(settings.root, 'static') # set up the static dir (with images/js/css inside)
   set :views, File.join(settings.root, 'views') # set up the views dir
+  set :request_cookies, (Thread.current[:request_cookies] ||= {})
 
-
-
-  def self.request_cookies_mapper
-     Thread.current[:request_cookies] ||= {}
-  end
-
-  set :request_cookies, RubygemsDownloadShieldsApp.request_cookies_mapper
-  
   def self.cookie_hash(url)
     CookieHash.new.tap { |hsh|
       settings.request_cookies[url].uniq.each { |c| hsh.add_cookies(c) }
