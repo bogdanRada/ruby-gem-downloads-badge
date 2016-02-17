@@ -16,14 +16,16 @@ require 'versionomy'
 require 'active_support/all'
 require 'addressable/uri'
 
+Time.zone = 'UTC'
+ENV['TZ'] = 'UTC'
+
 Dir.glob('./config/initializers/**/*.rb') { |file| require file }
 Dir.glob('./lib**/*.rb') { |file| require file }
 
 require_relative './request_middleware'
 require_relative './cookie_hash'
 
-Time.zone = 'UTC'
-ENV['TZ'] = 'UTC'
+
 
 # class that is used to download shields for ruby gems using their name and version
 class RubygemsDownloadShieldsApp < Sinatra::Base
