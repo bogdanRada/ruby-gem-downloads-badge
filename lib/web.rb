@@ -13,10 +13,7 @@ require 'json'
 require 'net/http'
 require 'securerandom'
 require 'versionomy'
-require 'active_support/core_ext/object/blank'
-require 'active_support/core_ext/hash/keys'
-require 'active_support/duration.rb'
-require 'active_support/core_ext/time/zones.rb'
+require 'active_support/all'
 require 'addressable/uri'
 
 Dir.glob('./config/initializers/**/*.rb') { |file| require file }
@@ -25,7 +22,8 @@ Dir.glob('./lib**/*.rb') { |file| require file }
 require_relative './request_middleware'
 require_relative './cookie_hash'
 
-
+Time.zone = 'UTC'
+ENV['TZ'] = 'UTC'
 
 # class that is used to download shields for ruby gems using their name and version
 class RubygemsDownloadShieldsApp < Sinatra::Base
@@ -73,7 +71,6 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
     headers('Pragma' => 'no-cache')
     #    etag SecureRandom.hex
     #    last_modified(Time.now - 60)
-    Time.zone = 'UTC'
     expires Time.zone.now - 1, :no_cache,:no_store, :must_revalidate, max_age: 0
   end
 
@@ -128,8 +125,8 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   # @return [void]
   def register_em_error_handler
     EM.error_handler do |error|
-      logger.debug "Error during event loop : #{error.inspect}"
-      logger.debug error.backtrace
+      settings.logger.debug "Error during event loop : #{error.inspect}"
+      settings.logger.debug error.backtrace
     end
   end
 
