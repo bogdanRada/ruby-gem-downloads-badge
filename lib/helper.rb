@@ -43,7 +43,7 @@ end
 # @return [void]
 def dispatch_http_response(res, options, &block)
   callback = options.fetch('callback', nil)
-  (res.blank? && callback.present?) ? callback.call(res) : block.call(res)
+  (res.blank? && callback.present?) ? callback.call(nil, res) : block.call(res)
 end
 
 # Returns the metric powers of all metric prefixes . This method is used in metric display of numbers
