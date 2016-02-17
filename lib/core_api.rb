@@ -65,10 +65,11 @@ class CoreApi
   end
 
   def add_cookie_header(options)
+    set_time_zone
     base_url = options['base_url']
     options[:head] = {}
     cookie_h = request_cookies[base_url].present? ? cookie_hash(base_url) : {}
-    options[:head]['cookie'] = cookie_h.to_cookie_string if cookie_h.present? && DateTime.parse(cookie_h[:expires]).in_time_zone  > Time.zone.now
+    options[:head]['cookie'] = cookie_h.to_cookie_string if cookie_h.present? && cookie_h.expire_time >= Time.zone.now
     base_url
   end
 

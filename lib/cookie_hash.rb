@@ -15,6 +15,10 @@ class CookieHash < Hash #:nodoc:
     end
   end
 
+  def expire_time
+    DateTime.parse(self[:expires]).in_time_zone
+  end
+
   def to_cookie_string
     delete_if { |k, v| CLIENT_COOKIES.include?(k.to_s) }.collect { |k, v| "#{k}=#{v}" }.join("; ")
   end

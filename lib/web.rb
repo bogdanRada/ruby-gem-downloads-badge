@@ -16,8 +16,6 @@ require 'versionomy'
 require 'active_support/all'
 require 'addressable/uri'
 
-Time.zone = 'UTC'
-ENV['TZ'] = 'UTC'
 
 Dir.glob('./config/initializers/**/*.rb') { |file| require file }
 Dir.glob('./lib**/*.rb') { |file| require file }
@@ -54,6 +52,11 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
     }
   end
 
+  def self.set_time_zone
+    Time.zone = 'UTC'
+    ENV['TZ'] = 'UTC'
+  end
+
   ::Logger.class_eval do
     alias_method :write, :<<
     alias_method :puts, :<<
@@ -73,6 +76,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
     headers('Pragma' => 'no-cache')
     #    etag SecureRandom.hex
     #    last_modified(Time.now - 60)
+    self.class.set_time_zone
     expires Time.zone.now - 1, :no_cache,:no_store, :must_revalidate, max_age: 0
   end
 
