@@ -39,7 +39,7 @@ class CoreApi
       redirects: 5,              # follow 3XX redirects up to depth 5
       keepalive: true,           # enable keep-alive (don't send Connection:close header)
       head: (options[:head] || {}).merge(
-        'ACCEPT' => '*/*'
+      'ACCEPT' => '*/*'
       )
     }
   end
@@ -64,10 +64,10 @@ class CoreApi
     }
   end
 
-  def add_cookie_header(options)
+  def add_cookie_header(options, url)
     set_time_zone
-    base_url = options['base_url']
-    options[:head] = {}
+    options[:head] ||= {}
+    base_url = options.fetch('base_url', url) || url
     cookie_h = request_cookies[base_url].present? ? cookie_hash(base_url) : {}
     options[:head]['cookie'] = cookie_h.to_cookie_string if cookie_h.present? && cookie_h.expire_time >= Time.zone.now
     base_url
@@ -84,7 +84,7 @@ class CoreApi
   # @return [void]
   def fetch_data(url, options = {}, &block)
     options = options.stringify_keys
-    base_url = add_cookie_header(options)
+    base_url = add_cookie_header(options, url)
     http = em_request(url, options)
     persist_cookies(http, base_url)
     register_error_callback(http)

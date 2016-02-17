@@ -101,7 +101,7 @@ class BadgeApi < CoreApi
   #
   # @return [void]
   def fetch_image_shield
-    fetch_data(build_badge_url, 'base_url' => BadgeApi::BASE_URL) do |http_response|
+    fetch_data(build_badge_url, 'base_url' => @params.fetch('base_url', nil)) do |http_response|
       print_to_output_buffer(http_response, @output_buffer)
     end
   end
