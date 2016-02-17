@@ -108,11 +108,10 @@ class RubygemsApi < CoreApi
   #
   # @return [void]
   def fetch_gem_stable_version_data
-    url = "#{RubygemsApi::BASE_URL}/api/v1/versions/#{gem_name}.json"
-    fetch_data(url,'callback' => @callback) do |http_response|
+    fetch_data("#{RubygemsApi::BASE_URL}/api/v1/versions/#{gem_name}.json",'callback' => @callback) do |http_response|
       latest_stable_version_details = get_latest_stable_version_details(http_response)
       downloads_count = latest_stable_version_details['downloads_count'] unless latest_stable_version_details.blank?
-      @callback.call(url.gsub(RubygemsApi::BASE_URL, ''), downloads_count)
+      @callback.call(gem_name, downloads_count)
     end
   end
 
@@ -121,11 +120,10 @@ class RubygemsApi < CoreApi
   #
   # @return [void]
   def fetch_specific_version_data
-    url = "#{RubygemsApi::BASE_URL}/api/v1/downloads/#{gem_name}-#{gem_version}.json"
-    fetch_data(url, 'callback' => @callback) do |http_response|
+    fetch_data("#{RubygemsApi::BASE_URL}/api/v1/downloads/#{gem_name}-#{gem_version}.json", 'callback' => @callback) do |http_response|
       downloads_count = http_response['version_downloads']
       downloads_count = http_response['total_downloads'] if display_total
-      @callback.call(url.gsub(RubygemsApi::BASE_URL, ''), downloads_count)
+      @callback.call(gem_name, downloads_count)
     end
   end
 
@@ -134,11 +132,10 @@ class RubygemsApi < CoreApi
   #
   # @return [void]
   def fetch_gem_data_without_version
-    url = "#{RubygemsApi::BASE_URL}/api/v1/gems/#{gem_name}.json"
-    fetch_data(url, 'callback' => @callback) do |http_response|
+    fetch_data("#{RubygemsApi::BASE_URL}/api/v1/gems/#{gem_name}.json", 'callback' => @callback) do |http_response|
       downloads_count = http_response['version_downloads']
       downloads_count = http_response['downloads'] if display_total
-      @callback.call(url.gsub(RubygemsApi::BASE_URL, ''), downloads_count)
+      @callback.call(gem_name, downloads_count)
     end
   end
 

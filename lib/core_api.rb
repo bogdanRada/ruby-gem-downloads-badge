@@ -67,7 +67,7 @@ class CoreApi
   def add_cookie_header(options, url)
     set_time_zone
     options[:head] ||= {}
-    base_url = options.fetch('base_url', url) || url
+    base_url = options.fetch('gem_name', url) || url
     cookie_h = request_cookies[base_url].present? ? cookie_hash(base_url) : {}
     options[:head]['cookie'] = cookie_h.to_cookie_string if cookie_h.present? && cookie_h.expire_time >= Time.zone.now
     base_url
