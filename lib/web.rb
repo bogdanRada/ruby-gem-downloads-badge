@@ -86,7 +86,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
       send_file File.join(settings.public_folder, 'favicon.ico'), disposition: 'inline', type: 'image/x-icon'
     else
       em_request_badge do |out|
-        RubygemsApi.new(params, badge_callback(out, 'api' => 'rubygems'))
+        RubygemsApi.new(params, badge_callback(out, 'api' => 'rubygems', 'request_name' => params[:gem]))
       end
     end
   end
@@ -98,8 +98,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   # @param [Hash] additional_params The additional params needed for the badge
   # @return [Lambda] The lambda that is used as callback to other APIS
   def badge_callback(out, additional_params = {})
-    lambda do |gem_name, downloads|
-      additional_params['gem_name'] = gem_name
+    lambda do |downloads|
       original_params = CGI::parse(request.query_string)
       BadgeApi.new(params.merge(additional_params), original_params, out, downloads)
     end
