@@ -1,0 +1,12 @@
+sudo: false
+cache: bundler
+language: ruby
+before_install:
+  - "echo 'gem: --no-ri --no-rdoc' > ~/.gemrc"
+  - gem install bundler
+rvm:
+- 2.2.3
+env:
+ - RAILS_ENV=test RACK_ENV=test
+notifications:
+  email: false
