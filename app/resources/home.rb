@@ -114,15 +114,13 @@ module Resources
         else
           response.body = ""
           condition = Celluloid::Condition.new
-          Thread.new do
-            Thread.current.abort_on_exception = true
+          Thread.abort_on_exception = true
             blk = lambda do |downloads|
               original_params = request.query
-              self.class.badge_workers.work(params.merge('request_name' => params[:gem]), original_params, response.body ,  downloads, condition)
+              self.class.badge_workers.async.work(params.merge('request_name' => params[:gem]), original_params, response.body ,  downloads, condition)
             end
-            self.class.workers_pool.work(params, blk)
+            self.class.workers_pool.async.work(params, blk)
           end
-        end
         condition.wait
       end
 
