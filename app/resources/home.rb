@@ -53,6 +53,11 @@ module Resources
       ENV['TZ'] = 'UTC'
     end
 
+    def fetch_mime_type
+      params[:extension] = params.fetch('extension', 'svg')
+      Rack::Mime::MIME_TYPES[".#{params['extension']}"]
+      end
+
     def allowed_methods
       [ "GET"]
     end
@@ -64,7 +69,7 @@ module Resources
       end
 
       def content_types_provided
-        [["image/svg+xml", :to_svg]]
+        [[fetch_mime_type, :to_svg]]
       end
 
       def resource_exists?
@@ -89,9 +94,7 @@ module Resources
         end
 
         def set_content_type
-          params[:extension] = params.fetch('extension', 'svg')
-          mime_type = Rack::Mime::MIME_TYPES[".#{params['extension']}"]
-          "#{mime_type};Content-Encoding: gzip; charset=utf-8;"
+          "#{fetch_mime_type};Content-Encoding: gzip; charset=utf-8;"
         end
 
         def finish_request
@@ -99,7 +102,7 @@ module Resources
           response.headers['Cache-Control'] = "no-cache, must-revalidate, max-age=-1"
           response.headers['Expires'] = Time.now - 1
           unless display_favicon?
-          #  response.headers['Content-Type'] =  set_content_type
+            response.headers['Content-Type'] =  set_content_type
         end
       end
 
