@@ -36,6 +36,18 @@ module Resources
       }
     end
 
+    def self.worker_supervisor
+      @@worker_supervisor ||= Celluloid::SupervisionGroup.run!
+    end
+
+    def self.workers_pool
+      @@workers_pool ||= worker_supervisor.pool(RubygemsApi, as: :workers, size: 10)
+    end 
+
+    def self.badge_workers
+      @@badge_workers ||= worker_supervisor.pool(BadgeApi, as: :badge_workers, size: 10)
+    end 
+
     def self.set_time_zone
       Time.zone = 'UTC'
       ENV['TZ'] = 'UTC'
@@ -65,28 +77,28 @@ module Resources
           'gem' => request.path_info[:gem],
           'version' => request.path_info[:version],
           'extension' =>  request.path_info[:extension]
-        }.merge(request.query).stringify_keys
-      end
+          }.merge(request.query).stringify_keys
+        end
 
-      def display_favicon?
-        params["gem"].present? &&  params["gem"].include?("favicon")
-      end
+        def display_favicon?
+          params["gem"].present? &&  params["gem"].include?("favicon")
+        end
 
-      def public_folder
-        File.expand_path('../../../static', __FILE__)
-      end
+        def public_folder
+          File.expand_path('../../../static', __FILE__)
+        end
 
-      def set_content_type
-        params[:extension] = params.fetch('extension', 'svg')
-        mime_type = Rack::Mime::MIME_TYPES[".#{params['extension']}"]
-        "#{mime_type};Content-Encoding: gzip; charset=utf-8;"
-      end
+        def set_content_type
+          params[:extension] = params.fetch('extension', 'svg')
+          mime_type = Rack::Mime::MIME_TYPES[".#{params['extension']}"]
+          "#{mime_type};Content-Encoding: gzip; charset=utf-8;"
+        end
 
-      def finish_request
-        response.headers['Pragma'] = "no-cache"
-        response.headers['Cache-Control'] = "no-cache, must-revalidate, max-age=-1"
-        response.headers['Expires'] = Time.now - 1
-        unless display_favicon?
+        def finish_request
+          response.headers['Pragma'] = "no-cache"
+          response.headers['Cache-Control'] = "no-cache, must-revalidate, max-age=-1"
+          response.headers['Expires'] = Time.now - 1
+          unless display_favicon?
           #  response.headers['Content-Type'] =  set_content_type
         end
       end
@@ -98,16 +110,18 @@ module Resources
           @file = File.join(public_folder, "favicon.ico")
           open(@file, "rb") {|io| io.read }
         else
-          @condition = Celluloid::Condition.new
-          @worker_supervisor = Celluloid::SupervisionGroup.run!
-          blk = lambda do |downloads|
-            original_params = request.query
-            @worker_supervisor.supervise_as(:badge_downloader, BadgeApi, params.merge('request_name' => params[:gem]), original_params, @condition ,  downloads)
+          response.body = ""
+          condition = Celluloid::Condition.new
+          Thread.new do
+            Thread.current.abort_on_exception = true
+            blk = lambda do |downloads|
+              original_params = request.query
+              self.class.badge_workers.work(params.merge('request_name' => params[:gem]), original_params, response.body ,  downloads, condition)
+            end
+            self.class.workers_pool.work(params, blk)
           end
-          @worker_supervisor.supervise_as(:rubygems_api, RubygemsApi, params, blk)
         end
-        wait_result = @condition.wait
-        raise wait_result
+        condition.wait
       end
 
 

@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 export rvm_trust_rvmrcs_flag=1
 export rvm_project_rvmrc_default=1
-rvm use 'ruby-2.2.2@ruby-gem-downloads-badge' --create
+rvm use 'ruby-2.2.3@ruby-gem-downloads-badge' --create
