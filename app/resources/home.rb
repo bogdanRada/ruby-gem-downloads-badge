@@ -54,7 +54,6 @@ module Resources
     end
 
     def fetch_mime_type
-      params[:extension] = params.fetch('extension', 'svg')
       Rack::Mime::MIME_TYPES[".#{params['extension']}"]
       end
 
@@ -81,7 +80,7 @@ module Resources
         {
           'gem' => request.path_info[:gem],
           'version' => request.path_info[:version],
-          'extension' =>  request.path_info[:extension]
+          'extension' =>  request.path_info[:extension] || 'svg'
           }.merge(request.query).stringify_keys
         end
 
