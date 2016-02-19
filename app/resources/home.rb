@@ -119,6 +119,7 @@ module Resources
           end
         end
 
+
         def to_svg
           if display_favicon?
             response.headers['Content-Type'] = "image/x-icon; Content-Encoding: gzip; charset=utf-8;"
@@ -136,6 +137,7 @@ module Resources
              condition.wait
             end
           end
+
 
 
         end

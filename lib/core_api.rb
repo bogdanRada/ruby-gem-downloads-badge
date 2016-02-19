@@ -70,12 +70,14 @@ module CoreApi
     request = Typhoeus::Request.new(url, followlocation: true, ssl_verifypeer: false, ssl_verifyhost: 0, headers: em_request_options(options )[:head])
     request.on_headers do |response|
       if response.code != 200
-        raise "Request failed with #{response.inspect}"
+        res = callback_before_success(nil)
+      dispatch_http_response(res, options, &block)
       else
         persist_cookies(response.headers, base_url)
       end
     end
     request.on_body do |chunk|
+
       res = callback_before_success(chunk)
       dispatch_http_response(res, options, &block)
     end
