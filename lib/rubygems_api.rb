@@ -3,13 +3,14 @@ require_relative './core_api'
 #
 # @!attribute callback
 #   @return [Proc] The callback that is executed after info is fetched
-class RubygemsApi < CoreApi
-  include Celluloid
-  include Celluloid::Logger
+class RubygemsApi < Concurrent::Actor::RestartingContext
+  include Concurrent::Async
+  include MethodicActor
+  include CoreApi
   # the base url to which the API will connect for fetching information about gems
   BASE_URL = 'https://rubygems.org'
 
-  attr_reader :callback
+  attr_reader :callback, :params
 
   # Method used to instantiate an instance of RubygemsApi class with the params received from URL
   #
@@ -19,7 +20,7 @@ class RubygemsApi < CoreApi
   # @option params [String] :type The type of display , if we want to display total downloads, this will have value 'total'
   # @param [Proc] callback The callback that is executed after info is fetched
   # @return [void]
-  def work(params, callback)
+  def initialize(params, callback)
     @params = params.stringify_keys
     @callback = callback
     fetch_downloads_data

@@ -1,4 +1,5 @@
 require_relative './helper'
+require_relative './methodic_actor'
 # module that is used for formatting numbers using metrics
 #
 # @!attribute params
@@ -7,7 +8,7 @@ require_relative './helper'
 #   @return [String] THe hostname from where the badges are fetched from
 # @!attribute base_url
 #   @return [String] THe base_url of the API
-class CoreApi
+module CoreApi
   include Helper
 
   attr_reader :params
@@ -65,7 +66,7 @@ class CoreApi
     base_url = add_cookie_header(options, url)
     uri = Addressable::URI.parse(url)
     conn_options = em_connection_options.merge(ssl: { sni_hostname: uri.host })
-    Typhoeus::Config.verbose = true
+    Typhoeus::Config.verbose = false
     request = Typhoeus::Request.new(url, followlocation: true, ssl_verifypeer: false, ssl_verifyhost: 0, headers: em_request_options(options )[:head])
     request.on_headers do |response|
       if response.code != 200

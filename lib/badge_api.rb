@@ -8,15 +8,16 @@ require_relative './core_api'
 #   @return [Stream] The Sinatra Stream to which the badge will be inserted into
 # @!attribute downloads
 #   @return [Hash] THe downloads count that will need to be displayed on the badge
-class BadgeApi < CoreApi
-  include Celluloid
-  include Celluloid::Logger
+class BadgeApi  < Concurrent::Actor::RestartingContext
+  include Concurrent::Async
+  include MethodicActor
+  include CoreApi
   # constant that is used to show message for invalid badge
   INVALID_COUNT = 'invalid'
 
   BASE_URL = 'https://img.shields.io'
 
-  attr_reader :output_buffer, :downloads, :original_params
+  attr_reader :output_buffer, :downloads, :original_params, :params, :condition
 
   # Initializes the instance with the params from controller, and will try to download the information about the rubygems
   # and then will try to download the badge to the output stream
@@ -30,7 +31,7 @@ class BadgeApi < CoreApi
   # @param [Sinatra::Stream] output_buffer describe output_buffer
   # @param [Number] downloads describe external_api_details
   # @return [void]
-  def work(params, original_params, output_buffer, downloads, condition)
+  def initialize(params, original_params, output_buffer, downloads, condition)
     @params = params
     @original_params = original_params
     @output_buffer = output_buffer
@@ -110,7 +111,7 @@ class BadgeApi < CoreApi
   end
 
   def on_complete(response)
-    @condition.signal(@output_buffer)
+    @condition.set @output_buffer
   end
 
   # Method that is used for formatting the number of downloads , if the number is blank, will return invalid,
