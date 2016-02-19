@@ -33,6 +33,10 @@ def metric_prefixes
   %w(k M G T P E Z Y)
 end
 
+def on_complete(response)
+  response
+end
+
 # Dispatches the response either to the final callback or to the block that will use the response
 # and then call the callback
 #

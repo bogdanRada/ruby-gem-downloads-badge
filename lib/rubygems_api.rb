@@ -19,7 +19,7 @@ class RubygemsApi < CoreApi
   # @option params [String] :type The type of display , if we want to display total downloads, this will have value 'total'
   # @param [Proc] callback The callback that is executed after info is fetched
   # @return [void]
-  def initialize(params, callback)
+  def work(params, callback)
     @params = params.stringify_keys
     @callback = callback
     fetch_downloads_data

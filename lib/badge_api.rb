@@ -30,11 +30,12 @@ class BadgeApi < CoreApi
   # @param [Sinatra::Stream] output_buffer describe output_buffer
   # @param [Number] downloads describe external_api_details
   # @return [void]
-  def initialize(params, original_params, output_buffer, downloads)
+  def work(params, original_params, output_buffer, downloads, condition)
     @params = params
     @original_params = original_params
     @output_buffer = output_buffer
     @downloads = downloads
+    @condition = condition
     fetch_image_shield
   end
 
@@ -104,9 +105,12 @@ class BadgeApi < CoreApi
   # @return [void]
   def fetch_image_shield
     fetch_data(build_badge_url, 'request_name' => @params.fetch('request_name', nil)) do |http_response|
-      raise http_response.inspect
-      @output_buffer.signal(http_response)
+      @output_buffer +=http_response
     end
+  end
+
+  def on_complete(response)
+    @condition.signal(@output_buffer)
   end
 
   # Method that is used for formatting the number of downloads , if the number is blank, will return invalid,
