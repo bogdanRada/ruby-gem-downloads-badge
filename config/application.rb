@@ -1,5 +1,21 @@
-require 'reel'
+$stdout.sync = true
+$stderr.sync = true
+require 'rubygems'
+require "bundler"
+ENV['RACK_ENV'] = ENV['RACK_ENV'] || 'development'
+Bundler.require :default, (ENV["RACK_ENV"] || "development").to_sym
+require 'active_support/all'
+require 'thread'
+require 'concurrent'
+require 'concurrent-edge'
+require 'json'
+require 'securerandom'
+require 'versionomy'
+require 'typhoeus'
+require 'rack'
+require 'webmachine/adapters/rack'
 require 'webmachine'
+require 'addressable'
 
 # Require your resources here
 require_relative '../app/resources/home'
@@ -28,7 +44,7 @@ class LogListener
 end
 Webmachine::Events.subscribe('wm.dispatch', LogListener.new)
 
-ENV['RACK_ENV'] = ENV['RACK_ENV'] || 'development'
+
 root = File.dirname(File.dirname(__FILE__))
 log_directory = File.join(root, 'log')
 FileUtils.mkdir_p(log_directory) unless File.directory?(log_directory)
@@ -42,7 +58,7 @@ MyApp = Webmachine::Application.new do |app|
   app.configure do |config|
     config.ip = '0.0.0.0'
     config.port = ENV['PORT'].present? ? ENV['PORT'] : 5000
-    config.adapter = :Reel
+    config.adapter = :Rack
     config.adapter_options = {:AccessLog => [access_logger], :Logger => access_logger}
   end
   # OR add routes this way:

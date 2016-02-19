@@ -1,16 +1,3 @@
-$stdout.sync = true
-$stderr.sync = true
-require 'rubygems'
-require "bundler"
-Bundler.require :default, (ENV["RACK_ENV"] || "development").to_sym
-require 'active_support/all'
-require 'thread'
-require 'celluloid'
-require 'celluloid/autostart'
-require 'json'
-require 'securerandom'
-require 'versionomy'
-require 'typhoeus'
 ::Logger.class_eval do
   alias_method :write, :<<
   alias_method :puts, :<<
@@ -30,19 +17,46 @@ module Resources
       Thread.current[:request_cookies] ||= {}
     end
 
-    def self.cookie_hash
+    def self.cookie_hash(url)
       CookieHash.new.tap { |hsh|
         request_cookies[url].uniq.each { |c| hsh.add_cookies(c) }
       }
     end
 
-    def self.worker_supervisor
-      @@worker_supervisor ||= Celluloid::SupervisionGroup.run!
+    QUEUES = Concurrent::Map.new do |hash, queue_name| #:nodoc:
+      hash.compute_if_absent(queue_name) {
+        Concurrent::ThreadPoolExecutor.new(
+          min_threads: 10, # create 10 threads at startup
+          max_threads: 50, # create at most 50 threads
+          max_queue: 0, # unbounded queue of work waiting for an available thread
+          )
+      }
     end
 
-    def self.workers_pool
-      @@workers_pool ||= worker_supervisor.pool(RubygemsApi, as: :workers, size: 10)
-    end 
+    BADGES_QUEUES = Concurrent::Map.new do |hash, queue_name| #:nodoc:
+      hash.compute_if_absent(queue_name) {
+        Concurrent::ThreadPoolExecutor.new(
+          min_threads: 10, # create 10 threads at startup
+          max_threads: 50, # create at most 50 threads
+          max_queue: 0, # unbounded queue of work waiting for an available thread
+          )
+      }
+    end
+
+     def enqueue_badge(*args) #:nodoc:
+      options = args.extract_options!
+      BADGES_QUEUES[options.fetch(:queue, 'default')].post(args) { |job|
+        BadgeApi.spawn(name:"badge_api#{SecureRandom.uuid}", args: [*job])
+      }
+    end
+
+    def enqueue(*args) #:nodoc:
+      options = args.extract_options!
+      QUEUES[options.fetch(:queue, 'default')].post(args) { |job|
+        RubygemsApi.spawn(name: "rubygems_api_#{SecureRandom.uuid}", args: [*job])
+      }
+    end
+
 
     def self.badge_workers
       @@badge_workers ||= worker_supervisor.pool(BadgeApi, as: :badge_workers, size: 10)
@@ -55,7 +69,7 @@ module Resources
 
     def fetch_mime_type
       Rack::Mime::MIME_TYPES[".#{params['extension']}"]
-      end
+    end
 
     def allowed_methods
       [ "GET"]
@@ -102,30 +116,27 @@ module Resources
           response.headers['Expires'] = Time.now - 1
           unless display_favicon?
             response.headers['Content-Type'] =  set_content_type
-        end
-      end
-
-      def to_svg
-        if display_favicon?
-          response.headers['Content-Type'] = "image/x-icon; Content-Encoding: gzip; charset=utf-8;"
-          response.headers['Content-Disposition'] = "inline"
-          @file = File.join(public_folder, "favicon.ico")
-          open(@file, "rb") {|io| io.read }
-        else
-          response.body = ""
-          condition = Celluloid::Condition.new
-          Thread.new do
-            Thread.current.abort_on_exception = true
-            blk = lambda do |downloads|
-              original_params = request.query
-              self.class.badge_workers.work(params.merge('request_name' => params[:gem]), original_params, response.body ,  downloads, condition)
-            end
-            self.class.workers_pool.work(params, blk)
           end
         end
-        condition.wait
+
+        def to_svg
+          if display_favicon?
+            response.headers['Content-Type'] = "image/x-icon; Content-Encoding: gzip; charset=utf-8;"
+            response.headers['Content-Disposition'] = "inline"
+            @file = File.join(public_folder, "favicon.ico")
+            open(@file, "rb") {|io| io.read }
+          else
+            response.body = ""
+            condition = Concurrent::Event.new
+              blk = lambda do |downloads|
+                original_params = request.query
+                enqueue_badge(params.merge('request_name' => params[:gem]), original_params, response.body ,  downloads, condition)
+              end
+              enqueue(params, blk)
+             condition.wait
+            end
+          end
+
+
+        end
       end
-
-
-    end
-  end

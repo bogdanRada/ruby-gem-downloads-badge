@@ -111,7 +111,8 @@ class BadgeApi  < Concurrent::Actor::RestartingContext
   end
 
   def on_complete(response)
-    @condition.set @output_buffer
+    @condition.success @output_buffer
+    @condition.complete
   end
 
   # Method that is used for formatting the number of downloads , if the number is blank, will return invalid,

@@ -11,11 +11,12 @@ gem 'activesupport'
 
 gem 'versionomy'
 gem 'rack'
-gem 'celluloid', "~> 0.16.0"
-
-gem 'reel', git: "https://github.com/celluloid/reel.git"
+gem 'concurrent-ruby', '~> 1.0', '>= 1.0'
+gem 'concurrent-ruby-edge', '~> 0.2' , '>= 0.2'
+gem 'httpkit'
 gem 'webmachine', git: "https://github.com/seancribbs/webmachine-ruby.git"
 gem 'typhoeus'
+gem 'addressable'
 
 # gem 'async_sinatra'
 # gem 'activesupport'
