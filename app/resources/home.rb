@@ -108,7 +108,7 @@ module Resources
 
 
         def process_badge(downloads)
-          badge =  BadgeApi.spawn(name: "badge_api_#{SecureRandom.uuid}", args: [params, {}])
+          badge =  BadgeApi.spawn(name: "badge_api_#{SecureRandom.uuid}", args: [params, request.query])
           badge.ask!([:fetch_image_shield, downloads])
         end
 
