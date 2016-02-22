@@ -17,7 +17,7 @@ class BadgeApi < Concurrent::Actor::RestartingContext
 
   BASE_URL = 'https://img.shields.io'
 
-  attr_reader :output_buffer, :downloads, :original_params, :params, :condition
+  attr_reader  :original_params, :params, :future, :event, :output_buffer
 
   # Initializes the instance with the params from controller, and will try to download the information about the rubygems
   # and then will try to download the badge to the output stream
@@ -31,9 +31,11 @@ class BadgeApi < Concurrent::Actor::RestartingContext
   # @param [Sinatra::Stream] output_buffer describe output_buffer
   # @param [Number] downloads describe external_api_details
   # @return [void]
-  def initialize(params, original_params)
+  def initialize(params, original_params,output_buffer, future)
     @params = params
     @original_params = original_params
+    @output_buffer = output_buffer
+    @future = future
   end
 
   # Fetches the param style from the params , and if is not present will return by default 'flat'
@@ -102,8 +104,12 @@ class BadgeApi < Concurrent::Actor::RestartingContext
   # @return [void]
   def fetch_image_shield(downloads)
     fetch_data(build_badge_url(downloads), 'request_name' => @params.fetch('request_name', nil)) do |http_response|
-      http_response
+      @output_buffer += http_response
     end
+  end
+
+  def on_complete(response)
+    @future.success @output_buffer
   end
 
   # Method that is used for formatting the number of downloads , if the number is blank, will return invalid,

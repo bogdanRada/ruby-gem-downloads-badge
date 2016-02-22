@@ -16,6 +16,8 @@ require "uri"
 require 'rack'
 require 'webmachine/adapters/rack'
 require 'webmachine'
+require 'addressable'
+require 'typhoeus'
 
 # Require your resources here
 require_relative '../app/resources/home'

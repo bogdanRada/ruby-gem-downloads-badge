@@ -95,23 +95,29 @@ module Resources
         blk = lambda do |downloads|
           process_badge(downloads)
         end
-          rubygems =  RubygemsApi.spawn(name: "rubygems_api_#{SecureRandom.uuid}", args: [params, blk])
-        Concurrent.future {
-          rubygems.ask!(:fetch_downloads_data) }.then {|svg|
-              svg
-            }.value!
-          end
-        rescue => ex
-          puts ex.inspect
-          puts ex.backtrace
+
+        rubygems =  RubygemsApi.spawn(name: "rubygems_api_#{SecureRandom.uuid}", args: [params, blk])
+      #  Concurrent.future {
+          rubygems.ask!(:fetch_downloads_data)
+        # }.then {|svg|
+        #    svg
+        #  }.value!
         end
-
-
-        def process_badge(downloads)
-          badge =  BadgeApi.spawn(name: "badge_api_#{SecureRandom.uuid}", args: [params, request.query])
-          badge.ask!([:fetch_image_shield, downloads])
-        end
-
-
+      rescue => ex
+        puts ex.inspect
+        puts ex.backtrace
       end
+
+
+      def process_badge(downloads)
+        response.body = ''
+        future = Concurrent.future
+        badge =  BadgeApi.spawn(name: "badge_api_#{SecureRandom.uuid}", args: [params, request.query, response.body , future])
+        badge.ask!([:fetch_image_shield, downloads])
+        sleep (0.1) until future.completed?
+        future.value!
+      end
+
+
     end
+  end

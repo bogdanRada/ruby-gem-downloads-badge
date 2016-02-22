@@ -19,8 +19,8 @@ gem 'rack-handlers'
 
 # gem 'async_sinatra'
 # gem 'activesupport'
-# gem 'addressable'
-
+ gem 'addressable'
+gem 'typhoeus'
 group :development, :test do
   gem 'foreman'
   gem 'rerun'
