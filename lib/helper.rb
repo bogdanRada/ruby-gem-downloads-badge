@@ -58,6 +58,7 @@ end
 # @param [string] res The string that will be parsed as JSON
 # @return [Hash, nil] Returns Hash object if the json parse succeeds or nil otherwise
 def parse_json(res)
+  return if res.blank?
   JSON.parse(res)
 rescue JSON::ParserError
   nil
