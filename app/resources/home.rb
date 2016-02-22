@@ -92,13 +92,13 @@ module Resources
         @file = File.join(public_folder, "favicon.ico")
         open(@file, "rb") {|io| io.read }
       else
-        rubygems =  RubygemsApi.spawn(name: "rubygems_api_#{SecureRandom.uuid}", args: [params])
+        blk = lambda do |downloads|
+          process_badge(downloads)
+        end
+          rubygems =  RubygemsApi.spawn(name: "rubygems_api_#{SecureRandom.uuid}", args: [params, blk])
         Concurrent.future {
-          rubygems.ask!(:fetch_downloads_data) }.then {|downloads|
-            process_badge(downloads) }.then {|svg|
-              <<-HTML
-              #{svg}
-              HTML
+          rubygems.ask!(:fetch_downloads_data) }.then {|svg|
+              svg
             }.value!
           end
         rescue => ex

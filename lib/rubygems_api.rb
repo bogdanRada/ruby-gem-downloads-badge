@@ -20,8 +20,9 @@ class RubygemsApi < Concurrent::Actor::RestartingContext
   # @option params [String] :type The type of display , if we want to display total downloads, this will have value 'total'
   # @param [Proc] callback The callback that is executed after info is fetched
   # @return [void]
-  def initialize(params)
+  def initialize(params, callback)
     @params = params.stringify_keys
+    @callback = callback
   end
 
   # Method that checks if the gem is valid , and if it is will fetch the infromation about the gem
@@ -35,7 +36,7 @@ class RubygemsApi < Concurrent::Actor::RestartingContext
     if valid?
       fetch_dowloads_info
     else
-      nil
+      @callback.call(nil)
     end
   end
 
@@ -109,10 +110,10 @@ class RubygemsApi < Concurrent::Actor::RestartingContext
   #
   # @return [void]
   def fetch_gem_stable_version_data
-     fetch_data("#{RubygemsApi::BASE_URL}/api/v1/versions/#{gem_name}.json") do |http_response|
+    fetch_data("#{RubygemsApi::BASE_URL}/api/v1/versions/#{gem_name}.json",'callback' => @callback) do |http_response|
       latest_stable_version_details = get_latest_stable_version_details(http_response)
       downloads_count = latest_stable_version_details['downloads_count'] unless latest_stable_version_details.blank?
-      return downloads_count
+      @callback.call(downloads_count)
     end
   end
 
@@ -121,10 +122,10 @@ class RubygemsApi < Concurrent::Actor::RestartingContext
   #
   # @return [void]
   def fetch_specific_version_data
-    fetch_data("#{RubygemsApi::BASE_URL}/api/v1/downloads/#{gem_name}-#{gem_version}.json") do |http_response|
+    fetch_data("#{RubygemsApi::BASE_URL}/api/v1/downloads/#{gem_name}-#{gem_version}.json", 'callback' => @callback) do |http_response|
       downloads_count = http_response['version_downloads']
       downloads_count = http_response['total_downloads'] if display_total
-      return downloads_count
+      @callback.call(downloads_count)
     end
   end
 
@@ -133,10 +134,10 @@ class RubygemsApi < Concurrent::Actor::RestartingContext
   #
   # @return [void]
   def fetch_gem_data_without_version
-    fetch_data("#{RubygemsApi::BASE_URL}/api/v1/gems/#{gem_name}.json") do |http_response|
+    fetch_data("#{RubygemsApi::BASE_URL}/api/v1/gems/#{gem_name}.json", 'callback' => @callback) do |http_response|
       downloads_count = http_response['version_downloads']
       downloads_count = http_response['downloads'] if display_total
-      return downloads_count
+      @callback.call(downloads_count)
     end
   end
 
