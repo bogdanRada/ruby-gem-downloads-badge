@@ -8,7 +8,7 @@ require_relative './core_api'
 #   @return [Stream] The Sinatra Stream to which the badge will be inserted into
 # @!attribute downloads
 #   @return [Hash] THe downloads count that will need to be displayed on the badge
-class BadgeApi  < Concurrent::Actor::RestartingContext
+class BadgeApi < Concurrent::Actor::RestartingContext
   include Concurrent::Async
   include MethodicActor
   include CoreApi
@@ -31,13 +31,9 @@ class BadgeApi  < Concurrent::Actor::RestartingContext
   # @param [Sinatra::Stream] output_buffer describe output_buffer
   # @param [Number] downloads describe external_api_details
   # @return [void]
-  def initialize(params, original_params, output_buffer, downloads, condition)
+  def initialize(params, original_params)
     @params = params
     @original_params = original_params
-    @output_buffer = output_buffer
-    @downloads = downloads
-    @condition = condition
-    fetch_image_shield
   end
 
   # Fetches the param style from the params , and if is not present will return by default 'flat'
@@ -92,9 +88,9 @@ class BadgeApi  < Concurrent::Actor::RestartingContext
   # Method used to build the shield URL for fetching the SVG image
   # @see #format_number_of_downloads
   # @return [String] The URL that will be used in fetching the SVG image from shields.io server
-  def build_badge_url(extension = image_extension)
-    colour = @downloads.blank? ? 'lightgrey' : @params.fetch('color', 'blue')
-    "#{BadgeApi::BASE_URL}/badge/#{status_param}-#{format_number_of_downloads}-#{colour}.#{extension}?#{additional_params}"
+  def build_badge_url(downloads, extension = image_extension)
+    colour = downloads.blank? ? 'lightgrey' : @params.fetch('color', 'blue')
+    "#{BadgeApi::BASE_URL}/badge/#{status_param}-#{format_number_of_downloads(downloads)}-#{colour}.#{extension}?#{additional_params}"
   end
 
   # Method that is used for building the URL for fetching the SVG Image, and actually
@@ -104,15 +100,10 @@ class BadgeApi  < Concurrent::Actor::RestartingContext
   # @see Helper#print_to_output_buffer
   #
   # @return [void]
-  def fetch_image_shield
-    fetch_data(build_badge_url, 'request_name' => @params.fetch('request_name', nil)) do |http_response|
-      @output_buffer +=http_response
+  def fetch_image_shield(downloads)
+    fetch_data(build_badge_url(downloads), 'request_name' => @params.fetch('request_name', nil)) do |http_response|
+      http_response
     end
-  end
-
-  def on_complete(response)
-    @condition.success @output_buffer
-    @condition.complete
   end
 
   # Method that is used for formatting the number of downloads , if the number is blank, will return invalid,
@@ -121,7 +112,7 @@ class BadgeApi  < Concurrent::Actor::RestartingContext
   # @see NumberFormatter#formatted_display
   #
   # @return [String] If the downloads argument is blank will return invalid, otherwise will format the numbere either with metrics or delimiters
-  def format_number_of_downloads
-    @downloads.blank? ? BadgeApi::INVALID_COUNT : NumberFormatter.new(@downloads, @params)
+  def format_number_of_downloads(downloads)
+    downloads.blank? ? BadgeApi::INVALID_COUNT : NumberFormatter.new(downloads, @params)
   end
 end

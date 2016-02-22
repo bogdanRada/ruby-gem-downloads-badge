@@ -13,10 +13,9 @@ gem 'versionomy'
 gem 'rack'
 gem 'concurrent-ruby', '~> 1.0', '>= 1.0'
 gem 'concurrent-ruby-edge', '~> 0.2' , '>= 0.2'
-gem 'httpkit'
 gem 'webmachine', git: "https://github.com/seancribbs/webmachine-ruby.git"
-gem 'typhoeus'
-gem 'addressable'
+gem 'puma'
+gem 'rack-handlers'
 
 # gem 'async_sinatra'
 # gem 'activesupport'

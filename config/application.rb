@@ -11,11 +11,11 @@ require 'concurrent-edge'
 require 'json'
 require 'securerandom'
 require 'versionomy'
-require 'typhoeus'
+require "net/http"
+require "uri"
 require 'rack'
 require 'webmachine/adapters/rack'
 require 'webmachine'
-require 'addressable'
 
 # Require your resources here
 require_relative '../app/resources/home'
