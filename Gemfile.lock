@@ -1,8 +1,8 @@
 GIT
   remote: git://github.com/eventmachine/eventmachine.git
-  revision: 61cf05db437f344848c65d1eca21ce8befafe204
+  revision: 4dc5cbae7dedd77791155fd9d33f4126a477616a
   specs:
-    eventmachine (1.2.0.dev.1)
+    eventmachine (1.2.0.dev.2)
 
 GEM
   remote: https://rubygems.org/
@@ -22,7 +22,7 @@ GEM
     coderay (1.1.1)
     colored (1.2)
     cookiejar (0.3.0)
-    coveralls (0.8.11)
+    coveralls (0.8.12)
       json (~> 1.8)
       simplecov (~> 0.11.0)
       term-ansicolor (~> 1.3)
