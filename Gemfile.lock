@@ -22,7 +22,7 @@ GEM
     coderay (1.1.1)
     colored (1.2)
     cookiejar (0.3.0)
-    coveralls (0.8.12)
+    coveralls (0.8.13)
       json (~> 1.8)
       simplecov (~> 0.11.0)
       term-ansicolor (~> 1.3)
