@@ -14,12 +14,13 @@ gem 'rack'
 gem 'async_sinatra'
 gem 'activesupport'
 gem 'addressable'
+gem 'rake'
 
 group :development, :test do
   gem 'foreman'
   gem 'rerun'
   gem 'rb-fsevent'
-  gem 'rake'
+
 
   gem 'yard'
   gem 'yard-rspec'
