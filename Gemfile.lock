@@ -1,13 +1,13 @@
 GIT
   remote: git://github.com/eventmachine/eventmachine.git
-  revision: 4dc5cbae7dedd77791155fd9d33f4126a477616a
+  revision: 47cadd14041ed32afa05f1e411fff5576a96dbd5
   specs:
     eventmachine (1.2.0.dev.2)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (4.2.5.2)
+    activesupport (4.2.6)
       i18n (~> 0.7)
       json (~> 1.7, >= 1.7.7)
       minitest (~> 5.1)
@@ -173,4 +173,4 @@ DEPENDENCIES
   yard-rspec
 
 BUNDLED WITH
-   1.10.6
+   1.11.2
