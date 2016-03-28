@@ -1,8 +1,8 @@
 GIT
   remote: git://github.com/eventmachine/eventmachine.git
-  revision: 8cfcc0e20918b8db7db473fcd857e7b0eaadf134
+  revision: 249846eb3434936b7cc5eea611cd92607536fd66
   specs:
-    eventmachine (1.2.0.dev.2)
+    eventmachine (1.2.0.1)
 
 GEM
   remote: https://rubygems.org/
@@ -76,7 +76,7 @@ GEM
       rack (~> 1.1)
       unicorn (~> 5.0)
     raindrops (0.16.0)
-    rake (11.1.1)
+    rake (11.1.2)
     rb-fsevent (0.9.7)
     rb-inotify (0.9.7)
       ffi (>= 0.5.0)
