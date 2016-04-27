@@ -60,7 +60,7 @@ GEM
       method_source (~> 0.8.1)
       slop (~> 3.4)
     rack (1.6.4)
-    rack-handlers (0.7.2)
+    rack-handlers (0.7.3)
       rack
     rack-protection (1.5.3)
       rack
