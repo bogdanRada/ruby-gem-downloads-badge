@@ -40,14 +40,14 @@ class BadgeApi < CoreApi
   #
   # @return [String] Returns the param style from params , otherwise will return by default 'flat'
   def style_param
-    @params.fetch('style', 'flat')
+    @params.fetch('style', 'flat') || 'flat'
   end
 
   # Fetches the link params from the original params used for social badges
   #
   # @return [String] Returns the link param otherwise empty string
   def link_param
-    @original_params.fetch('link', '')
+    @original_params.fetch('link', '') || ''
   end
 
   # Checks if the badge is a social badge and if the params contains links and returns the links for the badge
@@ -65,7 +65,8 @@ class BadgeApi < CoreApi
     additionals = {
       'logo': params.fetch('logo', ''),
       'logoWidth': params.fetch('logoWidth', ''),
-      'style': style_param
+      'style': style_param,
+      'maxAge': 2592000 #@TODO: find a way to not hardcode this value here. Taken from shields.io
     }.delete_if { |_key, value| value.blank? }
     additionals = additionals.to_query
     "#{additionals}#{style_additionals}"
