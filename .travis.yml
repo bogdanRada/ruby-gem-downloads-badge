@@ -5,7 +5,7 @@ before_install:
   - "echo 'gem: --no-ri --no-rdoc' > ~/.gemrc"
   - gem install bundler
 rvm:
-- 2.3.0
+- 2.3.1
 env:
  - RAILS_ENV=test RACK_ENV=test
 notifications:
