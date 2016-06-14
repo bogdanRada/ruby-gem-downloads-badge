@@ -16,6 +16,10 @@ require 'versionomy'
 require 'active_support/all'
 require 'addressable/uri'
 
+require 'tilt'
+require 'erb'
+require 'tilt/erb'
+
 
 Dir.glob('./config/initializers/**/*.rb') { |file| require file }
 Dir.glob('./lib**/*.rb') { |file| require file }

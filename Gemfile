@@ -15,6 +15,7 @@ gem 'async_sinatra'
 gem 'activesupport'
 gem 'addressable'
 gem 'rake'
+gem 'tilt'
 
 group :development, :test do
   gem 'foreman'

@@ -164,6 +164,7 @@ DEPENDENCIES
   sinatra-contrib
   sinatra-outputbuffer
   sinatra-settings
+  tilt
   versionomy
   yard
   yard-rspec
