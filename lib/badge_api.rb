@@ -43,6 +43,13 @@ class BadgeApi < CoreApi
     @params.fetch('style', 'flat') || 'flat'
   end
 
+  # Fetches the maxAge from the params , and if is not present will return by default 2592000
+  #
+  # @return [Integer] Returns the maxAge from params , otherwise will return by default 2592000
+  def max_age_param
+    @params.fetch('maxAge', 2592000) || 2592000
+  end
+
   # Fetches the link params from the original params used for social badges
   #
   # @return [String] Returns the link param otherwise empty string
@@ -66,7 +73,7 @@ class BadgeApi < CoreApi
       'logo': params.fetch('logo', ''),
       'logoWidth': params.fetch('logoWidth', ''),
       'style': style_param,
-      'maxAge': 2592000 #@TODO: find a way to not hardcode this value here. Taken from shields.io
+      'maxAge': max_age_param.to_i
     }.delete_if { |_key, value| value.blank? }
     additionals = additionals.to_query
     "#{additionals}#{style_additionals}"
