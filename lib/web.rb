@@ -20,7 +20,6 @@ require 'tilt'
 require 'erb'
 require 'tilt/erb'
 
-require 'chunky_png'
 
 
 Dir.glob('./config/initializers/**/*.rb') { |file| require file }
