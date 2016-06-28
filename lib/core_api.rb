@@ -107,7 +107,7 @@ class CoreApi
 
 
   def handle_http_callback(http, options, &block)
-    if http.response_header[:status] = 200 && http.response.present?
+    if !http.response.header['Content-Type'].include?('text/html') && http.response_header[:status] = 200 && http.response.present?
       res = callback_before_success(http.response)
       dispatch_http_response(res, options, &block)
     else

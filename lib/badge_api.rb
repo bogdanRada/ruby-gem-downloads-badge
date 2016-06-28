@@ -74,6 +74,7 @@ class BadgeApi < CoreApi
     additionals = {
       'logo': params.fetch('logo', ''),
       'logoWidth': params.fetch('logoWidth', ''),
+      'logoPadding': params.fetch('logoPadding', ''),
       'style': style_param,
       'maxAge': max_age_param.to_i
     }.delete_if { |_key, value| value.blank? }
@@ -85,7 +86,9 @@ class BadgeApi < CoreApi
   #
   # @return [String] Returns the status of the badge
   def status_param
-    (@params.fetch('label', 'downloads')|| 'downloads').tr('-', '_')
+    status_param = (@params.fetch('label', 'downloads')|| 'downloads')
+    status_param = status_param.present? ? status_param : 'downloads'
+    status_param.gsub(/[\s]+/, ' ').gsub(/[\_\-]+/, '_')
   end
 
   # Method that is used to set the image extension
