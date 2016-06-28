@@ -95,12 +95,15 @@ class BadgeApi < CoreApi
     @params.fetch('extension', 'svg') || 'svg'
   end
 
+  def image_colour
+    @downloads.blank? ? 'lightgrey' : @params.fetch('color', 'blue')
+  end
+
   # Method used to build the shield URL for fetching the SVG image
   # @see #format_number_of_downloads
   # @return [String] The URL that will be used in fetching the SVG image from shields.io server
   def build_badge_url(extension = image_extension)
-    colour = @downloads.blank? ? 'lightgrey' : @params.fetch('color', 'blue')
-    "#{BadgeApi::BASE_URL}/badge/#{status_param}-#{format_number_of_downloads}-#{colour}.#{extension}?#{additional_params}"
+    "#{BadgeApi::BASE_URL}/badge/#{status_param}-#{format_number_of_downloads}-#{image_colour}.#{extension}?#{additional_params}"
   end
 
   def root
@@ -111,6 +114,9 @@ class BadgeApi < CoreApi
     @default_template ||= File.expand_path(File.join(root, 'templates', "svg_default.erb"))
   end
 
+  def handle_http_callback(http, options, &block)
+    callback_error("blaa", options)
+  end
 
   def template_data
     Tilt.new(default_template).render(self)
@@ -131,7 +137,7 @@ class BadgeApi < CoreApi
 
 
   # callback that is called when http request fails
-  def callback_error(error)
+  def callback_error(error, options)
     super(error)
     output = (image_extension == 'png') ? create_png : template_data
     print_to_output_buffer(output, @output_buffer)

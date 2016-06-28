@@ -136,7 +136,7 @@ class CoreApi
   #
   # @param [Object] error The error that was raised by the HTTP request
   # @return [void]
-  def callback_error(error, options)
+  def callback_error(error, options = {})
     logger.debug "Error during fetching data  : #{error.inspect}"
   end
 end

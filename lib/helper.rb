@@ -1,6 +1,21 @@
+require 'color/css'
 # module that is used for formatting numbers using metrics
 module Helper
 # function that makes the methods incapsulated as utility functions
+
+COLOR_SCHEME = {
+  "brightgreen":    { "colorB": "#4c1" },
+  "green":          { "colorB": "#97CA00" },
+  "yellow":         { "colorB": "#dfb317" },
+  "yellowgreen":    { "colorB": "#a4a61d" },
+  "orange":         { "colorB": "#fe7d37" },
+  "red":            { "colorB": "#e05d44" },
+  "blue":           { "colorB": "#007ec6" },
+  "grey":           { "colorB": "#555" },
+  "gray":           { "colorB": "#555" },
+  "lightgrey":      { "colorB": "#9f9f9f" },
+  "lightgray":      { "colorB": "#9f9f9f" }
+}
 
 module_function
 
@@ -23,6 +38,14 @@ def available_extension?(extension)
   ['png', 'svg'].include?(extension)
 end
 
+def fetch_color_hex(name)
+  return COLOR_SCHEME[name]['colorB'] if COLOR_SCHEME[name]
+  if name.starts_with?('#')
+    name
+  else
+    Color::CSS[name].html
+  end
+end
 
 
 # Returns utf8 encoding of the msg

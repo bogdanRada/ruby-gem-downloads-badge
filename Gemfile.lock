@@ -16,6 +16,7 @@ GEM
     cairo (1.15.2)
       pkg-config (>= 1.1.5)
     coderay (1.1.1)
+    color (1.8)
     colored (1.2)
     cookiejar (0.3.3)
     coveralls (0.8.13)
@@ -152,6 +153,7 @@ DEPENDENCIES
   activesupport
   addressable
   async_sinatra
+  color
   coveralls
   em-http-request
   eventmachine (>= 1.2.0.1)

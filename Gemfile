@@ -17,6 +17,7 @@ gem 'addressable'
 gem 'rake'
 gem 'tilt'
 gem "rsvg2"
+gem 'color'
 
 group :development, :test do
   gem 'foreman'
