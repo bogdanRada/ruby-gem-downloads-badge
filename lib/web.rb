@@ -104,7 +104,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   def badge_callback(out, additional_params = {})
     lambda do |downloads|
       original_params = CGI::parse(request.query_string)
-      BadgeApi.new(params.merge(additional_params), original_params, out, downloads)
+      BadgeApi.new(params.merge(additional_params), original_params, out, downloads, self)
     end
   end
 
@@ -124,7 +124,6 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   # @param [Block] block The block that is executed after stream is open
   # @return [void]
   def use_stream(&block)
-  #  set_content_type
     stream :keep_open do |out|
       block.call(out)
     end
@@ -150,14 +149,5 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
       block.call(out)
     end
   end
-
-  # Method that is used to determine the proper content type based on 'extension' key from params
-  # and sets the content type
-  #
-  # @return [void]
-  def set_content_type
-    params[:extension] = params.fetch('extension', 'svg')
-    mime_type = Rack::Mime::MIME_TYPES[".#{params[:extension]}"]
-    content_type "#{mime_type};Content-Encoding: gzip; charset=utf-8;"
-  end
+  
 end

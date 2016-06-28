@@ -14,7 +14,7 @@ class BadgeApi < CoreApi
 
   BASE_URL = 'https://img.shields.io'
 
-  attr_reader :output_buffer, :downloads, :original_params
+  attr_reader :output_buffer, :downloads, :original_params, :controller
 
   # Initializes the instance with the params from controller, and will try to download the information about the rubygems
   # and then will try to download the badge to the output stream
@@ -28,11 +28,12 @@ class BadgeApi < CoreApi
   # @param [Sinatra::Stream] output_buffer describe output_buffer
   # @param [Number] downloads describe external_api_details
   # @return [void]
-  def initialize(params, original_params, output_buffer, downloads)
+  def initialize(params, original_params, output_buffer, downloads, controller)
     @params = params
     @original_params = original_params
     @output_buffer = output_buffer
     @downloads = downloads
+    @controller = controller
     fetch_image_shield
   end
 
@@ -123,13 +124,25 @@ class BadgeApi < CoreApi
   # @return [void]
   def fetch_image_shield
     fetch_data(build_badge_url, 'request_name' => @params.fetch('request_name', nil)) do |http_response|
+      set_badge_content_type(image_extension)
       print_to_output_buffer(http_response, @output_buffer)
     end
+  end
+
+
+  def set_content_type(content_type_string)
+    controller.response['Content-Type'] = content_type_string
+  end
+
+  def set_badge_content_type(extension = 'svg')
+    mime_type = Rack::Mime::MIME_TYPES[".#{extension}"]
+    set_content_type("#{mime_type};Content-Encoding: gzip; charset=utf-8;")
   end
 
   # callback that is called when http request fails
   def callback_error(error)
     super(error)
+    set_badge_content_type('svg')
     print_to_output_buffer(template_data, @output_buffer)
   end
 
