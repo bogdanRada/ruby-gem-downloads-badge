@@ -139,6 +139,11 @@ class RubygemsApi < CoreApi
     end
   end
 
+  def callback_error(error, options = {})
+    super(error)
+    @callback.call(nil)
+  end
+
   # Method that is executed after we receive an successful response.
   # This method willt try and parse the response as JSON, and if the
   # parsing fails will return  nil

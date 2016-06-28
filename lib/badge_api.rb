@@ -83,14 +83,14 @@ class BadgeApi < CoreApi
   #
   # @return [String] Returns the status of the badge
   def status_param
-    @params.fetch('label', 'downloads').tr('-', '_')
+    (@params.fetch('label', 'downloads')|| 'downloads').tr('-', '_')
   end
 
   # Method that is used to set the image extension
   #
   # @return [String] Returns the status of the badge
   def image_extension
-    @params.fetch('extension', 'svg')
+    @params.fetch('extension', 'svg') || 'svg'
   end
 
   # Method used to build the shield URL for fetching the SVG image
@@ -105,6 +105,15 @@ class BadgeApi < CoreApi
     File.expand_path(File.dirname(__dir__))
   end
 
+  def default_template
+    @default_template ||= File.expand_path(File.join(root, 'templates', "svg_default.erb"))
+  end
+
+
+  def template_data
+    Tilt.new(default_template).render(self)
+  end
+
   # Method that is used for building the URL for fetching the SVG Image, and actually
   # making the HTTP connection and adding the response to the stream
   # @see #build_badge_url
@@ -114,14 +123,14 @@ class BadgeApi < CoreApi
   # @return [void]
   def fetch_image_shield
     fetch_data(build_badge_url, 'request_name' => @params.fetch('request_name', nil)) do |http_response|
-      if http_response.include?("<svg")
-        output = http_response
-      else
-        default_template =  File.expand_path(File.join(root, 'templates', "#{image_extension}_default.erb")
-        output = Tilt.new(default_template).render(self)
-      end
-      print_to_output_buffer(output, @output_buffer)
+      print_to_output_buffer(http_response, @output_buffer)
     end
+  end
+
+  # callback that is called when http request fails
+  def callback_error(error)
+    super(error)
+    print_to_output_buffer(template_data, @output_buffer)
   end
 
   # Method that is used for formatting the number of downloads , if the number is blank, will return invalid,

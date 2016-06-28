@@ -87,7 +87,7 @@ class CoreApi
     base_url = add_cookie_header(options, url)
     http = em_request(url, options)
     persist_cookies(http, base_url)
-    register_error_callback(http)
+    register_error_callback(http, options)
     register_success_callback(http, options, &block)
   end
 
@@ -101,8 +101,17 @@ class CoreApi
   # @return [void]
   def register_success_callback(http, options, &block)
     http.callback do
+      handle_http_callback(http, options, &block)
+    end
+  end
+
+
+  def handle_http_callback(http, options, &block)
+    if http.response_header[:status] = 200 && http.response.present?
       res = callback_before_success(http.response)
       dispatch_http_response(res, options, &block)
+    else
+      callback_error(http.response, options)
     end
   end
 
@@ -118,8 +127,8 @@ class CoreApi
   # @see #callback_error
   # @param [EventMachine::HttpRequest] http The HTTP object that will be used for reqisteringt the error callback
   # @return [void]
-  def register_error_callback(http)
-    http.errback { |error| callback_error(error) }
+  def register_error_callback(http, options)
+    http.errback { |error| callback_error(error, options) }
   end
 
   # Method that is used to react when an error happens in a HTTP request
@@ -127,7 +136,7 @@ class CoreApi
   #
   # @param [Object] error The error that was raised by the HTTP request
   # @return [void]
-  def callback_error(error)
+  def callback_error(error, options)
     logger.debug "Error during fetching data  : #{error.inspect}"
   end
 end

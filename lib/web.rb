@@ -124,7 +124,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   # @param [Block] block The block that is executed after stream is open
   # @return [void]
   def use_stream(&block)
-    set_content_type
+  #  set_content_type
     stream :keep_open do |out|
       block.call(out)
     end
