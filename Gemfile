@@ -16,6 +16,7 @@ gem 'activesupport'
 gem 'addressable'
 gem 'rake'
 gem 'tilt'
+gem "rsvg2"
 
 group :development, :test do
   gem 'foreman'

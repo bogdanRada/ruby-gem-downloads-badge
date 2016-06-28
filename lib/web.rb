@@ -20,6 +20,8 @@ require 'tilt'
 require 'erb'
 require 'tilt/erb'
 
+require 'chunky_png'
+
 
 Dir.glob('./config/initializers/**/*.rb') { |file| require file }
 Dir.glob('./lib**/*.rb') { |file| require file }
@@ -31,6 +33,7 @@ require_relative './cookie_hash'
 
 # class that is used to download shields for ruby gems using their name and version
 class RubygemsDownloadShieldsApp < Sinatra::Base
+  include Helper
   helpers Sinatra::Streaming
   register Sinatra::Async
 
@@ -104,7 +107,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   def badge_callback(out, additional_params = {})
     lambda do |downloads|
       original_params = CGI::parse(request.query_string)
-      BadgeApi.new(params.merge(additional_params), original_params, out, downloads, self)
+      BadgeApi.new(params.merge(additional_params), original_params, out, downloads, @response)
     end
   end
 
@@ -124,6 +127,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   # @param [Block] block The block that is executed after stream is open
   # @return [void]
   def use_stream(&block)
+    content_type(fetch_content_type(params[:extension]))
     stream :keep_open do |out|
       block.call(out)
     end
@@ -149,5 +153,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
       block.call(out)
     end
   end
-  
+
+
+
 end

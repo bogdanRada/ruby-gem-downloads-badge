@@ -13,6 +13,18 @@ def display_type
   @params.fetch('type', nil)
 end
 
+def fetch_content_type(extension = 'svg')
+  extension = extension.present? && available_extension?(extension) ? extension : 'svg'
+  mime_type = Rack::Mime::MIME_TYPES[".#{extension}"]
+  "#{mime_type};Content-Encoding: gzip; charset=utf-8;"
+end
+
+def available_extension?(extension)
+  ['png', 'svg'].include?(extension)
+end
+
+
+
 # Returns utf8 encoding of the msg
 # @param [String] msg
 # @return [String] ReturnsReturns utf8 encoding of the msg
