@@ -22,7 +22,7 @@ class CoreApi
       ssl: {
         cipher_list: 'ALL',
         verify_peer: false,
-        ssl_version: 'TLSv1'
+        ssl_version: 'TLSv1.2'
       },
       head: {
         'ACCEPT' => '*/*',
@@ -59,15 +59,17 @@ class CoreApi
   def persist_cookies(http, url)
     http.headers { |head|
       cookie_string =  head[EM::HttpClient::SET_COOKIE]
-      request_cookies[url] ||= []
-      request_cookies[url] << cookie_string if cookie_string.present?
+      if cookie_string.present?
+        request_cookies[url] ||= []
+        request_cookies[url] << cookie_string
+      end
     }
   end
 
   def add_cookie_header(options, url)
     set_time_zone
     options[:head] ||= {}
-    base_url = options.fetch('request_name', url) || url
+    base_url = options['request_name'].present? ? options['request_name'] : url
     cookie_h = request_cookies[base_url].present? ? cookie_hash(base_url) : {}
     options[:head]['cookie'] = cookie_h.to_cookie_string if cookie_h.present? && cookie_h.expire_time >= Time.zone.now
     base_url
