@@ -22,7 +22,7 @@ class CoreApi
       ssl: {
         cipher_list: 'ALL',
         verify_peer: false,
-        ssl_version: 'TLSv1.2'
+        ssl_version: 'TLSv1'
       },
       head: {
         'ACCEPT' => '*/*',
@@ -59,10 +59,8 @@ class CoreApi
   def persist_cookies(http, url)
     http.headers { |head|
       cookie_string =  head[EM::HttpClient::SET_COOKIE]
-      if cookie_string.present?
-        request_cookies[url] ||= []
-        request_cookies[url] << cookie_string
-      end
+      request_cookies[url] ||= []
+      request_cookies[url] << cookie_string if cookie_string.present?
     }
   end
 
@@ -107,7 +105,6 @@ class CoreApi
     end
   end
 
-
   def handle_http_callback(http, options, &block)
     if !http.response.header['Content-Type'].include?('text/html') && http.response_header[:status] = 200 && http.response.present?
       res = callback_before_success(http.response)
@@ -116,6 +113,7 @@ class CoreApi
       callback_error(http.response, options)
     end
   end
+
 
   # Callback that is used before returning the response the the instance
   #

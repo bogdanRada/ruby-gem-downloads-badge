@@ -15,7 +15,7 @@ class BadgeApi < CoreApi
 
   BASE_URL = 'https://img.shields.io'
 
-  attr_reader :output_buffer, :downloads, :original_params, :controller_response
+  attr_reader :output_buffer, :downloads, :original_params
 
   # Initializes the instance with the params from controller, and will try to download the information about the rubygems
   # and then will try to download the badge to the output stream
@@ -29,12 +29,11 @@ class BadgeApi < CoreApi
   # @param [Sinatra::Stream] output_buffer describe output_buffer
   # @param [Number] downloads describe external_api_details
   # @return [void]
-  def initialize(params, original_params, output_buffer, downloads, controller_response)
+  def initialize(params, original_params, output_buffer, downloads)
     @params = params
     @original_params = original_params
     @output_buffer = output_buffer
     @downloads = downloads
-    @controller_response = controller_response
     fetch_image_shield
   end
 
@@ -88,7 +87,7 @@ class BadgeApi < CoreApi
   def status_param
     status_param = (@params.fetch('label', 'downloads')|| 'downloads')
     status_param = status_param.present? ? status_param : 'downloads'
-    status_param.gsub(/[\s]+/, ' ').gsub(/[\_\-]+/, '_')
+    clean_image_label(status_param)
   end
 
   # Method that is used to set the image extension

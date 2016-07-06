@@ -47,6 +47,11 @@ def fetch_color_hex(name)
   end
 end
 
+def clean_image_label(label)
+  return if label.blank?
+  label.gsub(/[\s]+/, ' ').gsub(/[\_\-]+/, '_')
+end
+
 
 # Returns utf8 encoding of the msg
 # @param [String] msg

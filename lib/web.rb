@@ -106,7 +106,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   def badge_callback(out, additional_params = {})
     lambda do |downloads|
       original_params = CGI::parse(request.query_string)
-      BadgeApi.new(params.merge(additional_params), original_params, out, downloads, @response)
+      BadgeApi.new(params.merge(additional_params), original_params, out, downloads)
     end
   end
 
@@ -126,7 +126,8 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   # @param [Block] block The block that is executed after stream is open
   # @return [void]
   def use_stream(&block)
-    content_type(fetch_content_type(params[:extension]))
+    content_type_string = fetch_content_type(params[:extension])
+    content_type(content_type_string)
     stream :keep_open do |out|
       block.call(out)
     end
