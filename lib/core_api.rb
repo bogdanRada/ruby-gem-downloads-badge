@@ -59,8 +59,10 @@ class CoreApi
   def persist_cookies(http, url)
     http.headers { |head|
       cookie_string =  head[EM::HttpClient::SET_COOKIE]
-      request_cookies[url] ||= []
-      request_cookies[url] << cookie_string if cookie_string.present?
+      if cookie_string.present?
+        request_cookies[url] ||= []
+        request_cookies[url] << cookie_string
+      end
     }
   end
 
