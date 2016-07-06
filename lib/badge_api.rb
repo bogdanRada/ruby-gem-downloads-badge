@@ -116,6 +116,7 @@ class BadgeApi < CoreApi
     @default_template ||= File.expand_path(File.join(root, 'templates', "svg_default.erb"))
   end
 
+ # TODO: REMOVE THIS once i test the default template
   def handle_http_callback(http, options, &block)
     callback_error("blaa", options)
   end
