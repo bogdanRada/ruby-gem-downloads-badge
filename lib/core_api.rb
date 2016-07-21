@@ -86,6 +86,24 @@ class CoreApi
   # @return [void]
   def fetch_data(url, options = {}, &block)
     options = options.stringify_keys
+    if options['test_default_template'].present?
+      callback_error(nil, options)
+    else
+      fetch_real_data(url, options, &block)
+    end
+  end
+
+  # Method that fetch the data from a URL and registers the error and success callback to the HTTP object
+  # @see #em_request
+  # @see #register_error_callback
+  # @see #register_success_callback
+  #
+  # @param [url] url The URL that is used to fetch data from
+  # @param [Lambda] callback The callback that will be called if the response is blank
+  # @param [Proc] block If the response is not blank, the block will receive the response
+  # @return [void]
+  def fetch_real_data(url, options = {}, &block)
+    options = options.stringify_keys
     base_url = add_cookie_header(options, url)
     http = em_request(url, options)
     persist_cookies(http, base_url)
@@ -108,7 +126,7 @@ class CoreApi
   end
 
   def handle_http_callback(http, options, &block)
-    if http.is_a?(EventMachine::HttpRequest) && !http.response.header['Content-Type'].include?('text/html') && http.response_header[:status] = 200 && http.response.present?
+    if http.is_a?(EM::HttpClient) && !http.response_header[EM::HttpClient::CONTENT_TYPE].include?('text/html') && http.response_header.http_status = 200 && http.response.present?
       res = callback_before_success(http.response)
       dispatch_http_response(res, options, &block)
     else

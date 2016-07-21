@@ -116,11 +116,6 @@ class BadgeApi < CoreApi
     @default_template ||= File.expand_path(File.join(root, 'templates', "svg_default.erb"))
   end
 
- # TODO: REMOVE THIS once i test the default template
-  def handle_http_callback(http, options, &block)
-    callback_error("blaa", options)
-  end
-
   def template_data
     Tilt.new(default_template).render(self)
   end
@@ -133,11 +128,10 @@ class BadgeApi < CoreApi
   #
   # @return [void]
   def fetch_image_shield
-    fetch_data(build_badge_url, 'request_name' => @params.fetch('request_name', nil)) do |http_response|
+    fetch_data(build_badge_url, 'request_name' => @params.fetch('request_name', nil), "test_default_template" => @params['customized_badge']) do |http_response|
       print_to_output_buffer(http_response, @output_buffer)
     end
   end
-
 
   # callback that is called when http request fails
   def callback_error(error, options)
