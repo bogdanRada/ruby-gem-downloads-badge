@@ -76,9 +76,8 @@ class CoreApi
   end
 
   # Method that fetch the data from a URL and registers the error and success callback to the HTTP object
-  # @see #em_request
-  # @see #register_error_callback
-  # @see #register_success_callback
+  # @see #fetch_real_data
+  # @see #callback_error
   #
   # @param [url] url The URL that is used to fetch data from
   # @param [Lambda] callback The callback that will be called if the response is blank
@@ -87,7 +86,7 @@ class CoreApi
   def fetch_data(url, options = {}, &block)
     options = options.stringify_keys
     if options['test_default_template'].present?
-      callback_error(nil, options)
+      callback_error("Showing default template for #{url.inspect} and #{options.inspect}" , options)
     else
       fetch_real_data(url, options, &block)
     end
