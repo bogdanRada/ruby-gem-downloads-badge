@@ -66,17 +66,38 @@ class BadgeApi < CoreApi
     "&link=#{link_param[0]}&link=#{link_param[1]}"
   end
 
+  # Fetches the logo from the params, otherwise empty string
+  #
+  # @return [String] Returns the logo from the params, otherwise empty string
+  def logo_param
+    @params.fetch('logo', '') || ''
+  end
+
+  # Fetches the logo width from the params, otherwise empty string
+  #
+  # @return [String] Returns the logo width from the params, otherwise empty string
+  def logo_width
+    @params.fetch('logoWidth', 0).to_s.to_i  || 0
+  end
+
+  # Fetches the logo padding from the params, otherwise empty string
+  #
+  # @return [String] Returns the logo padding from the params, otherwise empty string
+  def logo_padding
+    @params.fetch('logoPadding',  0).to_s.to_i || 0
+  end
+
   # Checks if any additional params are present in URL and adds them to the URL constructed for the badge
   #
   # @return [String] Returns the URL query string used for displaying the badge
   def additional_params
     additionals = {
-      'logo': params.fetch('logo', ''),
-      'logoWidth': params.fetch('logoWidth', ''),
-      'logoPadding': params.fetch('logoPadding', ''),
+      'logo': logo_param,
+      'logoWidth': logo_width,
+      'logoPadding': logo_padding,
       'style': style_param,
       'maxAge': max_age_param.to_i
-    }.delete_if { |_key, value| value.blank? }
+    }.delete_if { |_key, value| value.blank? || (value.is_a?(Numeric) && value.zero?) }
     additionals = additionals.to_query
     "#{additionals}#{style_additionals}"
   end
@@ -144,6 +165,10 @@ class BadgeApi < CoreApi
     ImageConvert.svg_to_png(template_data)
   end
 
+  def image_width
+    status_param.size + format_number_of_downloads.size
+  end
+
   # Method that is used for formatting the number of downloads , if the number is blank, will return invalid,
   # otherwise will format the number using the configuration from params, either using metrics or delimiters
   # @see  NumberFormatter#initialize
@@ -151,6 +176,6 @@ class BadgeApi < CoreApi
   #
   # @return [String] If the downloads argument is blank will return invalid, otherwise will format the numbere either with metrics or delimiters
   def format_number_of_downloads
-    @downloads.blank? ? BadgeApi::INVALID_COUNT : NumberFormatter.new(@downloads, @params)
+    @format_number_of_downloads ||= (@downloads.blank? ? BadgeApi::INVALID_COUNT : NumberFormatter.new(@downloads, @params).to_s)
   end
 end
