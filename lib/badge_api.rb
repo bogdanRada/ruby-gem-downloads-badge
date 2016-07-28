@@ -129,16 +129,8 @@ class BadgeApi < CoreApi
     "#{BadgeApi::BASE_URL}/badge/#{status_param}-#{format_number_of_downloads}-#{image_colour}.#{extension}?#{additional_params}"
   end
 
-  def root
-    File.expand_path(File.dirname(__dir__))
-  end
-
-  def default_template
-    @default_template ||= File.expand_path(File.join(root, 'templates', "svg_default.erb"))
-  end
-
-  def template_data
-    Tilt.new(default_template).render(self)
+  def svg_template
+    @svg_template ||= SvgTemplate.new(self)
   end
 
   # Method that is used for building the URL for fetching the SVG Image, and actually
@@ -157,16 +149,8 @@ class BadgeApi < CoreApi
   # callback that is called when http request fails
   def callback_error(error, options)
     super(error)
-    output = (image_extension == 'png') ? create_png : template_data
+    output = (image_extension == 'png') ? svg_template.create_png : svg_template.template_data
     print_to_output_buffer(output, @output_buffer)
-  end
-
-  def create_png
-    ImageConvert.svg_to_png(template_data)
-  end
-
-  def image_width
-    status_param.size + format_number_of_downloads.size
   end
 
   # Method that is used for formatting the number of downloads , if the number is blank, will return invalid,

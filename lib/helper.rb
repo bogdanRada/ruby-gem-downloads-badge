@@ -21,6 +21,11 @@ module_function
 
 delegate :settings, :cookie_hash, :set_time_zone , to: :RubygemsDownloadShieldsApp
 delegate :logger,:request_cookies, to: :settings
+
+def root
+  File.expand_path(File.dirname(__dir__))
+end
+
 # Returns the display_type from the params , otherwise nil
 #
 # @return [String, nil] Returns the display_type  from the params , otherwise nil
