@@ -9,8 +9,8 @@
   </mask>
 
   <g mask="url(#round)">
-    <rect width="<%= status_param.size %>" height="20" fill="<%= fetch_color_hex(image_colour) %>"/>
-    <rect x="<%= status_param %>" width="<%= status_param.size %>" height="20" fill="<%= fetch_color_hex(image_colour) %>"/>
+    <rect width="<%= status_param_width %>" height="20" fill="<%= fetch_color_hex(image_colour) %>"/>
+    <rect x="<%= status_param %>" width="<%= status_param_width %>" height="20" fill="<%= fetch_color_hex(image_colour) %>"/>
     <rect width="<%= image_width %>" height="20" fill="url(#smooth)"/>
   </g>
 
@@ -18,9 +18,9 @@
     <% if logo_param.present? %>
       <image x="5" y="3" width="<%= logo_width %>" height="14" xlink:href="<%= logo_param %>"/>
     <% end %>
-    <text x="<%= (status_param.size + logo_width+ logo_padding)/2 %>" y="15" fill="#010101" fill-opacity=".3"><%= status_param %></text>
-    <text x="<%= (status_param.size + logo_width+ logo_padding)/2 %>" y="14"><%= status_param %></text>
-    <text x="<%= (status_param.size + format_number_of_downloads.size/2 -1) %>" y="15" fill="#010101" fill-opacity=".3"><%= format_number_of_downloads %></text>
-    <text x="<%= (status_param.size + format_number_of_downloads.size/2 -1) %>" y="14"><%= format_number_of_downloads %></text>
+    <text x="<%= (status_param_width + logo_width+ logo_padding)/2 %>" y="15" fill="#010101" fill-opacity=".3"><%= status_param %></text>
+    <text x="<%= (status_param_width + logo_width+ logo_padding)/2 %>" y="14"><%= status_param %></text>
+    <text x="<%= (status_param_width + formatted_downloads_width/2 -1) %>" y="15" fill="#010101" fill-opacity=".3"><%= format_number_of_downloads %></text>
+    <text x="<%= (status_param_width + formatted_downloads_width/2 -1) %>" y="14"><%= format_number_of_downloads %></text>
   </g>
 </svg>
