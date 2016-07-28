@@ -86,14 +86,14 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
     expires Time.zone.now - 1, :no_cache,:no_store, :must_revalidate, max_age: 0
   end
 
+  get '/favicon.*' do
+    send_file File.expand_path(File.join(settings.public_folder, 'favicon.ico')), disposition: 'inline', type: 'image/x-icon'
+  end
+
   aget '/?:gem?/?:version?' do
     settings.logger.debug("Sinatra runing in #{Thread.current}")
-    if !params[:gem].nil? && params[:gem].include?('favicon')
-      send_file File.join(settings.public_folder, 'favicon.ico'), disposition: 'inline', type: 'image/x-icon'
-    else
-      em_request_badge do |out|
-        RubygemsApi.new(params, badge_callback(out, 'api' => 'rubygems', 'request_name' => params[:gem]))
-      end
+    em_request_badge do |out|
+      RubygemsApi.new(params, badge_callback(out, 'api' => 'rubygems', 'request_name' => params[:gem]))
     end
   end
 

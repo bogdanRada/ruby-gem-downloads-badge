@@ -85,7 +85,7 @@ class CoreApi
   # @return [void]
   def fetch_data(url, options = {}, &block)
     options = options.stringify_keys
-    if options['test_default_template'].present?
+    if options['test_default_template'].to_s == 'true'
       callback_error("Showing default template for #{url.inspect} and #{options.inspect}" , options)
     else
       fetch_real_data(url, options, &block)
