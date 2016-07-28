@@ -18,9 +18,9 @@
     <% if logo_param.present? %>
       <image x="5" y="3" width="<%= logo_width %>" height="14" xlink:href="<%= logo_param %>"/>
     <% end %>
-    <text x="<%= (status_param_width + logo_width+ logo_padding)/2 %>" y="15" fill="#010101" fill-opacity=".3"><%= status_param %></text>
-    <text x="<%= (status_param_width + logo_width+ logo_padding)/2 %>" y="14"><%= status_param %></text>
-    <text x="<%= (status_param_width + formatted_downloads_width/2 -1) %>" y="15" fill="#010101" fill-opacity=".3"><%= format_number_of_downloads %></text>
-    <text x="<%= (status_param_width + formatted_downloads_width/2 -1) %>" y="14"><%= format_number_of_downloads %></text>
+    <text x="<%= status_param_and_logo_width_text %>" y="15" fill="#010101" fill-opacity=".3"><%= status_param %></text>
+    <text x="<%= status_param_and_logo_width_text %>" y="14"><%= status_param %></text>
+    <text x="<%= formatted_download_text_width %>" y="15" fill="#010101" fill-opacity=".3"><%= format_number_of_downloads %></text>
+    <text x="<%= formatted_download_text_width %>" y="14"><%= format_number_of_downloads %></text>
   </g>
 </svg>
