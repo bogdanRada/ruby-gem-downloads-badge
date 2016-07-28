@@ -18,6 +18,7 @@ gem 'rake'
 gem 'tilt'
 gem "rsvg2"
 gem 'color'
+gem 'pdf-writer'
 
 group :development, :test do
   gem 'foreman'
