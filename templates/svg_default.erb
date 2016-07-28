@@ -1,17 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="<%= image_width %>" height="20">
-  <linearGradient id="smooth" x2="0" y2="100%">
+  <linearGradient id="b" x2="0" y2="100%">
     <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
     <stop offset="1" stop-opacity=".1"/>
   </linearGradient>
 
-  <mask id="round">
+  <mask id="a">
     <rect width="<%= image_width %>" height="20" rx="3" fill="#fff"/>
   </mask>
 
-  <g mask="url(#round)">
-    <rect width="<%= status_param_width %>" height="20" fill="<%= fetch_color_hex(image_colour) %>"/>
-    <rect x="<%= status_param %>" width="<%= status_param_width %>" height="20" fill="<%= fetch_color_hex(image_colour) %>"/>
-    <rect width="<%= image_width %>" height="20" fill="url(#smooth)"/>
+  <g mask="url(#a)">
+    <path fill="#555" d="M0 0h69v20H0z"/>
+    <path fill="#007ec6" d="M69 0h55v20H69z"/>
+    <path fill="url(#b)" d="M0 0h124v20H0z"/>
   </g>
 
   <g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">
