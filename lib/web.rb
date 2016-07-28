@@ -19,7 +19,7 @@ require 'addressable/uri'
 require 'tilt'
 require 'erb'
 require 'tilt/erb'
-require 'pdf/writer'
+require 'prawn'
 
 
 Dir.glob('./config/initializers/**/*.rb') { |file| require file }
