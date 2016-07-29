@@ -86,7 +86,7 @@ class CoreApi
   def fetch_data(url, options = {}, &block)
     options = options.stringify_keys
     if options['test_default_template'].to_s == 'true'
-      callback_error("Showing default template for #{url.inspect} and #{options.inspect}" , options)
+      callback_error(url , options)
     else
       fetch_real_data(url, options, &block)
     end
@@ -129,7 +129,7 @@ class CoreApi
       res = callback_before_success(http.response)
       dispatch_http_response(res, options, &block)
     else
-      callback_error(http.response, options)
+      callback_error(http.response, options.merge!('detected_http_error' => true))
     end
   end
 
@@ -156,6 +156,12 @@ class CoreApi
   # @param [Object] error The error that was raised by the HTTP request
   # @return [void]
   def callback_error(error, options = {})
-    logger.debug "Error during fetching data  : #{error.inspect}"
+    if options['detected_http_error']
+      logger.debug "Detected HTTP Connection Error for: #{error.inspect} and #{options.inspect}"
+    elsif options['test_default_template']
+      logger.debug "Using the customized template for: #{error.inspect} and #{options.inspect}"
+    else
+      logger.debug "Error during fetching data  : #{error.inspect} with #{options.inspect}"
+    end
   end
 end

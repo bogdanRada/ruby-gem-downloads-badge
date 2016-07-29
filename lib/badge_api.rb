@@ -148,8 +148,8 @@ class BadgeApi < CoreApi
 
   # callback that is called when http request fails
   def callback_error(error, options)
-    super(error)
-    output = (image_extension == 'png') ? svg_template.create_png : svg_template.template_data
+    super(error, options)
+    output = svg_template.fetch_badge_image
     print_to_output_buffer(output, @output_buffer)
   end
 
