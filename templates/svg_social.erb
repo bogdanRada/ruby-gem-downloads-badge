@@ -1,26 +1,33 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="<%= image_width %>" height="20">
-  <linearGradient id="b" x2="0" y2="100%">
-    <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
+<% formatted_downloads_width = formatted_downloads_width -4  %>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="<%= image_width +7 %>" height="20">
+  <style type="text/css"><![CDATA[
+    #llink:hover { fill:url(#b); stroke:#ccc; }
+    #rlink:hover { fill:#4183C4; }
+  ]]></style>
+  <linearGradient id="a" x2="0" y2="100%">
+    <stop offset="0" stop-color="#fcfcfc" stop-opacity="0"/>
     <stop offset="1" stop-opacity=".1"/>
   </linearGradient>
-
-  <mask id="a">
-    <rect width="<%= image_width %>" height="20" rx="3" fill="#fff"/>
-  </mask>
-
-  <g mask="url(#a)">
-    <path fill="#555" d="M0 0h69v20H0z"/>
-    <path fill="<%= svg_color_number.to_s %>" d="M69 0h55v20H69z"/>
-    <path fill="url(#b)" d="M0 0h124v20H0z"/>
+  <linearGradient id="b" x2="0" y2="100%">
+    <stop offset="0" stop-color="#ccc" stop-opacity=".1"/>
+    <stop offset="1" stop-opacity=".1"/>
+  </linearGradient>
+  <g stroke="#d5d5d5">
+    <rect stroke="none" fill="#fcfcfc" x="0.5" y="0.5" width="<%= status_param_width %>" height="19" rx="2"/>
+    <rect y="0.5" x="<%= status_param_width+6.5 %>" width="<%= formatted_downloads_width %>" height="19" rx="2" fill="#fafafa"/>
+    <rect x="<%= status_param_width+6 %>" y="7.5" width="0.5" height="5" stroke="#fafafa"/>
+    <path d="M<%= status_param_width+6.5%> 6.5 l-3 3v1 l3 3" stroke="d5d5d5" fill="#fafafa"/>
   </g>
-
-  <g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">
-    <% if logo_param.present? %>
-      <image x="5" y="3" width="<%= logo_width %>" height="14" xlink:href="<%= logo_param %>"/>
-    <% end %>
-    <text x="<%= (status_param_width + logo_width+ logo_padding)/2 %>" y="15" fill="#010101" fill-opacity=".3"><%= status_param %></text>
-    <text x="<%= (status_param_width + logo_width+ logo_padding)/2 %>" y="14"><%= status_param %></text>
-    <text x="<%= (status_param_width + formatted_downloads_width/2 -1) %>" y="15" fill="#010101" fill-opacity=".3"><%= format_number_of_downloads %></text>
-    <text x="<%= (status_param_width + formatted_downloads_width/2 -1) %>" y="14"><%= format_number_of_downloads %></text>
+  <%= logo_image_svg %>
+  <g fill="#333" text-anchor="middle" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" font-weight="700" font-size="11px" line-height="14px">
+    <text x="<%= status_param_and_logo_width_text %>" y="15" fill="#fff"><%= @status_text %></text>
+    <text x="<%= status_param_and_logo_width_text %>" y="14"><%= @status_text %></text>
+    <text x="<%= social_downloads_with %>" y="15" fill="#fff"><%= @downloads_text %></text>
+    <a xlink:href="<%= svg_social_links[1] %>">
+      <text id="rlink" x="<%= social_downloads_with %>" y="14"><%= @downloads_text %></text>
+    </a>
   </g>
+  <a xlink:href="<%= svg_social_links[0] %>">
+    <rect id="llink" stroke="#d5d5d5" fill="url(#a)" x="0.5" y="0.5" width="<%= status_param_width %>" height="19" rx="2"/>
+  </a>
 </svg>
