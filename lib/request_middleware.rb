@@ -28,14 +28,17 @@ class RequestMiddleware
   # @param [EventMachine::HttpResponse] resp The Http response received from API
   # @return [EventMachine::HttpResponse]
   def response(resp)
-    puts "############## HTTP RESPONSE  #####################\n"
     headers = resp.response_header
-    puts JSON.pretty_generate(
-      request_cookies: request_cookies,
-      headers: headers,
-      status: headers.status,
-      body: force_utf8_encoding(resp.response.to_s.inspect)
-    )
+    if headers[EM::HttpClient::CONTENT_TYPE].include?('text/html') || headers.http_status != 200
+      puts "############## HTTP RESPONSE  #####################\n"
+      puts JSON.pretty_generate(
+        request_cookies: request_cookies,
+        headers: headers,
+        status: headers.http_status,
+        url: resp.req.uri,
+        body: force_utf8_encoding(resp.response.to_s.inspect)
+      )
+    end
     resp
   end
 end
