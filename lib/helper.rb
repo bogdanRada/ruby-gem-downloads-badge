@@ -69,6 +69,8 @@ end
 # @return [String] ReturnsReturns utf8 encoding of the msg
 def force_utf8_encoding(msg)
   msg.respond_to?(:force_encoding) && msg.encoding.name != 'UTF-8' ? msg.force_encoding('UTF-8') : msg
+rescue
+  nil
 end
 
 # Method that checks if we need to display the total downloads
