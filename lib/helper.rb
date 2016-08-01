@@ -1,17 +1,68 @@
+require 'color/css'
 # module that is used for formatting numbers using metrics
 module Helper
 # function that makes the methods incapsulated as utility functions
+
+COLOR_SCHEME = {
+  "brightgreen" =>   { "colorB" => "#4c1"    },
+  "green"       =>   { "colorB" => "#97CA00" },
+  "yellow"      =>   { "colorB" => "#dfb317" },
+  "yellowgreen" =>   { "colorB" => "#a4a61d" },
+  "orange"      =>   { "colorB" => "#fe7d37" },
+  "red"         =>   { "colorB" => "#e05d44" },
+  "blue"        =>   { "colorB" => "#007ec6" },
+  "grey"        =>   { "colorB" => "#555"    },
+  "gray"        =>   { "colorB" => "#555"    },
+  "lightgrey"   =>   { "colorB" => "#9f9f9f" },
+  "lightgray"   =>   { "colorB" => "#9f9f9f" }
+}
 
 module_function
 
 delegate :settings, :cookie_hash, :set_time_zone , to: :RubygemsDownloadShieldsApp
 delegate :logger,:request_cookies, to: :settings
+
+def root
+  File.expand_path(File.dirname(__dir__))
+end
+
 # Returns the display_type from the params , otherwise nil
 #
 # @return [String, nil] Returns the display_type  from the params , otherwise nil
 def display_type
   @params.fetch('type', nil)
 end
+
+def fetch_content_type(extension = 'svg')
+  extension = extension.present? && available_extension?(extension) ? extension : 'svg'
+  mime_type = Rack::Mime::MIME_TYPES[".#{extension}"]
+  "#{mime_type};Content-Encoding: gzip; charset=utf-8;"
+end
+
+def available_extension?(extension)
+  ['png', 'svg', 'json'].include?(extension)
+end
+
+def fetch_color_from_scheme(name, color_key = 'colorB')
+  return COLOR_SCHEME[name][color_key] if COLOR_SCHEME[name]
+end
+
+def fetch_color_hex(name, color_key = 'colorB')
+  return fetch_color_from_scheme(name, color_key) if fetch_color_from_scheme(name, color_key).present?
+  if name.starts_with?('#')
+    name
+  elsif Color::CSS[name].present?
+    Color::CSS[name].html
+  else
+    "##{name}"
+  end
+end
+
+def clean_image_label(label)
+  return if label.blank?
+  label.gsub(/[\s]+/, ' ').gsub(/[\_\-]+/, '_')
+end
+
 
 # Returns utf8 encoding of the msg
 # @param [String] msg

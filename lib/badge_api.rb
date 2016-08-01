@@ -1,5 +1,6 @@
 require_relative './number_formatter.rb'
 require_relative './core_api'
+require_relative './image_convert'
 # class used to download badges from shields.io
 #
 # @!attribute original_params
@@ -14,7 +15,7 @@ class BadgeApi < CoreApi
 
   BASE_URL = 'https://img.shields.io'
 
-  attr_reader :output_buffer, :downloads, :original_params
+  attr_reader :output_buffer, :downloads, :original_params, :http_response, :params
 
   # Initializes the instance with the params from controller, and will try to download the information about the rubygems
   # and then will try to download the badge to the output stream
@@ -28,11 +29,12 @@ class BadgeApi < CoreApi
   # @param [Sinatra::Stream] output_buffer describe output_buffer
   # @param [Number] downloads describe external_api_details
   # @return [void]
-  def initialize(params, original_params, output_buffer, downloads)
+  def initialize(params, original_params, output_buffer, downloads, http_response)
     @params = params
     @original_params = original_params
     @output_buffer = output_buffer
     @downloads = downloads
+    @http_response = http_response
     fetch_image_shield
   end
 
@@ -65,16 +67,38 @@ class BadgeApi < CoreApi
     "&link=#{link_param[0]}&link=#{link_param[1]}"
   end
 
+  # Fetches the logo from the params, otherwise empty string
+  #
+  # @return [String] Returns the logo from the params, otherwise empty string
+  def logo_param
+    @params.fetch('logo', '') || ''
+  end
+
+  # Fetches the logo width from the params, otherwise empty string
+  #
+  # @return [String] Returns the logo width from the params, otherwise empty string
+  def logo_width
+    @params.fetch('logoWidth', 0).to_s.to_i  || 0
+  end
+
+  # Fetches the logo padding from the params, otherwise empty string
+  #
+  # @return [String] Returns the logo padding from the params, otherwise empty string
+  def logo_padding
+    @params.fetch('logoPadding',  0).to_s.to_i || 0
+  end
+
   # Checks if any additional params are present in URL and adds them to the URL constructed for the badge
   #
   # @return [String] Returns the URL query string used for displaying the badge
   def additional_params
     additionals = {
-      'logo': params.fetch('logo', ''),
-      'logoWidth': params.fetch('logoWidth', ''),
+      'logo': logo_param,
+      'logoWidth': logo_width,
+      'logoPadding': logo_padding,
       'style': style_param,
       'maxAge': max_age_param.to_i
-    }.delete_if { |_key, value| value.blank? }
+    }.delete_if { |_key, value| value.blank? || (value.is_a?(Numeric) && value.zero?) }
     additionals = additionals.to_query
     "#{additionals}#{style_additionals}"
   end
@@ -83,22 +107,31 @@ class BadgeApi < CoreApi
   #
   # @return [String] Returns the status of the badge
   def status_param
-    @params.fetch('label', 'downloads').tr('-', '_')
+    status_param = (@params.fetch('label', 'downloads')|| 'downloads')
+    status_param = status_param.present? ? status_param : 'downloads'
+    clean_image_label(status_param)
   end
 
   # Method that is used to set the image extension
   #
   # @return [String] Returns the status of the badge
   def image_extension
-    @params.fetch('extension', 'svg')
+    @params.fetch('extension', 'svg') || 'svg'
+  end
+
+  def image_colour
+    @downloads.blank? ? 'lightgrey' : @params.fetch('color', 'blue')
   end
 
   # Method used to build the shield URL for fetching the SVG image
   # @see #format_number_of_downloads
   # @return [String] The URL that will be used in fetching the SVG image from shields.io server
   def build_badge_url(extension = image_extension)
-    colour = @downloads.blank? ? 'lightgrey' : @params.fetch('color', 'blue')
-    "#{BadgeApi::BASE_URL}/badge/#{status_param}-#{format_number_of_downloads}-#{colour}.#{extension}?#{additional_params}"
+    "#{BadgeApi::BASE_URL}/badge/#{status_param}-#{format_number_of_downloads}-#{image_colour}.#{extension}?#{additional_params}"
+  end
+
+  def svg_template
+    @svg_template ||= SvgTemplate.new(self)
   end
 
   # Method that is used for building the URL for fetching the SVG Image, and actually
@@ -109,9 +142,16 @@ class BadgeApi < CoreApi
   #
   # @return [void]
   def fetch_image_shield
-    fetch_data(build_badge_url, 'request_name' => @params.fetch('request_name', nil)) do |http_response|
+    fetch_data(build_badge_url, 'request_name' => @params.fetch('request_name', nil), "test_default_template" => @params['customized_badge']) do |http_response|
       print_to_output_buffer(http_response, @output_buffer)
     end
+  end
+
+  # callback that is called when http request fails
+  def callback_error(error, options)
+    super(error, options)
+    output = svg_template.fetch_badge_image
+    print_to_output_buffer(output, @output_buffer)
   end
 
   # Method that is used for formatting the number of downloads , if the number is blank, will return invalid,
@@ -121,6 +161,6 @@ class BadgeApi < CoreApi
   #
   # @return [String] If the downloads argument is blank will return invalid, otherwise will format the numbere either with metrics or delimiters
   def format_number_of_downloads
-    @downloads.blank? ? BadgeApi::INVALID_COUNT : NumberFormatter.new(@downloads, @params)
+    @format_number_of_downloads ||= (@downloads.blank? ? BadgeApi::INVALID_COUNT : NumberFormatter.new(@downloads, @params).to_s)
   end
 end

@@ -34,7 +34,7 @@ class RubygemsApi < CoreApi
     if valid?
       fetch_dowloads_info
     else
-      @callback.call(nil)
+      @callback.call(nil, nil)
     end
   end
 
@@ -111,7 +111,7 @@ class RubygemsApi < CoreApi
     fetch_data("#{RubygemsApi::BASE_URL}/api/v1/versions/#{gem_name}.json",'callback' => @callback) do |http_response|
       latest_stable_version_details = get_latest_stable_version_details(http_response)
       downloads_count = latest_stable_version_details['downloads_count'] unless latest_stable_version_details.blank?
-      @callback.call(downloads_count)
+      @callback.call(downloads_count, http_response)
     end
   end
 
@@ -123,7 +123,7 @@ class RubygemsApi < CoreApi
     fetch_data("#{RubygemsApi::BASE_URL}/api/v1/downloads/#{gem_name}-#{gem_version}.json", 'callback' => @callback) do |http_response|
       downloads_count = http_response['version_downloads']
       downloads_count = http_response['total_downloads'] if display_total
-      @callback.call(downloads_count)
+      @callback.call(downloads_count, http_response)
     end
   end
 
@@ -135,8 +135,13 @@ class RubygemsApi < CoreApi
     fetch_data("#{RubygemsApi::BASE_URL}/api/v1/gems/#{gem_name}.json", 'callback' => @callback) do |http_response|
       downloads_count = http_response['version_downloads']
       downloads_count = http_response['downloads'] if display_total
-      @callback.call(downloads_count)
+      @callback.call(downloads_count, http_response)
     end
+  end
+
+  def callback_error(error, options = {})
+    super(error)
+    @callback.call(nil, nil)
   end
 
   # Method that is executed after we receive an successful response.

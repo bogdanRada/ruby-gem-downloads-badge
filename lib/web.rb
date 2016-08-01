@@ -16,6 +16,11 @@ require 'versionomy'
 require 'active_support/all'
 require 'addressable/uri'
 
+require 'tilt'
+require 'erb'
+require 'tilt/erb'
+require 'prawn'
+
 
 Dir.glob('./config/initializers/**/*.rb') { |file| require file }
 Dir.glob('./lib**/*.rb') { |file| require file }
@@ -27,6 +32,7 @@ require_relative './cookie_hash'
 
 # class that is used to download shields for ruby gems using their name and version
 class RubygemsDownloadShieldsApp < Sinatra::Base
+  include Helper
   helpers Sinatra::Streaming
   register Sinatra::Async
 
@@ -80,14 +86,14 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
     expires Time.zone.now - 1, :no_cache,:no_store, :must_revalidate, max_age: 0
   end
 
+  get '/favicon.*' do
+    send_file File.expand_path(File.join(settings.public_folder, 'favicon.ico')), disposition: 'inline', type: 'image/x-icon'
+  end
+
   aget '/?:gem?/?:version?' do
     settings.logger.debug("Sinatra runing in #{Thread.current}")
-    if !params[:gem].nil? && params[:gem].include?('favicon')
-      send_file File.join(settings.public_folder, 'favicon.ico'), disposition: 'inline', type: 'image/x-icon'
-    else
-      em_request_badge do |out|
-        RubygemsApi.new(params, badge_callback(out, 'api' => 'rubygems', 'request_name' => params[:gem]))
-      end
+    em_request_badge do |out|
+      RubygemsApi.new(params, badge_callback(out, 'api' => 'rubygems', 'request_name' => params[:gem]))
     end
   end
 
@@ -98,9 +104,9 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   # @param [Hash] additional_params The additional params needed for the badge
   # @return [Lambda] The lambda that is used as callback to other APIS
   def badge_callback(out, additional_params = {})
-    lambda do |downloads|
+    lambda do |downloads, http_response|
       original_params = CGI::parse(request.query_string)
-      BadgeApi.new(params.merge(additional_params), original_params, out, downloads)
+      BadgeApi.new(params.merge(additional_params), original_params, out, downloads, http_response)
     end
   end
 
@@ -120,7 +126,8 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   # @param [Block] block The block that is executed after stream is open
   # @return [void]
   def use_stream(&block)
-    set_content_type
+    content_type_string = fetch_content_type(params[:extension])
+    content_type(content_type_string)
     stream :keep_open do |out|
       block.call(out)
     end
@@ -147,13 +154,6 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
     end
   end
 
-  # Method that is used to determine the proper content type based on 'extension' key from params
-  # and sets the content type
-  #
-  # @return [void]
-  def set_content_type
-    params[:extension] = params.fetch('extension', 'svg')
-    mime_type = Rack::Mime::MIME_TYPES[".#{params[:extension]}"]
-    content_type "#{mime_type};Content-Encoding: gzip; charset=utf-8;"
-  end
+
+
 end

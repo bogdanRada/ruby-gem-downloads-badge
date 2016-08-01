@@ -22,7 +22,7 @@ class CoreApi
       ssl: {
         cipher_list: 'ALL',
         verify_peer: false,
-        ssl_version: 'TLSv1.2'
+        ssl_version: 'TLSv1'
       },
       head: {
         'ACCEPT' => '*/*',
@@ -76,6 +76,23 @@ class CoreApi
   end
 
   # Method that fetch the data from a URL and registers the error and success callback to the HTTP object
+  # @see #fetch_real_data
+  # @see #callback_error
+  #
+  # @param [url] url The URL that is used to fetch data from
+  # @param [Lambda] callback The callback that will be called if the response is blank
+  # @param [Proc] block If the response is not blank, the block will receive the response
+  # @return [void]
+  def fetch_data(url, options = {}, &block)
+    options = options.stringify_keys
+    if options['test_default_template'].to_s == 'true'
+      callback_error(url , options)
+    else
+      fetch_real_data(url, options, &block)
+    end
+  end
+
+  # Method that fetch the data from a URL and registers the error and success callback to the HTTP object
   # @see #em_request
   # @see #register_error_callback
   # @see #register_success_callback
@@ -84,12 +101,12 @@ class CoreApi
   # @param [Lambda] callback The callback that will be called if the response is blank
   # @param [Proc] block If the response is not blank, the block will receive the response
   # @return [void]
-  def fetch_data(url, options = {}, &block)
+  def fetch_real_data(url, options = {}, &block)
     options = options.stringify_keys
     base_url = add_cookie_header(options, url)
     http = em_request(url, options)
     persist_cookies(http, base_url)
-    register_error_callback(http)
+    register_error_callback(http, options)
     register_success_callback(http, options, &block)
   end
 
@@ -103,10 +120,19 @@ class CoreApi
   # @return [void]
   def register_success_callback(http, options, &block)
     http.callback do
-      res = callback_before_success(http.response)
-      dispatch_http_response(res, options, &block)
+      handle_http_callback(http, options, &block)
     end
   end
+
+  def handle_http_callback(http, options, &block)
+    if http.is_a?(EM::HttpClient) && !http.response_header[EM::HttpClient::CONTENT_TYPE].include?('text/html') && http.response_header.http_status = 200 && http.response.present?
+      res = callback_before_success(http.response)
+      dispatch_http_response(res, options, &block)
+    else
+      callback_error(http.response, options.merge!('detected_http_error' => true))
+    end
+  end
+
 
   # Callback that is used before returning the response the the instance
   #
@@ -120,8 +146,8 @@ class CoreApi
   # @see #callback_error
   # @param [EventMachine::HttpRequest] http The HTTP object that will be used for reqisteringt the error callback
   # @return [void]
-  def register_error_callback(http)
-    http.errback { |error| callback_error(error) }
+  def register_error_callback(http, options)
+    http.errback { |error| callback_error(error, options) }
   end
 
   # Method that is used to react when an error happens in a HTTP request
@@ -129,7 +155,13 @@ class CoreApi
   #
   # @param [Object] error The error that was raised by the HTTP request
   # @return [void]
-  def callback_error(error)
-    logger.debug "Error during fetching data  : #{error.inspect}"
+  def callback_error(error, options = {})
+    if options['detected_http_error']
+      logger.debug "Detected HTTP Connection Error for: #{error.inspect} and #{options.inspect}"
+    elsif options['test_default_template']
+      logger.debug "Using the customized template for: #{error.inspect} and #{options.inspect}"
+    else
+      logger.debug "Error during fetching data  : #{error.inspect} with #{options.inspect}"
+    end
   end
 end

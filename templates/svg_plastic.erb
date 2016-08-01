@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="<%= image_width %>" height="18">
+  <linearGradient id="smooth" x2="0" y2="100%">
+    <stop offset="0"  stop-color="#fff" stop-opacity=".7"/>
+    <stop offset=".1" stop-color="#aaa" stop-opacity=".1"/>
+    <stop offset=".9" stop-color="#000" stop-opacity=".3"/>
+    <stop offset="1"  stop-color="#000" stop-opacity=".5"/>
+  </linearGradient>
+
+  <mask id="round">
+    <rect width="<%= image_width %>" height="18" rx="4" fill="#fff"/>
+  </mask>
+
+  <g mask="url(#round)">
+    <rect width="<%= status_param_width %>" height="18" fill="<%= svg_color_number_left %>"/>
+    <rect x="<%= status_param_width %>" width="<%= formatted_downloads_width %>" height="18" fill="<%= svg_color_number %>"/>
+    <rect width="<%= image_width %>" height="18" fill="url(#smooth)"/>
+  </g>
+
+  <g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">
+    <text x="<%= plastic_status_param_width %>" y="14" fill="#010101" fill-opacity=".3"><%= @status_text %></text>
+    <text x="<%= plastic_status_param_width %>" y="13"><%= @status_text %></text>
+    <text x="<%= plastic_downloads_with %>" y="14" fill="#010101" fill-opacity=".3"><%= @downloads_text %></text>
+    <text x="<%= plastic_downloads_with %>" y="13"><%= @downloads_text %></text>
+  </g>
+</svg>
