@@ -10,17 +10,9 @@ class RequestMiddleware
   # @param [Hash] head The http headers sent to API
   # @param [String, nil] body The body sent to API
   # @return [Array<Hash,String>] Returns the http headers and the body
-  def request(client, head, body)
-    puts "############## HTTP REQUEST  #####################\n"
-    puts JSON.pretty_generate(
-      request_cookies: request_cookies,
-      headers: head,
-      url: client.req.uri,
-      body: body
-      #object: client.inspect
-    )
-    [head, body]
-  end
+  # def request(client, head, body)
+  #   [head, body]
+  # end
 
   # Method that is used to debug responses from API's
   # The method receives the response object and prints it content to console
@@ -30,13 +22,21 @@ class RequestMiddleware
   def response(resp)
     headers = resp.response_header
     if headers[EM::HttpClient::CONTENT_TYPE].include?('text/html') || headers.http_status != 200
-      puts "############## HTTP RESPONSE  #####################\n"
+      puts "############## HTTP RESPONSE DEBUGGING  #####################\n"
       puts JSON.pretty_generate(
         request_cookies: request_cookies,
-        headers: headers,
-        status: headers.http_status,
-        url: resp.req.uri,
-        body: force_utf8_encoding(resp.response.to_s.inspect)
+        request: {
+          headers: resp.req.headers,
+          url: resp.req.uri,
+          body: resp.req.body,
+          object: resp.req.inspect
+        },
+        response: {
+          headers: headers,
+          status: headers.http_status,
+          url: resp.req.uri,
+          body: force_utf8_encoding(resp.response.to_s.inspect)
+        }
       )
     end
     resp
