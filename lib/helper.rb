@@ -47,8 +47,10 @@ def fetch_color_hex(name)
   return COLOR_SCHEME[name]['colorB'] if COLOR_SCHEME[name]
   if name.starts_with?('#')
     name
-  else
+  elsif Color::CSS[name].present?
     Color::CSS[name].html
+  else
+    "##{name}"
   end
 end
 
