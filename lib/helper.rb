@@ -43,8 +43,12 @@ def available_extension?(extension)
   ['png', 'svg'].include?(extension)
 end
 
-def fetch_color_hex(name)
-  return COLOR_SCHEME[name]['colorB'] if COLOR_SCHEME[name]
+def fetch_color_from_scheme(name, color_key = 'colorB')
+  return COLOR_SCHEME[name][color_key] if COLOR_SCHEME[name]
+end
+
+def fetch_color_hex(name, color_key = 'colorB')
+  return fetch_color_from_scheme(name, color_key) if fetch_color_from_scheme(name, color_key).present?
   if name.starts_with?('#')
     name
   elsif Color::CSS[name].present?
