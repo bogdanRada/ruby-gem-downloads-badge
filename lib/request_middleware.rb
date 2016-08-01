@@ -16,8 +16,8 @@ class RequestMiddleware
       request_cookies: request_cookies,
       headers: head,
       url: client.req.uri,
-      body: body,
-      object: client.inspect
+      body: body
+      #object: client.inspect
     )
     [head, body]
   end
