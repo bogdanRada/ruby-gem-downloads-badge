@@ -7,6 +7,15 @@ http://ruby-gem-downloads-badge.herokuapp.com/ - gem downloads shields
 
 Clean and simple gem download badge, [courtesy of shields.io](https://github.com/badges/shields), that displays the downloads number of your gem. By default will display the downloads count of the latest version of the gem provided.
 
+
+NEW Improvements added:
+-------------------------------------------------------------------------------------
+- if [shields.io](https://github.com/badges/shields) is unavailable , instead of showing a blank image,
+we added support for rendering SVG and PNG badges that will be used only if the service is down ( this is done by checking if the status code returned is different than 200 or if the content type returned is text/html, which happens when the service returns a maintenance page )
+- This solves the problem of not being able to render badges when shields.io is down.
+- Currently this service supports only SVG, PNG and JSON format
+- **The JSON format though will not display a badge but the data received from rubygems.org in JSON format**
+
 ##Use
 
 In your README.md, just add an image with the base URL (`http://ruby-gem-downloads-badge.herokuapp.com/`) followed by the gem name and the version, for example :
