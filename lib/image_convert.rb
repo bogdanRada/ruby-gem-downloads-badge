@@ -11,4 +11,7 @@ class ImageConvert
     surface.write_to_png(b)
     return b.string
   end
+
+  def svg_to_jpg
+  end
 end

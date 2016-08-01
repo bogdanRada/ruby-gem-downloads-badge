@@ -40,7 +40,7 @@ def fetch_content_type(extension = 'svg')
 end
 
 def available_extension?(extension)
-  ['png', 'svg'].include?(extension)
+  ['png', 'svg', 'json'].include?(extension)
 end
 
 def fetch_color_from_scheme(name, color_key = 'colorB')
