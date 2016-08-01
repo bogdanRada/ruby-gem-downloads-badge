@@ -93,10 +93,10 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   aget '/?:gem?/?:version?' do
     settings.logger.debug("Sinatra runing in #{Thread.current}")
     em_request_badge do |out|
-      RubygemsApi.new(params, badge_callback(out, 'api' => 'rubygems', 'request_name' => params[:gem]))
+      RubygemsApi.new(request, params,  badge_callback(out, 'api' => 'rubygems', 'request_name' => params[:gem]))
     end
   end
-
+  
 
   # Method that fetch the badge
   #
@@ -106,7 +106,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   def badge_callback(out, additional_params = {})
     lambda do |downloads, http_response|
       original_params = CGI::parse(request.query_string)
-      BadgeApi.new(params.merge(additional_params), original_params, out, downloads, http_response)
+      BadgeApi.new(request, params.merge(additional_params), original_params, out, downloads, http_response)
     end
   end
 

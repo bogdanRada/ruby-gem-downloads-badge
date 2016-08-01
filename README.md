@@ -11,7 +11,9 @@ Clean and simple gem download badge, [courtesy of shields.io](https://github.com
 NEW Improvements added:
 -------------------------------------------------------------------------------------
 - if [shields.io](https://github.com/badges/shields) is unavailable , instead of showing a blank image,
-we added support for rendering SVG and PNG badges that will be used only if the service is down ( this is done by checking if the status code returned is different than 200 or if the content type returned is text/html, which happens when the service returns a maintenance page )
+we added support for rendering SVG and PNG badges ( The badges will look the same as the original ones) that will be used only if the service is down ( this is done by checking if the status code returned is different than 200 or if the content type returned is text/html, which happens when the service returns a maintenance page )
+- if you want to see those badges you can check this out: [Customized Badges Readme ](https://github.com/bogdanRada/ruby-gem-downloads-badge/tree/master/spec/customized_badges) but please don't use them
+in your README files, this will be rendered automatically if the service [shields.io](https://github.com/badges/shields) is unavailable
 - This solves the problem of not being able to render badges when shields.io is down.
 - Currently this service supports only SVG, PNG and JSON format
 - **The JSON format though will not display a badge but the data received from rubygems.org in JSON format**

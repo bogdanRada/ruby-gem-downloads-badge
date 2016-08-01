@@ -75,6 +75,9 @@ class CoreApi
     base_url
   end
 
+  def request_coming_from_repo?
+    defined?(@request) && @request.env['HTTP_REFERER'].to_s.include?('https://github.com/bogdanRada/ruby-gem-downloads-badge')
+  end
   # Method that fetch the data from a URL and registers the error and success callback to the HTTP object
   # @see #fetch_real_data
   # @see #callback_error
@@ -85,7 +88,7 @@ class CoreApi
   # @return [void]
   def fetch_data(url, options = {}, &block)
     options = options.stringify_keys
-    if options['test_default_template'].to_s == 'true'
+    if ((ENV['RACK_ENV'] == 'production' && request_coming_from_repo?) || ENV['RACK_ENV'] != 'production' ) && options['test_default_template'].to_s == 'true'
       callback_error(url , options)
     else
       fetch_real_data(url, options, &block)

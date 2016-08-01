@@ -15,7 +15,7 @@ class BadgeApi < CoreApi
 
   BASE_URL = 'https://img.shields.io'
 
-  attr_reader :output_buffer, :downloads, :original_params, :http_response, :params
+  attr_reader :output_buffer, :downloads, :original_params, :http_response, :params, :request
 
   # Initializes the instance with the params from controller, and will try to download the information about the rubygems
   # and then will try to download the badge to the output stream
@@ -29,8 +29,9 @@ class BadgeApi < CoreApi
   # @param [Sinatra::Stream] output_buffer describe output_buffer
   # @param [Number] downloads describe external_api_details
   # @return [void]
-  def initialize(params, original_params, output_buffer, downloads, http_response)
+  def initialize(request, params, original_params, output_buffer, downloads, http_response)
     @params = params
+    @request = request
     @original_params = original_params
     @output_buffer = output_buffer
     @downloads = downloads
