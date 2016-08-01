@@ -1,5 +1,5 @@
-<% formatted_downloads_width = formatted_downloads_width -4  %>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="<%= image_width +7 %>" height="20">
+<% formatted_downloads_width = self.formatted_downloads_width.to_i-4  %>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="<%= image_width+7 %>" height="20">
   <style type="text/css"><![CDATA[
     #llink:hover { fill:url(#b); stroke:#ccc; }
     #rlink:hover { fill:#4183C4; }
@@ -23,11 +23,11 @@
     <text x="<%= status_param_and_logo_width_text %>" y="15" fill="#fff"><%= @status_text %></text>
     <text x="<%= status_param_and_logo_width_text %>" y="14"><%= @status_text %></text>
     <text x="<%= social_downloads_with %>" y="15" fill="#fff"><%= @downloads_text %></text>
-    <a xlink:href="<%= svg_social_links[1] %>">
+    <a xlink:href="<%= @svg_social_links[1] %>">
       <text id="rlink" x="<%= social_downloads_with %>" y="14"><%= @downloads_text %></text>
     </a>
   </g>
-  <a xlink:href="<%= svg_social_links[0] %>">
+  <a xlink:href="<%= @svg_social_links[0] %>">
     <rect id="llink" stroke="#d5d5d5" fill="url(#a)" x="0.5" y="0.5" width="<%= status_param_width %>" height="19" rx="2"/>
   </a>
 </svg>
