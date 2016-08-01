@@ -4,15 +4,15 @@ module Helper
 # function that makes the methods incapsulated as utility functions
 
 COLOR_SCHEME = {
-  "brightgreen" =>   { "colorB" => "#4c1" },
-  "green"       =>   { "colorB" =>  "#97CA00" },
+  "brightgreen" =>   { "colorB" => "#4c1"    },
+  "green"       =>   { "colorB" => "#97CA00" },
   "yellow"      =>   { "colorB" => "#dfb317" },
   "yellowgreen" =>   { "colorB" => "#a4a61d" },
   "orange"      =>   { "colorB" => "#fe7d37" },
   "red"         =>   { "colorB" => "#e05d44" },
   "blue"        =>   { "colorB" => "#007ec6" },
-  "grey"        =>   { "colorB" => "#555" },
-  "gray"        =>   { "colorB" => "#555" },
+  "grey"        =>   { "colorB" => "#555"    },
+  "gray"        =>   { "colorB" => "#555"    },
   "lightgrey"   =>   { "colorB" => "#9f9f9f" },
   "lightgray"   =>   { "colorB" => "#9f9f9f" }
 }
