@@ -35,10 +35,18 @@ class RequestMiddleware
       puts "############## HTTP RESPONSE  #####################\n"
       puts JSON.pretty_generate(
       request_cookies: request_cookies,
-      headers: headers,
-      status: headers.http_status,
-      url: resp.req.uri,
-      body: force_utf8_encoding(resp.response.to_s.inspect)
+        request: {
+          headers: resp.req.headers,
+          url: resp.req.uri,
+          body: resp.req.body,
+          object: resp.req.inspect
+        },
+        response: {
+          headers: headers,
+          status: headers.http_status,
+          url: resp.req.uri,
+          body: force_utf8_encoding(resp.response.to_s.inspect)
+        }
       )
     end
     resp
