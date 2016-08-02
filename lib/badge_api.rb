@@ -30,10 +30,10 @@ class BadgeApi < CoreApi
   # @param [Sinatra::Stream] output_buffer describe output_buffer
   # @param [Number] downloads describe external_api_details
   # @return [void]
-  def initialize(request, params, original_params, output_buffer, downloads, http_response)
+  def initialize(request, params, output_buffer, downloads, http_response)
     @params = params
     @request = request
-    @original_params = original_params
+    @original_params = CGI::parse(request.query_string)
     @output_buffer = output_buffer
     @downloads = downloads
     @http_response = http_response

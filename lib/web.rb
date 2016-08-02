@@ -101,8 +101,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   # @return [Lambda] The lambda that is used as callback to other APIS
   def badge_callback(out, additional_params = {})
     lambda do |downloads, http_response|
-      original_params = CGI::parse(request.query_string)
-      BadgeApi.new(request, params.merge(additional_params), original_params, out, downloads, http_response)
+      BadgeApi.new(request, params.merge(additional_params), out, downloads, http_response)
     end
   end
 
