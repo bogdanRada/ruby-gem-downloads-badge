@@ -35,7 +35,7 @@ class RequestMiddleware
 
     if ENV['RACK_ENV'] != 'production' ||
       headers[EM::HttpClient::CONTENT_TYPE].include?('text/html') ||
-      (headers.http_status != 200 && headers.http_status != 404)
+      ![200, 404].include?(headers.http_status)
 
       puts "############## HTTP RESPONSE  #####################\n"
       puts JSON.pretty_generate(
