@@ -117,7 +117,7 @@ class BadgeApi < CoreApi
   #
   # @return [String] Returns the status of the badge
   def image_extension
-    @params.fetch('extension', 'svg') || 'svg'
+    @image_extension ||= available_extension?(@params['extension'].to_s) ? @params['extension'].to_s : 'svg'
   end
 
   def image_colour
