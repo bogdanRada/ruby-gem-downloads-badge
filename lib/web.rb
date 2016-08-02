@@ -22,6 +22,8 @@ require 'erb'
 require 'tilt/erb'
 require 'prawn'
 
+require 'forwardable'
+
 Dir.glob('./config/initializers/**/*.rb') { |file| require file }
 Dir.glob('./lib**/*.rb') { |file| require file }
 
@@ -50,8 +52,8 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   set :request_cookies, (Thread.current[:request_cookies] ||= {})
 
   def self.cookie_hash(url)
-    CookieHash.new.tap do |hsh|
-      settings.request_cookies[url].uniq.each { |c| hsh.add_cookies(c) }
+    CookieHash.new.tap do |cookie_hash|
+      settings.request_cookies[url].uniq.each { |cookie_data| cookie_hash.add_cookies(cookie_data) }
     end
   end
 
@@ -133,8 +135,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   # @return [void]
   def register_em_error_handler
     EM.error_handler do |error|
-      settings.logger.debug "Error during event loop : #{error.inspect}"
-      settings.logger.debug error.backtrace
+      settings.logger.debug "Error during event loop : #{error.inspect} \n #{error.backtrace}"
     end
   end
 

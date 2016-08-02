@@ -1,51 +1,49 @@
 # frozen_string_literal: true
+require_relative './helper'
 require 'rsvg2'
 # Initializes the instance with the params from controller
 class ImageProcessor
+  include Helper
   # Initializes the instance with the params from controller, and will try to download the information about the rubygems
   # and then will try to download the badge to the output strea
   def initialize(input, mode, options = {})
     @svg = input
-    @mode = mode
-    @mode = :jpeg if @mode == :jpg
+    @mode = mode.to_s
+    @mode = 'jpeg' if @mode == 'jpg'
     @options = options.is_a?(Hash) ? options.symbolize_keys : {}
+    @ratio = @options[:ratio].present? ? options[:ratio].to_i : 1
     @handle = RSVG::Handle.new_from_data(@svg)
   end
 
   def process
-    return unless %w(jpeg jpg png).include?(@mode.to_s)
+    return unless %w(jpeg jpg png).include?(@mode)
     render_image
   end
 
   def render_image
     setup
     @context = create_context Cairo::FORMAT_ARGB32
+    @context_target = @context.target
+    @mode == 'png' ? render_png_memory : render_jpeg_image_from_file
+  end
 
-    if @mode == :png
-      b = StringIO.new
-      @context.target.write_to_png(b)
-      @context.target.finish
-      return b.string
-    else
-      render_jpeg_image_from_file
-    end
+  def render_png_memory(output = StringIO.new)
+    @context_target.write_to_png(output)
+    @context_target.finish
+    output.is_a?(StringIO) ? output.string : output
   end
 
   def render_jpeg_image_from_file
-    temp = Tempfile.new('svg2', encoding: 'utf-8')
-    ObjectSpace.undefine_finalizer(temp)
+    temp_path = create_temp_file('svg2')
+    render_png_memory(temp_path)
+    buffer_jpeg_from_file(temp_path)
+  end
 
-    @context.target.write_to_png(temp.path)
-    @context.target.finish
-    @pixbuf = Gdk::Pixbuf.new(temp.path)
-    new_file = @tempfile = Tempfile.new(@mode.to_s, encoding: 'utf-8')
-    ObjectSpace.undefine_finalizer(new_file)
-
-    @pixbuf.save(new_file.path, @mode.to_s)
-
-    output = File.read(new_file.path)
-    FileUtils.rm_rf(temp.path) if File.exist?(temp.path)
-    FileUtils.rm_rf(new_file.path) if File.exist?(new_file.path)
+  def buffer_jpeg_from_file(temp_path)
+    @pixbuf = Gdk::Pixbuf.new(temp_path)
+    @pixbuf.save(temp_path, @mode)
+    output = File.read(temp_path)
+    FileUtils.rm_rf(temp_path)
     output
   end
 
@@ -70,7 +68,6 @@ class ImageProcessor
   # end
 
   def setup
-    @ratio = @options[:ratio].present? ? options[:ratio].to_i : 1
     @dim = @handle.dimensions
     @width = @dim.width * @ratio
     @height = @dim.height * @ratio

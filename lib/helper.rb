@@ -27,6 +27,19 @@ module_function
     File.expand_path(File.dirname(__dir__))
   end
 
+  def create_temp_file(name)
+    temp = Tempfile.new(name, encoding: 'utf-8')
+    ObjectSpace.undefine_finalizer(temp)
+    temp.path
+  end
+
+  def pixel_grid_aligment(width)
+    width = width.blank? ? 0 : width.to_i
+    # Increase chances of pixel grid alignment.
+    width += 1 if width.even?
+    width
+  end
+
   # Returns the display_type from the params , otherwise nil
   #
   # @return [String, nil] Returns the display_type  from the params , otherwise nil
