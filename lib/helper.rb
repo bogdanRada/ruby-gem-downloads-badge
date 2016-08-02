@@ -61,7 +61,7 @@ def fetch_color_hex(name, color_key = 'colorB')
   elsif valid_hex_color?("##{name}")
     "##{name}"
   else
-    COLOR_SCHEME['brightgreen'][color_key]
+    COLOR_SCHEME['blue'][color_key]
   end
 end
 
