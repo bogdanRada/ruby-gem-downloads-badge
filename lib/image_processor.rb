@@ -41,7 +41,8 @@ class ImageProcessor
     buffer_jpeg_from_file(temp_path)
   end
 
-  def buffer_jpeg_from_file(temp_path = create_temp_file('svg2'))
+  def buffer_jpeg_from_file(temp_path = nil)
+    temp_path = temp_path.present? ? temp_path : create_temp_file('svg2')
     @pixbuf.save(temp_path, @mode)
     output = File.read(temp_path)
     FileUtils.rm_rf(temp_path)
