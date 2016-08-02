@@ -28,6 +28,7 @@ class ImageProcessor
   end
 
   def render_png_memory(output = StringIO.new)
+    output.set_encoding('UTF-8') if output.is_a?(StringIO)
     @context_target.write_to_png(output)
     @context_target.finish
     output.is_a?(StringIO) ? output.string : output
@@ -47,25 +48,23 @@ class ImageProcessor
     output
   end
 
-  # def render_jpeg_image_memory
-  #   b = StringIO.new
-  #   @context.target.write_to_png(b)
-  #   @context.target.finish
-  #
-  #   @pixbuf = Gdk::Pixbuf.new(
-  #   data:             b.string,
-  #   colorspace:       :rgb,
-  #   has_alpha:        false,
-  #   bits_per_sample:  8,
-  #   width:            @width,
-  #   height:           @height,
-  #   rowstride:        1
-  #   )
-  #
-  #   output_String = StringIO.new
-  #   @pixbuf.save(output_String, @mode.to_s)
-  #   output_String.string
-  # end
+  def render_jpeg_image_memory
+    output =  render_png_memory
+    @pixbuf = Gdk::Pixbuf.new(
+    data:             output,
+    colorspace:       :rgb,
+    has_alpha:        false,
+    bits_per_sample:  8,
+    width:            @width,
+    height:           @height,
+    rowstride:        1
+    )
+    temp_path = create_temp_file('svg2')
+    @pixbuf.save(temp_path, @mode)
+    output = File.read(temp_path)
+    FileUtils.rm_rf(temp_path)
+    output
+  end
 
   def setup
     @dim = @handle.dimensions
