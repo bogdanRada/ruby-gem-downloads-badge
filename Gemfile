@@ -5,7 +5,7 @@ gem 'sinatra'
 gem 'rack-handlers'
 gem 'rainbows'
 gem 'em-http-request'
-gem 'eventmachine' , '>= 1.2.0.1'
+gem 'eventmachine', '>= 1.2.0.1'
 gem 'versionomy'
 gem 'sinatra-outputbuffer'
 gem 'sinatra-settings'
@@ -16,7 +16,7 @@ gem 'activesupport'
 gem 'addressable'
 gem 'rake'
 gem 'tilt'
-gem "rsvg2"
+gem 'rsvg2'
 gem 'color'
 gem 'prawn'
 
@@ -24,15 +24,11 @@ group :development, :test do
   gem 'foreman'
   gem 'rerun'
   gem 'rb-fsevent'
-
-
   gem 'yard'
   gem 'yard-rspec'
   gem 'redcarpet'
   gem 'github-markup'
-
   gem 'inch'
-
   gem 'rspec'
   gem 'rack-test'
   gem 'simplecov'

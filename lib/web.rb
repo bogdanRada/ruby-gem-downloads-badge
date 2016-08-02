@@ -21,14 +21,11 @@ require 'erb'
 require 'tilt/erb'
 require 'prawn'
 
-
 Dir.glob('./config/initializers/**/*.rb') { |file| require file }
 Dir.glob('./lib**/*.rb') { |file| require file }
 
 require_relative './request_middleware'
 require_relative './cookie_hash'
-
-
 
 # class that is used to download shields for ruby gems using their name and version
 class RubygemsDownloadShieldsApp < Sinatra::Base
@@ -96,7 +93,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
       RubygemsApi.new(request, params,  badge_callback(out, 'api' => 'rubygems', 'request_name' => params[:gem]))
     end
   end
-  
+
 
   # Method that fetch the badge
   #
