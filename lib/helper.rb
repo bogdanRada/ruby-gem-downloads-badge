@@ -43,18 +43,25 @@ def available_extension?(extension)
   ['png', 'svg', 'json'].include?(extension)
 end
 
+
+def valid_hex_color?(string)
+  /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.match(string)
+end
+
 def fetch_color_from_scheme(name, color_key = 'colorB')
   return COLOR_SCHEME[name][color_key] if COLOR_SCHEME[name]
 end
 
 def fetch_color_hex(name, color_key = 'colorB')
   return fetch_color_from_scheme(name, color_key) if fetch_color_from_scheme(name, color_key).present?
-  if name.starts_with?('#')
+  if name.starts_with?('#') && valid_hex_color?(name)
     name
   elsif Color::CSS[name].present?
     Color::CSS[name].html
-  else
+  elsif valid_hex_color?("##{name}")
     "##{name}"
+  else
+    COLOR_SCHEME['brightgreen'][color_key]
   end
 end
 
