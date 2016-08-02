@@ -61,7 +61,7 @@ class ImageProcessor
   #   )
   #   buffer_jpeg_from_file
   # end
-  
+
   def setup
     @dim = @handle.dimensions
     @width = @dim.width * @ratio
