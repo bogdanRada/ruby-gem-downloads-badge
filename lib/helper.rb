@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'color/css'
 # module that is used for formatting numbers using metrics
 module Helper
@@ -15,12 +16,12 @@ module Helper
     'gray'        =>   { 'colorB' => '#555'    },
     'lightgrey'   =>   { 'colorB' => '#9f9f9f' },
     'lightgray'   =>   { 'colorB' => '#9f9f9f' }
-  }
+  }.freeze
 
-  module_function
+module_function
 
   delegate :settings, :cookie_hash, :set_time_zone, to: :RubygemsDownloadShieldsApp
-  delegate :logger,:request_cookies, to: :settings
+  delegate :logger, :request_cookies, to: :settings
 
   def root
     File.expand_path(File.dirname(__dir__))
@@ -40,7 +41,7 @@ module Helper
   end
 
   def available_extension?(extension)
-    ['png', 'svg', 'json', 'jpg', 'jpeg'].include?(extension)
+    %w(png svg json jpg jpeg).include?(extension)
   end
 
   def valid_hex_color?(string)
@@ -77,7 +78,7 @@ module Helper
   rescue
     nil
   end
-  
+
   # Method that checks if we need to display the total downloads
   #
   # @return [Boolean] Returns true if we need to display the total downloads

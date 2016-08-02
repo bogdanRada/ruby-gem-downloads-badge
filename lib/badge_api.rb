@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require_relative './number_formatter.rb'
 require_relative './core_api'
 require_relative './svg_template'
@@ -50,7 +51,7 @@ class BadgeApi < CoreApi
   #
   # @return [Integer] Returns the maxAge from params , otherwise will return by default 2592000
   def max_age_param
-    @params.fetch('maxAge', 2592000) || 2592000
+    @params.fetch('maxAge', 2_592_000) || 2_592_000
   end
 
   # Fetches the link params from the original params used for social badges
@@ -79,14 +80,14 @@ class BadgeApi < CoreApi
   #
   # @return [String] Returns the logo width from the params, otherwise empty string
   def logo_width
-    @params.fetch('logoWidth', 0).to_s.to_i  || 0
+    @params.fetch('logoWidth', 0).to_s.to_i || 0
   end
 
   # Fetches the logo padding from the params, otherwise empty string
   #
   # @return [String] Returns the logo padding from the params, otherwise empty string
   def logo_padding
-    @params.fetch('logoPadding',  0).to_s.to_i || 0
+    @params.fetch('logoPadding', 0).to_s.to_i || 0
   end
 
   # Checks if any additional params are present in URL and adds them to the URL constructed for the badge
@@ -108,7 +109,7 @@ class BadgeApi < CoreApi
   #
   # @return [String] Returns the status of the badge
   def status_param
-    status_param = (@params.fetch('label', 'downloads')|| 'downloads')
+    status_param = @params.fetch('label', 'downloads') || 'downloads'
     status_param = status_param.present? ? status_param : 'downloads'
     clean_image_label(status_param)
   end
@@ -143,7 +144,7 @@ class BadgeApi < CoreApi
   #
   # @return [void]
   def fetch_image_shield
-    fetch_data(build_badge_url, 'request_name' => @params.fetch('request_name', nil), "test_default_template" => @params['customized_badge']) do |http_response|
+    fetch_data(build_badge_url, 'request_name' => @params.fetch('request_name', nil), 'test_default_template' => @params['customized_badge']) do |http_response|
       print_to_output_buffer(http_response, @output_buffer)
     end
   end

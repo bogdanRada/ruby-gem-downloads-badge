@@ -1,7 +1,8 @@
+# frozen_string_literal: true
 require 'rsvg2'
 class ImageProcessor
 
-  def initialize(input, mode, options ={})
+  def initialize(input, mode, options = {})
     @svg = input
     @mode = mode
     @mode = :jpeg if @mode == :jpg
@@ -11,9 +12,9 @@ class ImageProcessor
 
   def process
     case @mode
-      when :jpeg, :jpg, :png  then render_image
+      when :jpeg, :jpg, :png then render_image
       #    when :pdf, :ps          then render
-      else raise "Invalid output format: %s" % @mode.to_s
+      else raise "Invalid output format: #{@mode}"
     end
   end
 
@@ -50,7 +51,7 @@ class ImageProcessor
       # @pixbuf.save(output_String, @mode.to_s)
       # return output_String.string
 
-      temp = Tempfile.new("svg2", encoding: 'utf-8')
+      temp = Tempfile.new('svg2', encoding: 'utf-8')
       ObjectSpace.undefine_finalizer(temp)
 
       @context.target.write_to_png(temp.path)
@@ -62,8 +63,8 @@ class ImageProcessor
       @pixbuf.save(new_file.path, @mode.to_s)
 
       output = File.read(new_file.path)
-      FileUtils.rm_rf(temp.path) if File.exists?(temp.path)
-      FileUtils.rm_rf(new_file.path) if File.exists?(new_file.path)
+      FileUtils.rm_rf(temp.path) if File.exist?(temp.path)
+      FileUtils.rm_rf(new_file.path) if File.exist?(new_file.path)
       return output
     end
   end
@@ -75,9 +76,9 @@ class ImageProcessor
     @height = @dim.height * @ratio
 
     surface_class_name = case @mode
-    when :jpg, :jpeg, :png, :gif  then "ImageSurface"
-      #    when :ps                then "PSSurface"
-      #    when :pdf               then "PDFSurface"
+    when :jpg, :jpeg, :png, :gif then 'ImageSurface'
+      #    when :ps                then 'PSSurface'
+      #    when :pdf               then 'PDFSurface'
     end
     @surface_class = Cairo.const_get(surface_class_name)
   end
@@ -89,5 +90,4 @@ class ImageProcessor
     context.render_rsvg_handle(@handle)
     context
   end
-
 end

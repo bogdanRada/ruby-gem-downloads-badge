@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 $stdout.sync = true
 $stderr.sync = true
 ENV['RACK_ENV'] ||= 'development'
@@ -33,7 +34,6 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   helpers Sinatra::Streaming
   register Sinatra::Async
 
-
   set :root, File.dirname(File.dirname(__FILE__)) # You must set app root
   enable :logging
   set :environments, %w(development test production webdev)
@@ -50,9 +50,9 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   set :request_cookies, (Thread.current[:request_cookies] ||= {})
 
   def self.cookie_hash(url)
-    CookieHash.new.tap { |hsh|
+    CookieHash.new.tap do |hsh|
       settings.request_cookies[url].uniq.each { |c| hsh.add_cookies(c) }
-    }
+    end
   end
 
   def self.set_time_zone
@@ -80,7 +80,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
     #    etag SecureRandom.hex
     #    last_modified(Time.now - 60)
     self.class.set_time_zone
-    expires Time.zone.now - 1, :no_cache,:no_store, :must_revalidate, max_age: 0
+    expires Time.zone.now - 1, :no_cache, :no_store, :must_revalidate, max_age: 0
   end
 
   get '/favicon.*' do
@@ -90,10 +90,9 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   aget '/?:gem?/?:version?' do
     settings.logger.debug("Sinatra runing in #{Thread.current}")
     em_request_badge do |out|
-      RubygemsApi.new(request, params,  badge_callback(out, 'api' => 'rubygems', 'request_name' => params[:gem]))
+      RubygemsApi.new(request, params, badge_callback(out, 'api' => 'rubygems', 'request_name' => params[:gem]))
     end
   end
-
 
   # Method that fetch the badge
   #
@@ -122,11 +121,11 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   #
   # @param [Block] block The block that is executed after stream is open
   # @return [void]
-  def use_stream(&block)
+  def use_stream
     content_type_string = fetch_content_type(params[:extension])
     content_type(content_type_string)
     stream :keep_open do |out|
-      block.call(out)
+      yield out if block_given?
     end
   end
 
@@ -150,7 +149,4 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
       block.call(out)
     end
   end
-
-
-
 end

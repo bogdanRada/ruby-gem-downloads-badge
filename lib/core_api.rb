@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require_relative './helper'
 # module that is used for formatting numbers using metrics
 #
@@ -11,14 +12,14 @@ class CoreApi
   include Helper
 
   attr_reader :params
-  
+
   # Returns the connection options used for connecting to API's
   #
   # @return [Hash] Returns the connection options used for connecting to API's
   def em_connection_options
     {
-      connect_timeout: 30,        # default connection setup timeout
-      inactivity_timeout: 60,    # default connection inactivity (post-setup) timeout
+      connect_timeout: 30, # default connection setup timeout
+      inactivity_timeout: 60, # default connection inactivity (post-setup) timeout
       ssl: {
         cipher_list: 'ALL',
         verify_peer: false,
@@ -39,7 +40,7 @@ class CoreApi
       redirects: 5,              # follow 3XX redirects up to depth 5
       keepalive: true,           # enable keep-alive (don't send Connection:close header)
       head: (options[:head] || {}).merge(
-      'ACCEPT' => '*/*'
+        'ACCEPT' => '*/*'
       )
     }
   end
@@ -57,13 +58,13 @@ class CoreApi
   end
 
   def persist_cookies(http, url)
-    http.headers { |head|
-      cookie_string =  head[EM::HttpClient::SET_COOKIE]
+    http.headers do |head|
+      cookie_string = head[EM::HttpClient::SET_COOKIE]
       if cookie_string.present?
         request_cookies[url] ||= []
         request_cookies[url] << cookie_string
       end
-    }
+    end
   end
 
   def add_cookie_header(options, url)
@@ -78,6 +79,7 @@ class CoreApi
   def request_coming_from_repo?
     defined?(@request) && @request.env['HTTP_REFERER'].to_s.include?('https://github.com/bogdanRada/ruby-gem-downloads-badge')
   end
+
   # Method that fetch the data from a URL and registers the error and success callback to the HTTP object
   # @see #fetch_real_data
   # @see #callback_error
@@ -88,8 +90,8 @@ class CoreApi
   # @return [void]
   def fetch_data(url, options = {}, &block)
     options = options.stringify_keys
-    if ((ENV['RACK_ENV'] == 'production' && request_coming_from_repo?) || ENV['RACK_ENV'] != 'production' ) && options['test_default_template'].to_s == 'true'
-      callback_error(url , options)
+    if ((ENV['RACK_ENV'] == 'production' && request_coming_from_repo?) || ENV['RACK_ENV'] != 'production') && options['test_default_template'].to_s == 'true'
+      callback_error(url, options)
     else
       fetch_real_data(url, options, &block)
     end
@@ -135,7 +137,6 @@ class CoreApi
       callback_error(http.response, options.merge!('detected_http_error' => true))
     end
   end
-
 
   # Callback that is used before returning the response the the instance
   #

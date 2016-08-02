@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require_relative './core_api'
 # class used for connecting to runygems.org and downloading info about a gem
 #
@@ -109,7 +110,7 @@ class RubygemsApi < CoreApi
   #
   # @return [void]
   def fetch_gem_stable_version_data
-    fetch_data("#{RubygemsApi::BASE_URL}/api/v1/versions/#{gem_name}.json",'callback' => @callback) do |http_response|
+    fetch_data("#{RubygemsApi::BASE_URL}/api/v1/versions/#{gem_name}.json", 'callback' => @callback) do |http_response|
       latest_stable_version_details = get_latest_stable_version_details(http_response)
       downloads_count = latest_stable_version_details['downloads_count'] unless latest_stable_version_details.blank?
       @callback.call(downloads_count, http_response)
@@ -141,7 +142,7 @@ class RubygemsApi < CoreApi
   end
 
   def callback_error(error, options = {})
-    super(error)
+    super(error, options)
     @callback.call(nil, nil)
   end
 

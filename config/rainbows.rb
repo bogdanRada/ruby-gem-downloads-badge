@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Sync stdout to print mesages in real time.
 $stdout.sync = true
 # Preload app to make it faster

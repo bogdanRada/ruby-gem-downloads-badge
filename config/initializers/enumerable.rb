@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # extending enumerable with methods
 module Enumerable
   # Sorts gem versions
@@ -40,6 +41,6 @@ module_function
   # @return [String, Float] if the version is a float number, will return the float number, otherwise the string in downcase letters
   # @api public
   def version_is_float?(version)
-    version =~ /\A\d+(\.\d+)?\z/ ? -(version.to_f) : version.downcase
+    version =~ /\A\d+(\.\d+)?\z/ ? -version.to_f : version.downcase
   end
 end

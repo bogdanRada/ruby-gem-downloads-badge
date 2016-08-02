@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require_relative './helper'
 # class used for formatting numbers
 # class used to download badges from shields.io
@@ -82,7 +83,7 @@ class NumberFormatter
     while index >= 0
       limit = metric_power[index]
       if @number > limit
-        return "#{((@number / limit).to_f.round)}#{metric_prefixes[index]}"
+        return "#{(@number / limit).to_f.round}#{metric_prefixes[index]}"
       end
       index -= 1
     end
@@ -109,6 +110,7 @@ class NumberFormatter
   def byte_format(bytes, name)
     format('%g %s', (@number.to_f / (bytes / 1024)).round(1), name)
   end
+
   # Formats a number as a filesize
   # @see #byte_format
   # @return [String] The filesize of the number

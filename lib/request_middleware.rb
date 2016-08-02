@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require_relative './helper'
 # middleware used only in development for testing purposes
 class RequestMiddleware
@@ -15,11 +16,10 @@ class RequestMiddleware
 
       puts "############## HTTP REQUEST  #####################\n"
       puts JSON.pretty_generate(
-      request_cookies: request_cookies,
-      headers: head,
-      url: client.req.uri,
-      body: body
-      #object: client.inspect
+        request_cookies: request_cookies,
+        headers: head,
+        url: client.req.uri,
+        body: body
       )
     end
     [head, body]
@@ -34,8 +34,8 @@ class RequestMiddleware
     headers = resp.response_header
 
     if ENV['RACK_ENV'] != 'production' ||
-      headers[EM::HttpClient::CONTENT_TYPE].include?('text/html') ||
-      ![200, 404].include?(headers.http_status)
+       headers[EM::HttpClient::CONTENT_TYPE].include?('text/html') ||
+       ![200, 404].include?(headers.http_status)
 
       puts "############## HTTP RESPONSE  #####################\n"
       puts JSON.pretty_generate(

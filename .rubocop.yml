@@ -1,9 +1,16 @@
 AllCops:
+  TargetRubyVersion: 2.3
   Exclude:
-    - washout_builder.gemspec
+    - config.ru
+    - Gemfile
+    - Gemfile.lock
     - bin/**/*
+    - Rakefile
+    - Procfile
+    - Procfile.dev
     - Guardfile
     - vendor/**/*
+    - spec/**/*
 
 Documentation:
   Enabled: false
