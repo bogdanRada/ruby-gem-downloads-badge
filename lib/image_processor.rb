@@ -12,10 +12,17 @@ class ImageProcessor
     def process
         case @mode
         when :jpeg, :jpg, :png  then render_image
-        when :pdf, :ps          then render
+    #    when :pdf, :ps          then render
         else raise Svg2pdf::UnsupportedFormatError, "Invalid output format: %s" % @mode.to_s
         end
     end
+
+    # def render
+    #   setup
+    #   @context = create_context @options[:output_file]
+    #   @context.target.finish
+    #   File.new @options[:output_file]
+    # end
 
     def render_image
         setup
@@ -70,8 +77,8 @@ class ImageProcessor
 
         surface_class_name = case @mode
         when :jpg, :jpeg, :png, :gif  then "ImageSurface"
-        when :ps                then "PSSurface"
-        when :pdf               then "PDFSurface"
+    #    when :ps                then "PSSurface"
+    #    when :pdf               then "PDFSurface"
         end
         @surface_class = Cairo.const_get(surface_class_name)
     end
