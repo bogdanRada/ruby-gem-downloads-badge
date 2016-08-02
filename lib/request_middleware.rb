@@ -12,6 +12,7 @@ class RequestMiddleware
   # @return [Array<Hash,String>] Returns the http headers and the body
   def request(client, head, body)
     if ENV['RACK_ENV'] != 'production'
+
       puts "############## HTTP REQUEST  #####################\n"
       puts JSON.pretty_generate(
       request_cookies: request_cookies,
@@ -31,10 +32,14 @@ class RequestMiddleware
   # @return [EventMachine::HttpResponse]
   def response(resp)
     headers = resp.response_header
-    if ENV['RACK_ENV'] != 'production' || headers[EM::HttpClient::CONTENT_TYPE].include?('text/html') || (headers.http_status != 200 && headers.http_status != 404)
+
+    if ENV['RACK_ENV'] != 'production' ||
+      headers[EM::HttpClient::CONTENT_TYPE].include?('text/html') ||
+      (headers.http_status != 200 && headers.http_status != 404)
+
       puts "############## HTTP RESPONSE  #####################\n"
       puts JSON.pretty_generate(
-      request_cookies: request_cookies,
+        request_cookies: request_cookies,
         request: {
           headers: resp.req.headers,
           url: resp.req.uri,
