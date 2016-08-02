@@ -31,7 +31,7 @@ class RequestMiddleware
   # @return [EventMachine::HttpResponse]
   def response(resp)
     headers = resp.response_header
-    if ENV['RACK_ENV'] != 'production' || headers[EM::HttpClient::CONTENT_TYPE].include?('text/html') || headers.http_status != 200
+    if ENV['RACK_ENV'] != 'production' || headers[EM::HttpClient::CONTENT_TYPE].include?('text/html') || (headers.http_status != 200 && headers.http_status != 404)
       puts "############## HTTP RESPONSE  #####################\n"
       puts JSON.pretty_generate(
       request_cookies: request_cookies,
