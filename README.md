@@ -15,7 +15,7 @@ we added support for rendering SVG and PNG badges ( The badges will look the sam
 - if you want to see those badges you can check this out: [Customized Badges Readme ](https://github.com/bogdanRada/ruby-gem-downloads-badge/tree/master/spec/customized_badges) but please don't use them
 in your README files, this will be rendered automatically if the service [shields.io](https://github.com/badges/shields) is unavailable
 - This solves the problem of not being able to render badges when shields.io is down.
-- Currently this service supports only SVG, PNG and JSON format
+- Currently this service supports only SVG, PNG, JPG (or JPEG) and JSON format
 - **The JSON format though will not display a badge but the data received from rubygems.org in JSON format**
 
 ##Use
