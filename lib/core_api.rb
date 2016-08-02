@@ -130,7 +130,7 @@ class CoreApi
   end
 
   def handle_http_callback(http, options, &block)
-    if http.is_a?(EM::HttpClient) && !http.response_header[EM::HttpClient::CONTENT_TYPE].include?('text/html') && http.response_header.http_status == 200 && http.response.present?
+    if http.is_a?(EM::HttpClient) && !http.response_header[EM::HttpClient::CONTENT_TYPE].include?('text/html') && [200, 404].include?(http.response_header.http_status) && http.response.present?
       res = callback_before_success(http.response)
       dispatch_http_response(res, options, &block)
     else

@@ -11,6 +11,13 @@ AllCops:
     - Guardfile
     - vendor/**/*
     - spec/**/*
+    - lib/request_middleware.rb
+
+ClassLength:
+  Max: 900
+
+ModuleLength:
+  Max: 900
 
 Documentation:
   Enabled: false

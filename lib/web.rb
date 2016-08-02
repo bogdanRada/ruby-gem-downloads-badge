@@ -1,4 +1,4 @@
-# frozen_string_literal: true
+# frozen_string_literal: false
 $stdout.sync = true
 $stderr.sync = true
 ENV['RACK_ENV'] ||= 'development'
@@ -143,10 +143,10 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   # @param [Sinatra::Stream] out The stream where the response will be appended
   # @param [Block] block The block that is executed after eventmachine starts running
   # @return [void]
-  def run_eventmachine(out, &block)
+  def run_eventmachine(out)
     EM.run do
       EM::HttpRequest.use RequestMiddleware
-      block.call(out)
+      yield out if block_given?
     end
   end
 end
