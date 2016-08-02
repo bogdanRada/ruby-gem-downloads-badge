@@ -37,17 +37,17 @@ class ImageProcessor
   def render_jpeg_image_from_file
     temp_path = create_temp_file('svg2')
     render_png_memory(temp_path)
+    @pixbuf = Gdk::Pixbuf.new(temp_path)
     buffer_jpeg_from_file(temp_path)
   end
 
-  def buffer_jpeg_from_file(temp_path)
-    @pixbuf = Gdk::Pixbuf.new(temp_path)
+  def buffer_jpeg_from_file(temp_path = create_temp_file('svg2'))
     @pixbuf.save(temp_path, @mode)
     output = File.read(temp_path)
     FileUtils.rm_rf(temp_path)
     output
   end
-  
+
   # def render_jpeg_image_memory
   #   output =  render_png_memory
   #   @pixbuf = Gdk::Pixbuf.new(
@@ -59,13 +59,9 @@ class ImageProcessor
   #   height:           @height,
   #   rowstride:        1
   #   )
-  #   temp_path = create_temp_file('svg2')
-  #   @pixbuf.save(temp_path, @mode)
-  #   output = File.read(temp_path)
-  #   FileUtils.rm_rf(temp_path)
-  #   output
+  #   buffer_jpeg_from_file
   # end
-
+  
   def setup
     @dim = @handle.dimensions
     @width = @dim.width * @ratio
