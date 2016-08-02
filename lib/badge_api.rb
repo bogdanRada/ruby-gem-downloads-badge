@@ -1,6 +1,6 @@
 require_relative './number_formatter.rb'
 require_relative './core_api'
-require_relative './image_convert'
+require_relative './svg_template'
 # class used to download badges from shields.io
 #
 # @!attribute original_params

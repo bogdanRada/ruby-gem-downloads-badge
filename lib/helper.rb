@@ -40,7 +40,7 @@ def fetch_content_type(extension = 'svg')
 end
 
 def available_extension?(extension)
-  ['png', 'svg', 'json'].include?(extension)
+  ['png', 'svg', 'json', 'jpg', 'jpeg'].include?(extension)
 end
 
 
