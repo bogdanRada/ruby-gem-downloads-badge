@@ -34,7 +34,7 @@ You can also specify the version of the gem, for example:
 You can also specify to display the total downloads count like this:
 
 ```ruby
-  ![](http://ruby-gem-downloads-badge.herokuapp.com/rails?type=tota&customized_badge=truel)
+  ![](http://ruby-gem-downloads-badge.herokuapp.com/rails?type=tota&customized_badge=true)
 ```
 
 ![](http://ruby-gem-downloads-badge.herokuapp.com/rails?type=total&customized_badge=true)
