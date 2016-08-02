@@ -47,24 +47,24 @@ class ImageProcessor
     FileUtils.rm_rf(temp_path)
     output
   end
-
-  def render_jpeg_image_memory
-    output =  render_png_memory
-    @pixbuf = Gdk::Pixbuf.new(
-    data:             output,
-    colorspace:       :rgb,
-    has_alpha:        false,
-    bits_per_sample:  8,
-    width:            @width,
-    height:           @height,
-    rowstride:        1
-    )
-    temp_path = create_temp_file('svg2')
-    @pixbuf.save(temp_path, @mode)
-    output = File.read(temp_path)
-    FileUtils.rm_rf(temp_path)
-    output
-  end
+  
+  # def render_jpeg_image_memory
+  #   output =  render_png_memory
+  #   @pixbuf = Gdk::Pixbuf.new(
+  #   data:             output,
+  #   colorspace:       :rgb,
+  #   has_alpha:        false,
+  #   bits_per_sample:  8,
+  #   width:            @width,
+  #   height:           @height,
+  #   rowstride:        1
+  #   )
+  #   temp_path = create_temp_file('svg2')
+  #   @pixbuf.save(temp_path, @mode)
+  #   output = File.read(temp_path)
+  #   FileUtils.rm_rf(temp_path)
+  #   output
+  # end
 
   def setup
     @dim = @handle.dimensions
