@@ -2,7 +2,8 @@ require 'spec_helper'
 describe RubygemsApi do
   let(:params) { { gem: 'rails', version: 'stable', tyoe: 'total' } }
   let(:callback) { -> {} }
-  let(:subject) { RubygemsApi.new(params, callback) }
+  let(:request) { double() }
+  let(:subject) { RubygemsApi.new(request, params, callback) }
 
   before(:each) do
     allow_any_instance_of(RubygemsApi).to receive(:fetch_downloads_data).and_return('this is the value to return')
