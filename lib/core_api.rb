@@ -98,14 +98,6 @@ class CoreApi
     options['head']['cookie'] = cookie_string if cookie_string.present?
   end
 
-  def request_coming_from_repo?
-    defined?(@request) && @request.env['HTTP_REFERER'].to_s.include?('https://github.com/bogdanRada/ruby-gem-downloads-badge')
-  end
-
-  def request_allowed_for_customized_badge?
-    ((env_production? && request_coming_from_repo?) || !env_production?)
-  end
-
   def setup_options_for_url(options, request_url)
     options['head'] ||= {}
     options['url_fetched'] = request_url

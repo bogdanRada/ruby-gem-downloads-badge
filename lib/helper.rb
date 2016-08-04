@@ -1,22 +1,7 @@
 # frozen_string_literal: true
-require 'color/css'
 # module that is used for formatting numbers using metrics
 module Helper
   # function that makes the methods incapsulated as utility functions
-
-  COLOR_SCHEME = {
-    'brightgreen' =>   { 'colorB' => '#4c1'    },
-    'green'       =>   { 'colorB' => '#97CA00' },
-    'yellow'      =>   { 'colorB' => '#dfb317' },
-    'yellowgreen' =>   { 'colorB' => '#a4a61d' },
-    'orange'      =>   { 'colorB' => '#fe7d37' },
-    'red'         =>   { 'colorB' => '#e05d44' },
-    'blue'        =>   { 'colorB' => '#007ec6' },
-    'grey'        =>   { 'colorB' => '#555'    },
-    'gray'        =>   { 'colorB' => '#555'    },
-    'lightgrey'   =>   { 'colorB' => '#9f9f9f' },
-    'lightgray'   =>   { 'colorB' => '#9f9f9f' }
-  }.freeze
 
 module_function
 
@@ -73,20 +58,6 @@ module_function
     "#{error.inspect} \n #{error.backtrace}"
   end
 
-  def create_temp_file(name = nil)
-    name = name.present? ? name : SecureRandom.uuid
-    temp = Tempfile.new(name, encoding: 'utf-8')
-    ObjectSpace.undefine_finalizer(temp)
-    temp.path
-  end
-
-  def pixel_grid_aligment(width)
-    width = width.blank? ? 0 : width.to_i
-    # Increase chances of pixel grid alignment.
-    width += 1 if width.even?
-    width
-  end
-
   # Returns the display_type from the params , otherwise nil
   #
   # @return [String, nil] Returns the display_type  from the params , otherwise nil
@@ -102,32 +73,6 @@ module_function
 
   def available_extension?(extension)
     %w(png svg json jpg jpeg).include?(extension)
-  end
-
-  def valid_hex_color?(string)
-    /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.match(string)
-  end
-
-  def fetch_color_from_scheme(name, color_key = 'colorB')
-    color_scheme = COLOR_SCHEME[name]
-    return color_scheme[color_key] if color_scheme.present?
-  end
-
-  def fetch_color_hex(name, color_key = 'colorB')
-    color_scheme = fetch_color_from_scheme(name, color_key)
-    return color_scheme if color_scheme.present?
-    real = get_real_hex_color(name, Color::CSS[name])
-    real.present? ? real : COLOR_SCHEME['blue'][color_key]
-  end
-
-  def get_real_hex_color(color_name, css_name)
-    if color_name.starts_with?('#') && valid_hex_color?(color_name)
-      color_name
-    elsif css_name.present?
-      css_name.html
-    elsif valid_hex_color?("##{color_name}")
-      "##{color_name}"
-    end
   end
 
   def clean_image_label(label)
