@@ -11,13 +11,6 @@ require_relative './helper'
 class CoreApi
   include Helper
 
-  DETECTED_HTTP_ERROR = 'detected_http_error'
-  CUSTOMIZED_BADGE = 'test_default_template'
-
-  CALLBACK_ERROR_MESSAGES = {
-    CoreApi::DETECTED_HTTP_ERROR => 'Detected HTTP Connection Error for',
-    CoreApi::CUSTOMIZED_BADGE => 'Using the customized template for'
-  }.freeze
 
   attr_reader :params
 
@@ -129,13 +122,7 @@ class CoreApi
   def fetch_data(url, options = {}, &block)
     options = options.stringify_keys
     setup_options_for_url(options, url)
-    if request_allowed_for_customized_badge? && options['http_detect'].to_s == CoreApi::CUSTOMIZED_BADGE
-      callback_error(url, options)
-    elsif options[:multi_request] && multi_manager.present?
-      multi_fetch_data(options, &block)
-    else
-      fetch_real_data(url, options, &block)
-    end
+    fetch_real_data(url, options, &block)
   end
 
   # Method that fetch the data from a URL and registers the error and success callback to the HTTP object
@@ -175,12 +162,8 @@ class CoreApi
 
   def handle_http_callback(http, options, &block)
     http_response = http.response
-    if valid_http_response?(http) && valid_http_code_returned?(http, options['url_fetched'])
-      res = callback_before_success(http_response)
-      dispatch_http_response(res, options, &block)
-    else
-      callback_error(http_response, options.merge!('http_detect' => CoreApi::DETECTED_HTTP_ERROR))
-    end
+    res = callback_before_success(http_response)
+    dispatch_http_response(res, options, &block)
   end
 
   # Callback that is used before returning the response the the instance
@@ -206,7 +189,6 @@ class CoreApi
   # @return [void]
   def callback_error(error, options = {})
     debug = "#{error.inspect} with #{options.inspect}"
-    message = CoreApi::CALLBACK_ERROR_MESSAGES[options['http_detect']]
-    message.present? ? logger.debug("#{message}: #{debug}") : logger.debug("Error during fetching data  : #{debug}")
+    logger.debug("Error during fetching data  : #{debug}")
   end
 end

@@ -136,14 +136,6 @@ class BadgeApi < CoreApi
     "#{BadgeApi::BASE_URL}/badge/#{status_param}-#{format_number_of_downloads}-#{image_colour}.#{extension}?#{additional_params}"
   end
 
-  def svg_template
-    @svg_template ||= SvgTemplate.new(self)
-  end
-
-  def customized_badge?
-    @params['customized_badge'].present? ? CoreApi::CUSTOMIZED_BADGE : ''
-  end
-
   # Method that is used for building the URL for fetching the SVG Image, and actually
   # making the HTTP connection and adding the response to the stream
   # @see #build_badge_url
@@ -152,7 +144,7 @@ class BadgeApi < CoreApi
   #
   # @return [void]
   def fetch_image_shield
-    fetch_data(build_badge_url, 'request_name' => @params.fetch('request_name', nil), 'http_detect' => customized_badge?) do |http_response|
+    fetch_data(build_badge_url, 'request_name' => @params.fetch('request_name', nil)) do |http_response|
       print_to_output_buffer(http_response, @output_buffer)
     end
   end
