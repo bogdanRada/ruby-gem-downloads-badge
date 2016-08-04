@@ -40,18 +40,25 @@ module_function
   end
 
   def valid_http_response?(http)
-    http.is_a?(EM::HttpClient) && http_valid_content_types?(http) && non_empty_http_response?(http)
+    http.is_a?(EM::HttpClient) && non_empty_http_response?(http)
   end
 
   def non_empty_http_response?(http)
     http.response.present?
   end
 
+  def rubygems_valid_response?(http, url)
+    url.include?(RubygemsApi::BASE_URL) && http_valid_status_code?(http, [200,404])
+  end
+
+  def shields_io_valid_response?(http, url)
+    url.include?(BadgeApi::BASE_URL) &&
+    http_valid_status_code?(http, [200]) &&
+    http_valid_content_types?(http)
+  end
+
   def valid_http_code_returned?(http, url)
-    http_valid_status_code?(http, 200) || (
-    http_valid_status_code?(http, 404) &&
-    url.include?(RubygemsApi::BASE_URL)
-    )
+    rubygems_valid_response?(http, url) || shields_io_valid_response?(http, url)
   end
 
   def http_valid_content_types?(http, content_types = ['text/html'])

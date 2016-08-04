@@ -16,14 +16,16 @@ class RequestMiddleware
 
       puts "############## HTTP REQUEST  #####################\n"
       puts JSON.pretty_generate(
-        request_cookies: request_cookies,
-        headers: head,
-        url: client.req.uri,
-        body: body
+      request_cookies: request_cookies,
+      headers: head,
+      url: client.req.uri,
+      body: body
       )
     end
     [head, body]
   end
+
+
 
   # Method that is used to debug responses from API's
   # The method receives the response object and prints it content to console
@@ -33,25 +35,23 @@ class RequestMiddleware
   def response(resp)
     headers = resp.response_header
 
-    if ENV['RACK_ENV'] != 'production' ||
-       headers[EM::HttpClient::CONTENT_TYPE].include?('text/html') ||
-       ![200, 404].include?(headers.http_status)
+    if (env_production? && valid_http_code_returned?(resp, resp.req.uri)) || !env_production?
 
       puts "############## HTTP RESPONSE  #####################\n"
       puts JSON.pretty_generate(
-        request_cookies: request_cookies,
-        request: {
-          headers: resp.req.headers,
-          url: resp.req.uri,
-          body: resp.req.body,
-          object: resp.req.inspect
-        },
-        response: {
-          headers: headers,
-          status: headers.http_status,
-          url: resp.req.uri,
-          body: force_utf8_encoding(resp.response.to_s.inspect)
-        }
+      request_cookies: request_cookies,
+      request: {
+        headers: resp.req.headers,
+        url: resp.req.uri,
+        body: resp.req.body,
+        object: resp.req.inspect
+      },
+      response: {
+        headers: headers,
+        status: headers.http_status,
+        url: resp.req.uri,
+        body: force_utf8_encoding(resp.response.to_s.inspect)
+      }
       )
     end
     resp
