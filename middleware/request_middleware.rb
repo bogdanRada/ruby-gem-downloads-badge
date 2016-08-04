@@ -35,7 +35,7 @@ class RequestMiddleware
   def response(resp)
     headers = resp.response_header
 
-    if (env_production? && valid_http_code_returned?(resp, resp.req.uri)) || !env_production?
+    if  !env_production? #|| (env_production? && valid_http_code_returned?(resp, resp.req.uri))
 
       puts "############## HTTP RESPONSE  #####################\n"
       puts JSON.pretty_generate(
