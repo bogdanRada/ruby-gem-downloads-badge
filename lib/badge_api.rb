@@ -159,11 +159,11 @@ class BadgeApi < CoreApi
   end
 
   # callback that is called when http request fails
-  def callback_error(error, options)
-    super(error, options)
-    output = svg_template.fetch_badge_image
-    print_to_output_buffer(output, @output_buffer)
-  end
+  # def callback_error(error, options)
+  #  super(error, options)
+  #  output = svg_template.fetch_badge_image
+  #  print_to_output_buffer(output, @output_buffer)
+  # end
 
   # Method that is used for formatting the number of downloads , if the number is blank, will return invalid,
   # otherwise will format the number using the configuration from params, either using metrics or delimiters

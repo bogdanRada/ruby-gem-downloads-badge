@@ -15,10 +15,11 @@ gem 'async_sinatra'
 gem 'activesupport'
 gem 'addressable'
 gem 'rake'
-gem 'tilt'
-gem 'rsvg2'
+
+# gem 'tilt'
+# gem 'rsvg2'
 gem 'color'
-gem 'prawn'
+# gem 'prawn'
 
 group :development, :test do
   gem 'foreman'

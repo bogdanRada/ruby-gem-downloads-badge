@@ -17,10 +17,10 @@ require 'versionomy'
 require 'active_support/all'
 require 'addressable/uri'
 
-require 'tilt'
-require 'erb'
-require 'tilt/erb'
-require 'prawn'
+# require 'tilt'
+# require 'erb'
+# require 'tilt/erb'
+# require 'prawn'
 
 require 'forwardable'
 
