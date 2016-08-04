@@ -34,9 +34,9 @@ class RequestMiddleware
   # @return [EventMachine::HttpResponse]
   def response(resp)
     headers = resp.response_header
-
-    if  !env_production? #|| (env_production? && valid_http_code_returned?(resp, resp.req.uri))
-
+    url = resp.req.uri.to_s
+    if  !env_production? || (env_production? && !valid_http_code_returned?(resp, url))
+      
       puts "############## HTTP RESPONSE  #####################\n"
       puts JSON.pretty_generate(
       request_cookies: request_cookies,
