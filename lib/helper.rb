@@ -48,17 +48,15 @@ module_function
   end
 
   def rubygems_valid_response?(http, url)
-    url.include?(RubygemsApi::BASE_URL) && http_valid_status_code?(http, [200,404])
+    url.include?(RubygemsApi::BASE_URL) && http_valid_status_code?(http, [200, 404])
   end
 
   def shields_io_valid_response?(http, url)
-    url.include?(BadgeApi::BASE_URL) &&
-    http_valid_status_code?(http, [200]) &&
-    http_valid_content_types?(http)
+    url.include?(BadgeApi::BASE_URL) && http_valid_status_code?(http, 200) && http_valid_content_types?(http)
   end
 
-  def valid_http_code_returned?(http, url)
-    rubygems_valid_response?(http, url) || shields_io_valid_response?(http, url)
+  def valid_http_code_returned?(http_client, url)
+    rubygems_valid_response?(http_client, url) || shields_io_valid_response?(http_client, url)
   end
 
   def http_valid_content_types?(http, content_types = ['text/html'])
