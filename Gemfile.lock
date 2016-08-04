@@ -13,7 +13,6 @@ GEM
     backports (3.6.8)
     blockenspiel (0.5.0)
     coderay (1.1.1)
-    color (1.8)
     colorize (0.8.1)
     concurrent-ruby (1.0.2)
     cookiejar (0.3.3)
@@ -143,7 +142,6 @@ DEPENDENCIES
   activesupport
   addressable
   async_sinatra
-  color
   coveralls
   em-http-request
   eventmachine (>= 1.2.0.1)

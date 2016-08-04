@@ -16,10 +16,6 @@ gem 'activesupport'
 gem 'addressable'
 gem 'rake'
 
-# gem 'tilt'
-# gem 'rsvg2'
-gem 'color'
-# gem 'prawn'
 
 group :development, :test do
   gem 'foreman'
