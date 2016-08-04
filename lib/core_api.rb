@@ -11,19 +11,28 @@ require_relative './helper'
 class CoreApi
   include Helper
 
+  DETECTED_HTTP_ERROR = 'detected_http_error'
+  CUSTOMIZED_BADGE = 'test_default_template'
+
+  CALLBACK_ERROR_MESSAGES = {
+    CoreApi::DETECTED_HTTP_ERROR => 'Detected HTTP Connection Error for',
+    CoreApi::CUSTOMIZED_BADGE => 'Using the customized template for'
+  }.freeze
+
   attr_reader :params
 
   # Returns the connection options used for connecting to API's
   #
   # @return [Hash] Returns the connection options used for connecting to API's
-  def em_connection_options
+  def em_connection_options(url = nil)
     {
       connect_timeout: 30, # default connection setup timeout
       inactivity_timeout: 60, # default connection inactivity (post-setup) timeout
       ssl: {
         cipher_list: 'ALL',
         verify_peer: false,
-        ssl_version: 'TLSv1'
+        ssl_version: 'TLSv1',
+        sni_hostname: parsed_url_property(url)
       },
       head: {
         'ACCEPT' => '*/*',
@@ -35,13 +44,15 @@ class CoreApi
   # Returns the request options used for connecting to API's
   #
   # @return [Hash] Returns the request options used for connecting to API's
-  def em_request_options(options = {})
+  def em_request_options(data = {})
     {
       redirects: 5,              # follow 3XX redirects up to depth 5
       keepalive: true,           # enable keep-alive (don't send Connection:close header)
-      head: (options[:head] || {}).merge(
-        'ACCEPT' => '*/*'
-      )
+      head: (data[:head] || {}).merge(
+        'ACCEPT' => '*/*',
+        'Connection' => 'keep-alive'
+      ),
+      body: (params[:body] || {})
     }
   end
 
@@ -50,34 +61,61 @@ class CoreApi
   #
   # @param [String] url The URL that will be used in the HTTP request
   # @return [EventMachine::HttpRequest] Returns an http request object
-  def em_request(url, options)
-    uri = Addressable::URI.parse(url)
-    conn_options = em_connection_options.merge(ssl: { sni_hostname: uri.host })
-    em_request = EventMachine::HttpRequest.new(url, conn_options)
+  def em_request(request_url, options)
+    em_request = EventMachine::HttpRequest.new(request_url, em_connection_options(request_url))
     em_request.send(options.fetch('http_method', 'get'), em_request_options(options))
   end
 
-  def persist_cookies(http, url)
-    http.headers do |head|
+  def setup_request_cookies_for_url
+    request_cookies[@base_url] ||= []
+  end
+
+  def persist_cookies_for_url(cookie_string)
+    return if cookie_string.blank?
+    setup_request_cookies_for_url
+    request_cookies[@base_url] << cookie_string
+  end
+
+  def persist_cookies(http_client)
+    http_client.headers do |head|
       cookie_string = head[EM::HttpClient::SET_COOKIE]
-      if cookie_string.present?
-        request_cookies[url] ||= []
-        request_cookies[url] << cookie_string
-      end
+      persist_cookies_for_url(cookie_string)
     end
+  end
+
+  def options_base_url(options, request_url)
+    request_name = options['request_name']
+    request_name.present? ? request_name : request_url
+  end
+
+  def get_cookie_string_for_base_url(base_url)
+    cookie_h = request_cookies[base_url].present? ? cookie_hash(base_url) : {}
+    return if cookie_h.blank?
+    get_string_from_cookie_data(cookie_h)
+  end
+
+  def get_string_from_cookie_data(cookie_h)
+    cookie_h.to_cookie_string if cookie_h.expire_time >= Time.zone.now
   end
 
   def add_cookie_header(options, url)
     set_time_zone
-    options[:head] ||= {}
-    base_url = options['request_name'].present? ? options['request_name'] : url
-    cookie_h = request_cookies[base_url].present? ? cookie_hash(base_url) : {}
-    options[:head]['cookie'] = cookie_h.to_cookie_string if cookie_h.present? && cookie_h.expire_time >= Time.zone.now
-    base_url
+    @base_url = options_base_url(options, url)
+    cookie_string = get_cookie_string_for_base_url(@base_url)
+    options['head']['cookie'] = cookie_string if cookie_string.present?
   end
 
   def request_coming_from_repo?
     defined?(@request) && @request.env['HTTP_REFERER'].to_s.include?('https://github.com/bogdanRada/ruby-gem-downloads-badge')
+  end
+
+  def request_allowed_for_customized_badge?
+    ((env_production? && request_coming_from_repo?) || !env_production?)
+  end
+
+  def setup_options_for_url(options, request_url)
+    options['head'] ||= {}
+    options['url_fetched'] = request_url
   end
 
   # Method that fetch the data from a URL and registers the error and success callback to the HTTP object
@@ -90,8 +128,11 @@ class CoreApi
   # @return [void]
   def fetch_data(url, options = {}, &block)
     options = options.stringify_keys
-    if ((ENV['RACK_ENV'] == 'production' && request_coming_from_repo?) || ENV['RACK_ENV'] != 'production') && options['test_default_template'].to_s == 'true'
+    setup_options_for_url(options, url)
+    if request_allowed_for_customized_badge? && options['http_detect'].to_s == CoreApi::CUSTOMIZED_BADGE
       callback_error(url, options)
+    elsif options[:multi_request] && multi_manager.present?
+      multi_fetch_data(options, &block)
     else
       fetch_real_data(url, options, &block)
     end
@@ -107,12 +148,15 @@ class CoreApi
   # @param [Proc] block If the response is not blank, the block will receive the response
   # @return [void]
   def fetch_real_data(url, options = {}, &block)
-    options = options.stringify_keys
-    base_url = add_cookie_header(options, url)
+    add_cookie_header(options, url)
     http = em_request(url, options)
-    persist_cookies(http, base_url)
-    register_error_callback(http, options)
-    register_success_callback(http, options, &block)
+    do_fetch_real_data(http, options, &block)
+  end
+
+  def do_fetch_real_data(http_client, options, &block)
+    persist_cookies(http_client)
+    register_error_callback(http_client, options)
+    register_success_callback(http_client, options, &block)
   end
 
   # Method that is used to register a success callback to a http object
@@ -130,11 +174,12 @@ class CoreApi
   end
 
   def handle_http_callback(http, options, &block)
-    if http.is_a?(EM::HttpClient) && !http.response_header[EM::HttpClient::CONTENT_TYPE].include?('text/html') && [200, 404].include?(http.response_header.http_status) && http.response.present?
-      res = callback_before_success(http.response)
+    http_response = http.response
+    if valid_http_response?(http) && valid_http_code_returned?(http, options['url_fetched'])
+      res = callback_before_success(http_response)
       dispatch_http_response(res, options, &block)
     else
-      callback_error(http.response, options.merge!('detected_http_error' => true))
+      callback_error(http_response, options.merge!('http_detect' => CoreApi::DETECTED_HTTP_ERROR))
     end
   end
 
@@ -160,12 +205,8 @@ class CoreApi
   # @param [Object] error The error that was raised by the HTTP request
   # @return [void]
   def callback_error(error, options = {})
-    if options['detected_http_error']
-      logger.debug "Detected HTTP Connection Error for: #{error.inspect} and #{options.inspect}"
-    elsif options['test_default_template']
-      logger.debug "Using the customized template for: #{error.inspect} and #{options.inspect}"
-    else
-      logger.debug "Error during fetching data  : #{error.inspect} with #{options.inspect}"
-    end
+    debug = "#{error.inspect} with #{options.inspect}"
+    message = CoreApi::CALLBACK_ERROR_MESSAGES[options['http_detect']]
+    message.present? ? logger.debug("#{message}: #{debug}") : logger.debug("Error during fetching data  : #{debug}")
   end
 end

@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-require_relative './helper'
+require_relative '../lib/helper'
 # middleware used only in development for testing purposes
 class RequestMiddleware
   include Helper

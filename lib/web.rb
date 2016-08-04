@@ -27,7 +27,7 @@ require 'forwardable'
 Dir.glob('./config/initializers/**/*.rb') { |file| require file }
 Dir.glob('./lib**/*.rb') { |file| require file }
 
-require_relative './request_middleware'
+require_relative '../middleware/request_middleware'
 require_relative './cookie_hash'
 
 # class that is used to download shields for ruby gems using their name and version
@@ -135,7 +135,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   # @return [void]
   def register_em_error_handler
     EM.error_handler do |error|
-      settings.logger.debug "Error during event loop : #{error.inspect} \n #{error.backtrace}"
+      settings.logger.debug "Error during event loop : #{format_error(error)}"
     end
   end
 

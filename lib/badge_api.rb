@@ -44,21 +44,21 @@ class BadgeApi < CoreApi
   #
   # @return [String] Returns the param style from params , otherwise will return by default 'flat'
   def style_param
-    @params.fetch('style', 'flat') || 'flat'
+    @style_param ||= @params.fetch('style', 'flat') || 'flat'
   end
 
   # Fetches the maxAge from the params , and if is not present will return by default 2592000
   #
   # @return [Integer] Returns the maxAge from params , otherwise will return by default 2592000
   def max_age_param
-    @params.fetch('maxAge', 2_592_000) || 2_592_000
+    @max_age_param ||= @params.fetch('maxAge', 2_592_000) || 2_592_000
   end
 
   # Fetches the link params from the original params used for social badges
   #
   # @return [String] Returns the link param otherwise empty string
   def link_param
-    @original_params.fetch('link', '') || ''
+    @link_param ||= @original_params.fetch('link', '') || ''
   end
 
   # Checks if the badge is a social badge and if the params contains links and returns the links for the badge
@@ -73,21 +73,21 @@ class BadgeApi < CoreApi
   #
   # @return [String] Returns the logo from the params, otherwise empty string
   def logo_param
-    @params.fetch('logo', '') || ''
+    @logo_param ||= @params.fetch('logo', '') || ''
   end
 
   # Fetches the logo width from the params, otherwise empty string
   #
   # @return [String] Returns the logo width from the params, otherwise empty string
   def logo_width
-    @params.fetch('logoWidth', 0).to_s.to_i || 0
+    @logo_width ||= @params.fetch('logoWidth', 0).to_s.to_i || 0
   end
 
   # Fetches the logo padding from the params, otherwise empty string
   #
   # @return [String] Returns the logo padding from the params, otherwise empty string
   def logo_padding
-    @params.fetch('logoPadding', 0).to_s.to_i || 0
+    @logo_padding ||= @params.fetch('logoPadding', 0).to_s.to_i || 0
   end
 
   # Checks if any additional params are present in URL and adds them to the URL constructed for the badge
@@ -109,21 +109,25 @@ class BadgeApi < CoreApi
   #
   # @return [String] Returns the status of the badge
   def status_param
-    status_param = @params.fetch('label', 'downloads') || 'downloads'
-    status_param = status_param.present? ? status_param : 'downloads'
-    clean_image_label(status_param)
+    @status_param ||= begin
+      status_param = @params.fetch('label', 'downloads') || 'downloads'
+      status_param = status_param.present? ? status_param : 'downloads'
+      clean_image_label(status_param)
+    end
   end
 
   # Method that is used to set the image extension
   #
   # @return [String] Returns the status of the badge
   def image_extension
-    param_extension = @params['extension'].to_s
-    @image_extension ||= available_extension?(param_extension) ? param_extension : 'svg'
+    @image_extension ||= begin
+      param_extension = @params['extension'].to_s
+      available_extension?(param_extension) ? param_extension : 'svg'
+    end
   end
 
   def image_colour
-    @downloads.blank? ? 'lightgrey' : @params.fetch('color', 'blue')
+    @image_colour ||= @downloads.blank? ? 'lightgrey' : @params.fetch('color', 'blue')
   end
 
   # Method used to build the shield URL for fetching the SVG image
@@ -137,6 +141,10 @@ class BadgeApi < CoreApi
     @svg_template ||= SvgTemplate.new(self)
   end
 
+  def customized_badge?
+    @params['customized_badge'].present? ? CoreApi::CUSTOMIZED_BADGE : ''
+  end
+
   # Method that is used for building the URL for fetching the SVG Image, and actually
   # making the HTTP connection and adding the response to the stream
   # @see #build_badge_url
@@ -145,7 +153,7 @@ class BadgeApi < CoreApi
   #
   # @return [void]
   def fetch_image_shield
-    fetch_data(build_badge_url, 'request_name' => @params.fetch('request_name', nil), 'test_default_template' => @params['customized_badge']) do |http_response|
+    fetch_data(build_badge_url, 'request_name' => @params.fetch('request_name', nil), 'http_detect' => customized_badge?) do |http_response|
       print_to_output_buffer(http_response, @output_buffer)
     end
   end

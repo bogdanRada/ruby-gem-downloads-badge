@@ -27,11 +27,19 @@ class ImageProcessor
     @mode == 'png' ? render_png_memory : render_jpeg_image_from_file
   end
 
+  def return_string_from_output(output)
+    output.is_a?(StringIO) ? output.string : output
+  end
+
+  def output_set_encoding(output)
+    output.set_encoding('UTF-8') if output.respond_to?(:set_encoding)
+  end
+
   def render_png_memory(output = StringIO.new)
-    output.set_encoding('UTF-8') if output.is_a?(StringIO)
+    output_set_encoding(output)
     @context_target.write_to_png(output)
     @context_target.finish
-    output.is_a?(StringIO) ? output.string : output
+    return_string_from_output(output)
   end
 
   def render_jpeg_image_from_file
@@ -41,8 +49,12 @@ class ImageProcessor
     buffer_jpeg_from_file(temp_path)
   end
 
+  def need_temp_file(temp_path)
+    temp_path.present? ? temp_path : create_temp_file
+  end
+
   def buffer_jpeg_from_file(temp_path = nil)
-    temp_path = temp_path.present? ? temp_path : create_temp_file('svg2')
+    temp_path = need_temp_file(temp_path)
     @pixbuf.save(temp_path, @mode)
     output = File.read(temp_path)
     FileUtils.rm_rf(temp_path)

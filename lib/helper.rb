@@ -23,11 +23,53 @@ module_function
   delegate :settings, :cookie_hash, :set_time_zone, to: :RubygemsDownloadShieldsApp
   delegate :logger, :request_cookies, to: :settings
 
+  def parsed_url_property(url, property = 'host')
+    return if url.blank? || !url.is_a?(String)
+    uri = Addressable::URI.parse(url)
+    uri.present? && property.present? ? uri.send(property) : uri
+  rescue
+    nil
+  end
+
   def root
     File.expand_path(File.dirname(__dir__))
   end
 
-  def create_temp_file(name)
+  def env_production?
+    ENV['RACK_ENV'] == 'production'
+  end
+
+  def valid_http_response?(http)
+    http.is_a?(EM::HttpClient) && http_valid_content_types?(http) && non_empty_http_response?(http)
+  end
+
+  def non_empty_http_response?(http)
+    http.response.present?
+  end
+
+  def valid_http_code_returned?(http, url)
+    http_valid_status_code?(http, 200) || (
+    http_valid_status_code?(http, 404) &&
+    url.include?(RubygemsApi::BASE_URL)
+    )
+  end
+
+  def http_valid_content_types?(http, content_types = ['text/html'])
+    content_types = content_types.is_a?(Array) ? content_types : [content_types]
+    !content_types.include?(http.response_header[EM::HttpClient::CONTENT_TYPE])
+  end
+
+  def http_valid_status_code?(http, status_codes = [200])
+    status_codes = status_codes.is_a?(Array) ? status_codes : [status_codes]
+    status_codes.include?(http.response_header.http_status)
+  end
+
+  def format_error(error)
+    "#{error.inspect} \n #{error.backtrace}"
+  end
+
+  def create_temp_file(name = nil)
+    name = name.present? ? name : SecureRandom.uuid
     temp = Tempfile.new(name, encoding: 'utf-8')
     ObjectSpace.undefine_finalizer(temp)
     temp.path
@@ -62,19 +104,24 @@ module_function
   end
 
   def fetch_color_from_scheme(name, color_key = 'colorB')
-    return COLOR_SCHEME[name][color_key] if COLOR_SCHEME[name]
+    color_scheme = COLOR_SCHEME[name]
+    return color_scheme[color_key] if color_scheme.present?
   end
 
   def fetch_color_hex(name, color_key = 'colorB')
-    return fetch_color_from_scheme(name, color_key) if fetch_color_from_scheme(name, color_key).present?
-    if name.starts_with?('#') && valid_hex_color?(name)
-      name
-    elsif Color::CSS[name].present?
-      Color::CSS[name].html
-    elsif valid_hex_color?("##{name}")
-      "##{name}"
-    else
-      COLOR_SCHEME['blue'][color_key]
+    color_scheme = fetch_color_from_scheme(name, color_key)
+    return color_scheme if color_scheme.present?
+    real = get_real_hex_color(name, Color::CSS[name])
+    real.present? ? real : COLOR_SCHEME['blue'][color_key]
+  end
+
+  def get_real_hex_color(color_name, css_name)
+    if color_name.starts_with?('#') && valid_hex_color?(color_name)
+      color_name
+    elsif css_name.present?
+      css_name.html
+    elsif valid_hex_color?("##{color_name}")
+      "##{color_name}"
     end
   end
 
