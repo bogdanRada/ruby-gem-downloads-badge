@@ -2,6 +2,10 @@
 require_relative './core_api'
 # class used for connecting to runygems.org and downloading info about a gem
 #
+# @!attribute request
+#   @return [Rack::Request] The request that Sinatra received
+# @!attribute params
+#   @return [Hash] The params received by Sinatra
 # @!attribute callback
 #   @return [Proc] The callback that is executed after info is fetched
 class RubygemsApi < CoreApi
@@ -12,6 +16,7 @@ class RubygemsApi < CoreApi
 
   # Method used to instantiate an instance of RubygemsApi class with the params received from URL
   #
+  # @param [Rack::Request] request The request that Sinatra received
   # @param [Hash] params The params received from URL
   # @option params [String] :gem The name of the gem
   # @option params [String]:version The version of the gem
@@ -30,7 +35,6 @@ class RubygemsApi < CoreApi
   # @see #valid?
   # @see #fetch_dowloads_info
   #
-  # @param [Lambda] callback The callback that needs to be executed after the information is downloaded
   # @return [void]
   def fetch_downloads_data
     if valid?
@@ -107,6 +111,8 @@ class RubygemsApi < CoreApi
 
   # Method that downloads all the versions of a gem, finds the latest stable version and sends the downloads count to the callback
   # The count defers depending if we need to display total amount or not
+  # @see #get_latest_stable_version_details
+  # @see #latest_stable_version_details
   #
   # @return [void]
   def fetch_gem_stable_version_data
@@ -119,6 +125,7 @@ class RubygemsApi < CoreApi
 
   # Method that downloads information about a specifc version of a gem and send the count to the callback
   # The count defers depending if we need to display total amount or not
+  # @see #display_total
   #
   # @return [void]
   def fetch_specific_version_data
@@ -131,6 +138,7 @@ class RubygemsApi < CoreApi
 
   # Method that downloads information about the latest version and sends the count to the callback
   # The count defers depending if we need to display total amount or not
+  # @see #display_total
   #
   # @return [void]
   def fetch_gem_data_without_version
@@ -141,6 +149,12 @@ class RubygemsApi < CoreApi
     end
   end
 
+  # Method that is used when a HTTP error happens for this service,
+  # and this also makes sure that the success callback is called with nil values,
+  # so further processing can happen
+  # @see CoreApi#callback_error
+  #
+  # @return [void]
   def callback_error(error, options = {})
     super(error, options)
     @callback.call(nil, nil)

@@ -1,13 +1,20 @@
 # frozen_string_literal: true
 # module that is used for formatting numbers using metrics
 module Helper
-  # function that makes the methods incapsulated as utility functions
-
+# function that makes the methods incapsulated as utility functions
 module_function
 
   delegate :settings, :cookie_hash, :set_time_zone, to: :RubygemsDownloadShieldsApp
   delegate :logger, :request_cookies, to: :settings
 
+  # Method used for parsing a URL and fetching a specific property of the URL
+  # (By default , the 'host' property)
+  # @see Addressable::URI#parse
+  #
+  # @param [String] url  The URL that will be parsed
+  # @param [String] property The property of the URL that we want to get (Default: 'host')
+  #
+  # @return [String,nil] The property value or nil if there is a exception in parsing the URL or the property does not exist
   def parsed_url_property(url, property = 'host')
     return if url.blank? || !url.is_a?(String)
     uri = Addressable::URI.parse(url)
@@ -16,44 +23,118 @@ module_function
     nil
   end
 
+  # Method used to determine the root of the application,
+  # that might be helpful when trying to construct file paths relative to this value
+  #
+  # @return [String]
   def root
     File.expand_path(File.dirname(__dir__))
   end
 
+  # Method used to determine if application is running in production environment
+  # by checking ENV['RACK_ENV']
+  #
+  # @return [Boolean] Returns true if RACK_ENV is equal to production, otherwise false
   def env_production?
     ENV['RACK_ENV'] == 'production'
   end
 
+  # Method used to determine if a object is a valid HTTP client and has a response
+  # @see #non_empty_http_response
+  #
+  # @param [EventMachine::HttpRequest] http The http client that will be verified for response
+  #
+  # @return [Boolean] Returns true if valid, otherwise false
   def valid_http_response?(http)
     http.is_a?(EM::HttpClient) && non_empty_http_response?(http)
   end
 
+  # Method used to determine if the reponse form the http client is valid
+  #
+  # @param [EventMachine::HttpRequest] http The http client that will be verified for response
+  #
+  # @return [Boolean] Returns true if valid, otherwise false
   def non_empty_http_response?(http)
     http.response.present?
   end
 
+  # Method used to determine if URL is from Rubygems and if has valid status code ( 200 or 404)
+  # 404 are considered valid, because it determines if a gem exists or not.
+  #
+  # We don't check the content type for this, becasue if JSON is not returned,
+  # the JSON parsing will return nil , because the parsed exception is rescued,
+  # and will call the success callback with nil value, which will still show a badge
+  # that is 'invalid' ( this happens also for 404 statuses, since we receive HTML format,
+  # but we can still display a badge, letting people know that either there is a problem
+  # with the service itself, or the requested gem does not exist )
+  #
+  # @see #http_valid_status_code?
+  #
+  # @param [EventMachine::HttpRequest] http The http client that will be verified for response
+  # @param [String] url The URL that was used by the client to make the request
+  #
+  # @return [Boolean] Returns true if valid, otherwise false
   def rubygems_valid_response?(http, url)
     url.include?(RubygemsApi::BASE_URL) && http_valid_status_code?(http, [200, 404])
   end
 
+  # Method used to determine if URL is from Shields.io and if has valid status code ( 200)
+  # and if the content type returned is valid ( in some cases we can receive 200 status code but with invalid
+  # status code, e.q. when shields.io is down or under maintenance )
+  #
+  # @see #http_valid_status_code?
+  # @see #http_valid_content_types?
+  #
+  # @param [EventMachine::HttpRequest] http The http client that will be verified for response
+  # @param [String] url The URL that was used by the client to make the request
+  #
+  # @return [Boolean] Returns true if valid, otherwise false
   def shields_io_valid_response?(http, url)
     url.include?(BadgeApi::BASE_URL) && http_valid_status_code?(http, 200) && http_valid_content_types?(http)
   end
 
+  # Method used to detect bad responses from services, used by the middleware to log invalid responses
+  # in production.
+  #
+  # @see #rubygems_valid_response?
+  # @see #shields_io_valid_response?
+  #
+  # @param [EventMachine::HttpRequest] http The http client that will be verified for response
+  # @param [String] url The URL that was used by the client to make the request
+  #
+  # @return [Boolean] Returns true if valid, otherwise false
   def valid_http_code_returned?(http_client, url)
     rubygems_valid_response?(http_client, url) || shields_io_valid_response?(http_client, url)
   end
 
+  # Method used to check if the content type returned by the http client is not included in the list
+  # of invalid content types (e.g. text/html )
+  #
+  # @param [EventMachine::HttpRequest] http The http client that will be verified for content type
+  # @param [Array<String>] content_types The content types that are considered invalid ( e.g. text/html )
+  #
+  # @return [Boolean] Returns true if valid, otherwise false
   def http_valid_content_types?(http, content_types = ['text/html'])
     content_types = content_types.is_a?(Array) ? content_types : [content_types]
     !content_types.include?(http.response_header[EM::HttpClient::CONTENT_TYPE])
   end
 
+  # Method used to check if the status code returned by http client is in the list of valid status codes
+  #
+  # @param [EventMachine::HttpRequest] http The http client that will be verified for status code
+  # @param [Array<String>] status_codes The status codes that are considered valid ( e.g 200 )
+  #
+  # @return [Boolean] Returns true if valid, otherwise false
   def http_valid_status_code?(http, status_codes = [200])
     status_codes = status_codes.is_a?(Array) ? status_codes : [status_codes]
     status_codes.include?(http.response_header.http_status)
   end
 
+  # Method used to format a exception for displaying (usually used for logging only)
+  #
+  # @param [Exception] error The error that will be formatted
+  #
+  # @return [String] Returns the formatted exception that will be used in further processing
   def format_error(error)
     "#{error.inspect} \n #{error.backtrace}"
   end
@@ -65,16 +146,31 @@ module_function
     @params.fetch('type', nil)
   end
 
+  # Returns the corect mime type for the given extension ( suported extension are SVG, PNG, JPG, JPEG)
+  # @param [String] extension The extension that will be used to determine the coorect MimeType that needs to be set before the response is outputted (Default: 'svg')
+  #
+  # @return [String] Returns the mime type that the browser will use in order to know what output to expect
   def fetch_content_type(extension = 'svg')
     extension = extension.present? && available_extension?(extension) ? extension : 'svg'
     mime_type = Rack::Mime::MIME_TYPES[".#{extension}"]
     "#{mime_type};Content-Encoding: gzip; charset=utf-8"
   end
 
+  # Checks if a extension is currently supported by the application, by checking if it is in the list of supported extension
+  #
+  # @param [String] extension The extension that will be used
+  #
+  # @return [Boolean] Returns true if valid, otherwise false
   def available_extension?(extension)
     %w(png svg json jpg jpeg).include?(extension)
   end
 
+  # Sanitizes a string, by replacing unsafe characters with other characters
+  # Returns nil if string is blank
+  #
+  # @param [String] label The string that will be used
+  #
+  # @return [String,nil] Returns the sanitized string, or nil if string is blank
   def clean_image_label(label)
     return if label.blank?
     label.gsub(/[\s]+/, ' ').gsub(/[\_\-]+/, '_')
@@ -108,7 +204,6 @@ module_function
   #
   # @param [String] res The response string that will be dispatched
   # @param [Hash] options The callback that is used to dispatch further the response
-  # @param [Proc] block The block that is used for parsing response and then calling the callback
   # @return [void]
   def dispatch_http_response(res, options)
     callback = options.fetch('callback', nil)

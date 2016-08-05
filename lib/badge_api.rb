@@ -3,40 +3,68 @@ require_relative './number_formatter.rb'
 require_relative './core_api'
 # class used to download badges from shields.io
 #
-# @!attribute original_params
-#   @return [Hash] THe original params received from URL
+# @!attribute request
+#   @return [Rack::Request] THe request received by Sinatra (used by the middleware to detect bad responses)
+# @!attribute params
+#   @return [Hash] The params that Sinatra received
 # @!attribute output_buffer
-#   @return [Stream] The Sinatra Stream to which the badge will be inserted into
+#   @return [Sintra::Stream] The Sinatra Stream to which the badge will be inserted into
 # @!attribute downloads
 #   @return [Hash] THe downloads count that will need to be displayed on the badge
+# @!attribute http_response
+#   @return [Hash] THe http response receives from the other service, used for providing JSON format
 class BadgeApi < CoreApi
   # constant that is used to show message for invalid badge
   INVALID_COUNT = 'invalid'
 
+  # constant that is used for fetching badges.
   BASE_URL = 'https://img.shields.io'
 
-  attr_reader :output_buffer, :downloads, :original_params, :http_response, :params, :request
+  # @return [Rack::Request] THe request received by Sinatra (used by the middleware to detect bad responses)
+  attr_reader :request
+
+  # @return [Hash] The params that Sinatra received
+  attr_reader :params
+
+  # @return [Sinatra::Stream] The Sinatra Stream to which the badge will be inserted into
+  attr_reader :output_buffer
+
+  # @return [Hash] THe downloads count that will need to be displayed on the badge
+  attr_reader :downloads
+
+  # @return [Hash] THe http response receives from the other service, used for providing JSON format
+  attr_reader :http_response
 
   # Initializes the instance with the params from controller, and will try to download the information about the rubygems
   # and then will try to download the badge to the output stream
   # @see #fetch_image_shield
   # @see RubygemsApi#fetch_downloads_data
   #
-  # @param [Hash] params describe params
+  # @param [Rack::Request] request THe request received by Sinatra (used by the middleware to detect bad responses)
+  # @param [Hash] params THe params parsed by Sinatra
   # @option params [String] :color The color of the badge
   # @option params [String]:style The style of the badge
   # @option params [Boolean] :metric This will decide if the number will be formatted using metric or delimiters
   # @param [Sinatra::Stream] output_buffer describe output_buffer
-  # @param [Number] downloads describe external_api_details
+  # @param [Number] downloads The downloads number received after parsing the http_response from the other service
+  # @param [JSON] http_response The HTTP response parsed as JSON from the other service
   # @return [void]
   def initialize(request, params, output_buffer, downloads, http_response)
     @params = params
     @request = request
-    @original_params = CGI::parse(request.query_string)
     @output_buffer = output_buffer
     @downloads = downloads
     @http_response = http_response
     fetch_image_shield
+  end
+
+  # Parses the query string from the request with CGI in order to provide a integration with social badges
+  # @see Rack::Request#query_string
+  # @see CGI::parse
+  #
+  # @return [Hash] the parsed query string in Hash format but making array params as arrays instead of hashes
+  def original_params
+    @original_params ||= CGI::parse(@request.query_string)
   end
 
   # Fetches the param style from the params , and if is not present will return by default 'flat'
@@ -57,7 +85,7 @@ class BadgeApi < CoreApi
   #
   # @return [String] Returns the link param otherwise empty string
   def link_param
-    @link_param ||= @original_params.fetch('link', '') || ''
+    @link_param ||= original_params.fetch('link', '') || ''
   end
 
   # Checks if the badge is a social badge and if the params contains links and returns the links for the badge
@@ -125,6 +153,10 @@ class BadgeApi < CoreApi
     end
   end
 
+  # Method that is used to determine the image color, by default blue.
+  # In case the downloads are blank , will return lightgrey
+  #
+  # @return [String] Returns the color of the badge (Default: blue)
   def image_colour
     @image_colour ||= @downloads.blank? ? 'lightgrey' : @params.fetch('color', 'blue')
   end

@@ -30,6 +30,7 @@ Dir.glob('./lib**/*.rb') { |file| require file }
 require_relative '../middleware/request_middleware'
 require_relative './cookie_hash'
 
+# @author Rada Bogdan Raul
 # class that is used to download shields for ruby gems using their name and version
 class RubygemsDownloadShieldsApp < Sinatra::Base
   include Helper
@@ -51,12 +52,19 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   set :views, File.join(settings.root, 'views') # set up the views dir
   set :request_cookies, (Thread.current[:request_cookies] ||= {})
 
+  # It constructs the cookie data as a Hash from the cookie string that belongs to a particular URL
+  # @param [String] url
+  #
+  # @return [void]
   def self.cookie_hash(url)
     CookieHash.new.tap do |cookie_hash|
       settings.request_cookies[url].uniq.each { |cookie_data| cookie_hash.add_cookies(cookie_data) }
     end
   end
 
+  # It sets the Time zone so that using Time.zone will give the time in that timezone
+  #
+  # @return [void]
   def self.set_time_zone
     Time.zone = 'UTC'
     ENV['TZ'] = 'UTC'
@@ -118,10 +126,9 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
     end
   end
 
-  # Method that opens the stream and executes a block
+  # Method that sets first the content type , then opens a stream and yields the stream if a block is given
   #
-  # @param [Block] block The block that is executed after stream is open
-  # @return [void]
+  # @yieldreturn  [Sinatra::Stream] yields the stream that was opened if a block is given
   def use_stream
     content_type_string = fetch_content_type(params[:extension])
     content_type(content_type_string)
@@ -139,10 +146,11 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
     end
   end
 
-  # Method that runs a block after eventmachine starts
+  # Method that runs a block after eventmachine starts. This method also sets the RequestMiddleware to be used for all EM::HttpRequest instances that will be created_at
+  # @see RequestMiddleware
+  #
   # @param [Sinatra::Stream] out The stream where the response will be appended
-  # @param [Block] block The block that is executed after eventmachine starts running
-  # @return [void]
+  # @yieldreturn [Sinatra::Stream] yields the stream if a block is given
   def run_eventmachine(out)
     EM.run do
       EM::HttpRequest.use RequestMiddleware
