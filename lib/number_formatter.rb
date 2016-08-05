@@ -64,7 +64,6 @@ class NumberFormatter
   # @return [String] Returns the number formatted with metrics if 'display_metric' instance variable is true, otherwise using delimiters
   def to_s
     nr = can_display_metric? ? number_with_metric : number_with_delimiter
-    nr = format_to_filesize if for_github_api?
     "#{nr}#{number_text}"
   end
 
