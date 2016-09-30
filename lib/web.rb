@@ -10,19 +10,13 @@ Bundler.require :default, ENV['RACK_ENV'].to_sym
 
 require 'sinatra/streaming'
 require 'sinatra/json'
-require 'json'
-require 'net/http'
-require 'securerandom'
 require 'versionomy'
 require 'active_support/all'
 require 'addressable/uri'
 
-# require 'tilt'
-# require 'erb'
-# require 'tilt/erb'
-# require 'prawn'
-
 require 'forwardable'
+require 'json'
+require 'securerandom'
 
 Dir.glob('./config/initializers/**/*.rb') { |file| require file }
 Dir.glob('./lib**/*.rb') { |file| require file }
