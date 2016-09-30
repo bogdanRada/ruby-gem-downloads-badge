@@ -21,7 +21,6 @@ group :development, :test do
   gem 'rb-fsevent'
 
   gem 'rspec'
-  gem 'rack-test'
   gem 'simplecov'
   gem 'simplecov-summary'
   gem 'coveralls'
