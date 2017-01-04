@@ -1,7 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (5.0.0.1)
+    activesupport (5.0.1)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (~> 0.7)
       minitest (~> 5.1)
@@ -14,7 +14,7 @@ GEM
     backports (3.6.8)
     blockenspiel (0.5.0)
     colorize (0.8.1)
-    concurrent-ruby (1.0.2)
+    concurrent-ruby (1.0.4)
     cookiejar (0.3.3)
     coveralls (0.8.17)
       json (>= 1.8, < 3)
@@ -39,14 +39,14 @@ GEM
     http_parser.rb (0.6.0)
     i18n (0.7.0)
     json (2.0.2)
-    kgio (2.10.0)
+    kgio (2.11.0)
     listen (3.1.5)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
       ruby_dep (~> 1.2)
     minitest (5.10.1)
     multi_json (1.12.1)
-    public_suffix (2.0.4)
+    public_suffix (2.0.5)
     rack (1.6.5)
     rack-handlers (0.7.3)
       rack
