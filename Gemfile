@@ -13,7 +13,7 @@ gem 'async_sinatra'
 gem 'activesupport'
 gem 'addressable'
 gem 'rake'
-gem 'bundler', '~>1.13'
+gem 'bundler', '~>1.12'
 
 
 group :development, :test do
