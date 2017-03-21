@@ -1,13 +1,15 @@
 source 'https://rubygems.org'
 
 ruby '2.3.3'
-gem 'sinatra'
+gem 'sinatra', '~> 2.0.0.rc2'
 gem 'rack-handlers'
 gem 'rainbows'
 gem 'em-http-request'
 gem 'eventmachine', '>= 1.2.0.1'
 gem 'versionomy'
-gem 'sinatra-contrib'
+github 'sinatra/sinatra' do
+  gem 'sinatra-contrib'
+end
 gem 'rack'
 gem 'async_sinatra'
 gem 'activesupport'

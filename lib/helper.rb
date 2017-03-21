@@ -36,7 +36,7 @@ module_function
   #
   # @return [Boolean] Returns true if RACK_ENV is equal to production, otherwise false
   def env_production?
-    ENV['RACK_ENV'] == 'production'
+    ENV['RACK_ENV'] == 'production' || ENV['APP_ENV'] == "production"
   end
 
   # Method used to determine if a object is a valid HTTP client and has a response

@@ -6,7 +6,7 @@ ENV['RACK_ENV'] ||= 'development'
 require 'rubygems'
 require 'bundler'
 
-Bundler.require :default, ENV['RACK_ENV'].to_sym
+Bundler.require :default, ENV['RACK_ENV'].to_sym || ENV['APP_ENV'].to_sym
 
 require 'sinatra/streaming'
 require 'sinatra/json'
@@ -34,7 +34,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   set :root, File.dirname(File.dirname(__FILE__)) # You must set app root
   enable :logging
   set :environments, %w(development test production webdev)
-  set :environment, ENV['RACK_ENV']
+  set :environment, ENV['RACK_ENV'] || ENV['APP_ENV']
   set :development, (settings.environment == 'development')
   set :raise_errors, true
   set :dump_errors, settings.development
