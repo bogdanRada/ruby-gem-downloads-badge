@@ -92,7 +92,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   end
 
   aget '/?:gem?/?:version?' do
-    settings.logger.debug("Sinatra runing in #{Thread.current}")
+    settings.logger.debug("Sinatra runing in #{Thread.current} with referrer #{request.env['HTTP_REFERER']}")
     em_request_badge do |out|
       RubygemsApi.new(request, params, badge_callback(out, 'api' => 'rubygems', 'request_name' => params[:gem]))
     end
