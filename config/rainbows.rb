@@ -6,10 +6,11 @@ preload_app true
 # The worker concurrency (CPU cores)
 worker_processes Integer(ENV['WEB_CONCURRENCY'] || 10)
 # The timeout for each request
-timeout 1260
+timeout 30
 # Rainbows configuration for using Eventmachine
 Rainbows! do
   use :EventMachine
+  keepalive_timeout(30)
 end
 
 
