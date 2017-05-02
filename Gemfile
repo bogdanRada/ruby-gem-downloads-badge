@@ -14,6 +14,7 @@ gem 'activesupport'
 gem 'addressable'
 gem 'rake'
 gem 'bundler', '~>1.13'
+gem 'rack-timeout'
 
 
 group :development, :test do
