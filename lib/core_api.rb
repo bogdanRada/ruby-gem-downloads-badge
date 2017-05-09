@@ -26,7 +26,7 @@ class CoreApi
       ssl: {
         cipher_list: 'ALL',
         verify_peer: false,
-        ssl_version: 'TLSv1',
+        ssl_version: 'TLSv1_2',
         sni_hostname: parsed_url_property(url)
       },
       head: {
