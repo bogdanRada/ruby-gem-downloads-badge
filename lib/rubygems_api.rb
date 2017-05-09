@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative './core_api'
 # class used for connecting to runygems.org and downloading info about a gem
 #
