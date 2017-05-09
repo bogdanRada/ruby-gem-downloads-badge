@@ -15,6 +15,8 @@ gem 'addressable'
 gem 'rake'
 gem 'bundler', '~>1.13'
 gem 'rack-timeout'
+gem 'moneta'
+gem 'localmemcache'
 
 
 group :development, :test do

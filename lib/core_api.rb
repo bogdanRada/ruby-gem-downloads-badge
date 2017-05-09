@@ -40,6 +40,7 @@ class CoreApi
   #
   # @return [Hash] Returns the request options used for connecting to API's
   def em_request_options(data = {})
+    data = data.is_a?(Hash) ? data.with_indifferent_access : {}
     {
       redirects: 5,              # follow 3XX redirects up to depth 5
       keepalive: true,           # enable keep-alive (don't send Connection:close header)
@@ -63,13 +64,7 @@ class CoreApi
     em_request.send(options.fetch('http_method', 'get'), em_request_options(options))
   end
 
-  # sets the request coookies for a URL to a empty Array if was not yet instantiated already
-  # @see RubygemsDownloadShieldsApp#request_cookies
-  #
-  # @return [void]
-  def setup_request_cookies_for_url
-    request_cookies[@base_url] ||= []
-  end
+
 
   # sets the full cookie string received from the response to the application's request cookies store
   # so that it can be used later when a new request cames for same URL
@@ -86,15 +81,14 @@ class CoreApi
   # Currently only Shields.io uses CLoudFlare Nginx
   #
   # @see #setup_request_cookies_for_url
-  # @see RubygemsDownloadShieldsApp#request_cookies
+  # @see RubygemsDownloadShieldsApp#cookie_db
   #
   # @param [String] cookie_string The cookie String that will be persisted for the current URL that is used.
   #
   # @return [void]
   def persist_cookies_for_url(cookie_string)
     return if cookie_string.blank?
-    setup_request_cookies_for_url
-    request_cookies[@base_url] << cookie_string
+    cookie_db[@base_url] = cookie_string
   end
 
   # persist the cookies through requests
@@ -126,7 +120,7 @@ class CoreApi
   # check if a cookie data already exist in the cookie store for the specified URL and if it is will return only the cookie value
   # without the other data, like expiration date, or other values that are specific to cookies
   #
-  # @see RubygemsDownloadShieldsApp#request_cookies
+  # @see RubygemsDownloadShieldsApp#cookie_db
   # @see RubygemsDownloadShieldsApp#cookie_hash
   # @see #get_string_from_cookie_data
   #
@@ -134,7 +128,7 @@ class CoreApi
   #
   # @return [String, nil] Returns the cookie value for the specified URL if exists in the cookie store and is not expired, or nil
   def get_cookie_string_for_base_url(base_url)
-    cookie_h = request_cookies[base_url].present? ? cookie_hash(base_url) : {}
+    cookie_h = cookie_db.key?(base_url) ? cookie_hash(base_url) : {}
     return if cookie_h.blank?
     get_string_from_cookie_data(cookie_h)
   end

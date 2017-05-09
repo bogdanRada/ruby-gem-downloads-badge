@@ -5,7 +5,7 @@ module Helper
 module_function
 
   delegate :settings, :cookie_hash, :set_time_zone, to: :RubygemsDownloadShieldsApp
-  delegate :logger, :request_cookies, to: :settings
+  delegate :logger,:cookie_db,  to: :settings
 
   # Method used for parsing a URL and fetching a specific property of the URL
   # (By default , the 'host' property)

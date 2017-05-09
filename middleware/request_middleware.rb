@@ -16,7 +16,6 @@ class RequestMiddleware
 
       puts "############## HTTP REQUEST  #####################\n"
       puts JSON.pretty_generate(
-      request_cookies: request_cookies,
       headers: head,
       url: client.req.uri,
       body: body
@@ -36,10 +35,8 @@ class RequestMiddleware
     headers = resp.response_header
     url = resp.req.uri.to_s
     if  !env_production? || (env_production? && !valid_http_code_returned?(resp, url))
-
       puts "############## HTTP RESPONSE  #####################\n"
       puts JSON.pretty_generate(
-      request_cookies: request_cookies,
       request: {
         headers: resp.req.headers,
         url: resp.req.uri,

@@ -23,6 +23,7 @@ Dir.glob('./lib**/*.rb') { |file| require file }
 
 require_relative '../middleware/request_middleware'
 require_relative './cookie_hash'
+require 'moneta'
 
 # @author Rada Bogdan Raul
 # class that is used to download shields for ruby gems using their name and version
@@ -44,7 +45,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   set :static, false # set up static file routing
   set :public_folder, File.join(settings.root, 'static') # set up the static dir (with images/js/css inside)
   set :views, File.join(settings.root, 'views') # set up the views dir
-  set :request_cookies, (Thread.current[:request_cookies] ||= {})
+  set :cookie_db, Moneta.new(:LocalMemCache, file: "db/cookie_store.db")
 
   # It constructs the cookie data as a Hash from the cookie string that belongs to a particular URL
   # @param [String] url
@@ -52,7 +53,9 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   # @return [void]
   def self.cookie_hash(url)
     CookieHash.new.tap do |cookie_hash|
-      settings.request_cookies[url].uniq.each { |cookie_data| cookie_hash.add_cookies(cookie_data) }
+        if settings.cookie_db.key?(url)
+          cookie_hash.add_cookies(settings.cookie_db[url])
+        end
     end
   end
 
