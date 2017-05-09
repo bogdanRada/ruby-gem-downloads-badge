@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # extending enumerable with methods
 module Enumerable
   # Sorts gem versions

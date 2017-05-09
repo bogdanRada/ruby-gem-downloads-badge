@@ -1,11 +1,12 @@
 # frozen_string_literal: true
+
 # module that is used for formatting numbers using metrics
 module Helper
 # function that makes the methods incapsulated as utility functions
 module_function
 
   delegate :settings, :cookie_hash, :set_time_zone, to: :RubygemsDownloadShieldsApp
-  delegate :logger, :request_cookies, to: :settings
+  delegate :logger, :cookie_db, to: :settings
 
   # Method used for parsing a URL and fetching a specific property of the URL
   # (By default , the 'host' property)
@@ -36,7 +37,7 @@ module_function
   #
   # @return [Boolean] Returns true if RACK_ENV is equal to production, otherwise false
   def env_production?
-    ENV['RACK_ENV'] == 'production' || ENV['APP_ENV'] == "production"
+    ENV['RACK_ENV'] == 'production' || ENV['APP_ENV'] == 'production'
   end
 
   # Method used to determine if a object is a valid HTTP client and has a response
@@ -162,7 +163,7 @@ module_function
   #
   # @return [Boolean] Returns true if valid, otherwise false
   def available_extension?(extension)
-    %w(png svg json jpg jpeg).include?(extension)
+    %w[png svg json jpg jpeg].include?(extension)
   end
 
   # Sanitizes a string, by replacing unsafe characters with other characters
@@ -196,7 +197,7 @@ module_function
   #
   # @return [Array<String>] Returns the metric prefixes array that can be used in metric display
   def metric_prefixes
-    %w(k M G T P E Z Y)
+    %w[k M G T P E Z Y]
   end
 
   # Dispatches the response either to the final callback or to the block that will use the response

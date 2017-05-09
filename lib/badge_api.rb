@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative './number_formatter.rb'
 require_relative './core_api'
 # class used to download badges from shields.io

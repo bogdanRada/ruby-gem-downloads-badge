@@ -1,4 +1,5 @@
 # frozen_string_literal: false
+
 $stdout.sync = true
 $stderr.sync = true
 ENV['RACK_ENV'] ||= 'development'
@@ -23,6 +24,7 @@ Dir.glob('./lib**/*.rb') { |file| require file }
 
 require_relative '../middleware/request_middleware'
 require_relative './cookie_hash'
+require 'moneta'
 
 # @author Rada Bogdan Raul
 # class that is used to download shields for ruby gems using their name and version
@@ -33,7 +35,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
 
   set :root, File.dirname(File.dirname(__FILE__)) # You must set app root
   enable :logging
-  set :environments, %w(development test production webdev)
+  set :environments, %w[development test production webdev]
   set :environment, ENV['RACK_ENV'] || ENV['APP_ENV']
   set :development, (settings.environment == 'development')
   set :raise_errors, true
@@ -44,7 +46,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   set :static, false # set up static file routing
   set :public_folder, File.join(settings.root, 'static') # set up the static dir (with images/js/css inside)
   set :views, File.join(settings.root, 'views') # set up the views dir
-  set :request_cookies, (Thread.current[:request_cookies] ||= {})
+  set :cookie_db, Moneta.new(:LocalMemCache, file: 'db/cookie_store.db')
 
   # It constructs the cookie data as a Hash from the cookie string that belongs to a particular URL
   # @param [String] url
@@ -52,7 +54,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   # @return [void]
   def self.cookie_hash(url)
     CookieHash.new.tap do |cookie_hash|
-      settings.request_cookies[url].uniq.each { |cookie_data| cookie_hash.add_cookies(cookie_data) }
+      cookie_hash.add_cookies(settings.cookie_db[url]) if settings.cookie_db.key?(url)
     end
   end
 
