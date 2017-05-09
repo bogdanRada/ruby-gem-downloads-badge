@@ -7,9 +7,7 @@ gem 'rainbows'
 gem 'em-http-request'
 gem 'eventmachine', '>= 1.2.0.1'
 gem 'versionomy'
-github 'sinatra/sinatra' do
-  gem 'sinatra-contrib'
-end
+gem 'sinatra-contrib'
 gem 'rack'
 gem 'async_sinatra'
 gem 'activesupport'
