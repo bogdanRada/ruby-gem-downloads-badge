@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
-ruby '2.3.3'
-gem 'sinatra', '~> 2.0.0.rc2'
+ruby '2.4.1'
+gem 'sinatra'
 gem 'rack-handlers'
 gem 'rainbows'
 gem 'em-http-request'
@@ -16,6 +16,7 @@ gem 'activesupport'
 gem 'addressable'
 gem 'rake'
 gem 'bundler', '~>1.13'
+gem 'rack-timeout'
 
 
 group :development, :test do
