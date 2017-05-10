@@ -15,9 +15,12 @@ class RequestPoolMiddleware
 
   def call(parent_env)
     env = parent_env.dup
-    future = Concurrent::Future.execute(:executor => @pool) do
+    future = Concurrent::dataflow_with!(@pool) do
      request(env)
-   end.then(&:succ).value!
+   end
+    future.wait
+    mime_type = Rack::Mime::MIME_TYPES[".svg"]
+    [200, {"Content-Type" => "#{mime_type};Content-Encoding: gzip; charset=utf-8"}, future.value!]
   end
 
   private
