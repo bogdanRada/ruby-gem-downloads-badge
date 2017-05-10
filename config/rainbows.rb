@@ -1,17 +1,16 @@
 # frozen_string_literal: true
-require 'etc'
-$worker_processes =  Integer(ENV['WEB_CONCURRENCY'] || 10)
+
 # Sync stdout to print mesages in real time.
 $stdout.sync = true
 # Preload app to make it faster
 preload_app true
 # The worker concurrency (CPU cores)
-worker_processes $worker_processes
+worker_processes Integer(ENV['WEB_CONCURRENCY'] || 10)
 # The timeout for each request
 timeout 120
 # Rainbows configuration for using Eventmachine
 Rainbows! do
-  use :NeverBlock, :pool_size => 25
+  use :NeverBlock, pool_size: 25
   keepalive_timeout(100)
   worker_connections 24
 end

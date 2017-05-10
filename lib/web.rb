@@ -148,7 +148,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   # @yieldreturn [Sinatra::Stream] yields the stream if a block is given
   def run_eventmachine(out)
     EM.run do
-      if ENV["LOG_REQUESTS"].present?
+      if ENV['LOG_REQUESTS'].present?
         EM::HttpRequest.use RequestMiddleware
       end
       yield out if block_given?
