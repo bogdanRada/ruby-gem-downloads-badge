@@ -1,11 +1,11 @@
 # frozen_string_literal: true
-
+require_relative "../lib/middleware/request_pool_middleware"
 # Sync stdout to print mesages in real time.
 $stdout.sync = true
 # Preload app to make it faster
 preload_app true
 # The worker concurrency (CPU cores)
-worker_processes Integer(ENV['WEB_CONCURRENCY'] || ThreadPoolMiddleware.SIZE)
+worker_processes Integer(ENV['WEB_CONCURRENCY'] || RequestPoolMiddleware::SIZE)
 # The timeout for each request
 timeout 120
 # Rainbows configuration for using Eventmachine

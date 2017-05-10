@@ -92,7 +92,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
     send_file File.expand_path(File.join(settings.public_folder, 'favicon.ico')), disposition: 'inline', type: 'image/x-icon'
   end
 
-  aget '/?:gem?/?:version?' do
+  get '/?:gem?/?:version?' do
     settings.logger.debug("Sinatra runing in #{Thread.current} with referrer #{request.env['HTTP_REFERER']}")
     em_request_badge do |out|
       RubygemsApi.new(request, params, badge_callback(out, 'api' => 'rubygems', 'request_name' => params[:gem]))

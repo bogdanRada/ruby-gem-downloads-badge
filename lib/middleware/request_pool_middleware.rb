@@ -15,7 +15,7 @@ class RequestPoolMiddleware
 
   def call(parent_env)
     env = parent_env.dup
-    future = Future.execute(:executor => @pool) do
+    future = Concurrent::Future.execute(:executor => @pool) do
      request(env)
    end.then(&:succ).value!
   end
