@@ -15,14 +15,17 @@ gem 'addressable'
 gem 'rake'
 gem 'bundler', '~>1.13'
 gem 'rack-timeout'
+gem 'sleepy_penguin'
+gem 'raindrops'
+gem 'sendfile'
 gem 'moneta'
 gem 'localmemcache'
-
+gem 'rb-fsevent'
+gem 'neverblock'
 
 group :development, :test do
   gem 'foreman'
   gem 'rerun'
-  gem 'rb-fsevent'
 
   gem 'rspec'
   gem 'simplecov'
