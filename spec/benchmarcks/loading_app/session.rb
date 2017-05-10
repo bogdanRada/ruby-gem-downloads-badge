@@ -7,8 +7,8 @@ CelluloidBenchmark::Session.define do
   benchmark :test
   get 'http://ruby-gem-test.herokuapp.com/rails'
 
-  benchmark :test2
-  get 'http://ruby-gem-test2.herokuapp.com/rails'
+  # benchmark :test2
+  # get 'http://ruby-gem-test2.herokuapp.com/rails'
 
   benchmark :local
   get 'http://localhost:5000/rails'

@@ -7,7 +7,7 @@ CelluloidBenchmark::Session.define do
   benchmark :test
   get 'https://github.com/bogdanRada/ruby-gem-downloads-badge/blob/master/spec/test/README.md'
 
-  benchmark :test2
-  get 'https://github.com/bogdanRada/ruby-gem-downloads-badge/blob/master/spec/test/README2.md'
+  # benchmark :test2
+  # get 'https://github.com/bogdanRada/ruby-gem-downloads-badge/blob/master/spec/test/README2.md'
 
 end

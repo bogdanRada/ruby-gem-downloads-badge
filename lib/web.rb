@@ -94,7 +94,6 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   end
 
   aget '/?:gem?/?:version?' do
-    settings.logger.debug("Sinatra runing in #{Thread.current} with referrer #{request.env['HTTP_REFERER']}")
     em_request_badge do |out|
       RubygemsApi.new(request, params, badge_callback(out, 'api' => 'rubygems', 'request_name' => params[:gem]))
     end
@@ -149,7 +148,9 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   # @yieldreturn [Sinatra::Stream] yields the stream if a block is given
   def run_eventmachine(out)
     EM.run do
-      EM::HttpRequest.use RequestMiddleware
+      if ENV["LOG_REQUESTS"].present?
+        EM::HttpRequest.use RequestMiddleware
+      end
       yield out if block_given?
     end
   end
