@@ -15,6 +15,8 @@ GEM
     blockenspiel (0.5.0)
     colorize (0.8.1)
     concurrent-ruby (1.0.5)
+    concurrent-ruby-edge (0.3.1)
+      concurrent-ruby (= 1.0.5)
     cookiejar (0.3.3)
     coveralls (0.8.21)
       json (>= 1.8, < 3)
@@ -123,6 +125,8 @@ DEPENDENCIES
   addressable
   async_sinatra
   bundler (~> 1.13)
+  concurrent-ruby
+  concurrent-ruby-edge
   coveralls
   em-http-request
   eventmachine (>= 1.2.0.1)

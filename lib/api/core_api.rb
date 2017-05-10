@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative './helper'
+require_relative '../modules/helper'
 # module that is used for formatting numbers using metrics
 #
 # @!attribute params

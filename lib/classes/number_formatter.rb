@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative './helper'
+require_relative '../modules/helper'
 # class used for formatting numbers
 # class used to download badges from shields.io
 #

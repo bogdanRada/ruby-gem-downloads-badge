@@ -17,7 +17,8 @@ gem 'bundler', '~>1.13'
 gem 'rack-timeout'
 gem 'moneta'
 gem 'localmemcache'
-
+gem 'concurrent-ruby'
+gem 'concurrent-ruby-edge'
 
 group :development, :test do
   gem 'foreman'
