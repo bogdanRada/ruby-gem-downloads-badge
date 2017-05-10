@@ -10,7 +10,7 @@ worker_processes Integer(ENV['WEB_CONCURRENCY'] || 10)
 timeout 120
 # Rainbows configuration for using Eventmachine
 Rainbows! do
-  use :NeverBlock, pool_size: 25
+  use :EventMachine
   keepalive_timeout(100)
   worker_connections 24
 end
