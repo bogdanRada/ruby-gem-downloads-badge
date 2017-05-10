@@ -55,6 +55,8 @@ GEM
       rack
     rack-protection (2.0.0)
       rack
+    rack-test (0.6.3)
+      rack (>= 1.0)
     rack-timeout (0.4.2)
     rainbows (5.1.1)
       kgio (~> 2.5)
@@ -131,6 +133,7 @@ DEPENDENCIES
   moneta
   rack
   rack-handlers
+  rack-test
   rack-timeout
   rainbows
   rake

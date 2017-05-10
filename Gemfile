@@ -24,6 +24,7 @@ group :development, :test do
   gem 'rerun'
   gem 'rb-fsevent'
 
+  gem 'rack-test'
   gem 'rspec'
   gem 'simplecov'
   gem 'simplecov-summary'
