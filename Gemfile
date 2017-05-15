@@ -17,6 +17,7 @@ gem 'bundler', '~>1.13'
 gem 'rack-timeout'
 gem 'moneta'
 gem 'localmemcache'
+gem 'sleepy_penguin'
 
 
 group :development, :test do

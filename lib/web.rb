@@ -25,6 +25,8 @@ Dir.glob('./lib**/*.rb') { |file| require file }
 require_relative '../middleware/request_middleware'
 require_relative './cookie_hash'
 require 'moneta'
+require 'localmemcache'
+require 'sleepy_penguin'
 
 # @author Rada Bogdan Raul
 # class that is used to download shields for ruby gems using their name and version
