@@ -36,6 +36,9 @@ class BadgeApi < CoreApi
   # @return [Hash] THe http response receives from the other service, used for providing JSON format
   attr_reader :http_response
 
+  # @return [Hash] THe default options that are sent to #fetch_data method
+  attr_reader :default_options
+
   # Initializes the instance with the params from controller, and will try to download the information about the rubygems
   # and then will try to download the badge to the output stream
   # @see #fetch_image_shield
@@ -56,6 +59,7 @@ class BadgeApi < CoreApi
     @output_buffer = output_buffer
     @downloads = downloads
     @http_response = http_response
+    @default_options = { 'request_name' => @params.fetch('request_name', nil) }
     fetch_image_shield
   end
 
@@ -177,7 +181,7 @@ class BadgeApi < CoreApi
   #
   # @return [void]
   def fetch_image_shield
-    fetch_data(build_badge_url, 'request_name' => @params.fetch('request_name', nil)) do |http_response|
+    fetch_data(build_badge_url, @default_options) do |http_response|
       print_to_output_buffer(http_response, @output_buffer)
     end
   end

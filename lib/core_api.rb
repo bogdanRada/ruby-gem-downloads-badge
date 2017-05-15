@@ -36,6 +36,13 @@ class CoreApi
     }
   end
 
+  # Method that checks if the call to rubygems.org needs to be authorized
+  # and adds the authorization header if is needed
+  # @return [Hash] The additional headers needed for request, by default empty Hash
+  def fetch_additional_headers
+    {}
+  end
+
   # Returns the request options used for connecting to API's
   # @param [Hash] data The optional data that will be used to inject additional headers to the request or providing a body to the request
   #
@@ -48,7 +55,7 @@ class CoreApi
       head: (data[:head] || {}).merge(
         'ACCEPT' => '*/*',
         'Connection' => 'keep-alive'
-      ),
+      ).remove_blank_values!,
       body: (params[:body] || {})
     }
   end
@@ -182,6 +189,7 @@ class CoreApi
   # @return [void]
   def fetch_data(url, options = {}, &block)
     options = options.stringify_keys
+    options['head'] = (options['head'] || {}).merge(fetch_additional_headers)
     setup_options_for_url(options, url)
     fetch_real_data(url, options, &block)
   end

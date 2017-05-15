@@ -20,7 +20,7 @@ require 'json'
 require 'securerandom'
 
 Dir.glob('./config/initializers/**/*.rb') { |file| require file }
-Dir.glob('./lib**/*.rb') { |file| require file }
+Dir.glob('./lib/**/*.rb') { |file| require file }
 
 require_relative '../middleware/request_middleware'
 require_relative './cookie_hash'

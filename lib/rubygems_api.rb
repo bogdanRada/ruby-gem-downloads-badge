@@ -13,7 +13,7 @@ class RubygemsApi < CoreApi
   # the base url to which the API will connect for fetching information about gems
   BASE_URL = 'https://rubygems.org'
 
-  attr_reader :callback, :params, :request
+  attr_reader :callback, :params, :request, :default_options
 
   # Method used to instantiate an instance of RubygemsApi class with the params received from URL
   #
@@ -28,7 +28,17 @@ class RubygemsApi < CoreApi
     @request = request
     @params = params.stringify_keys
     @callback = callback
+    @default_options = { 'callback' => @callback }
     fetch_downloads_data
+  end
+
+  # Method that checks if the call to rubygems.org needs to be authorized
+  # and adds the authorization header if is needed
+  # @return [Hash] The additional headers needed for request to rubygems.org
+  #   * :Authorization [String] The authorization key that holds the API KEY for the request
+  def fetch_additional_headers
+    api_key = params.fetch('api_key', '')
+    { 'Authorization' => api_key }
   end
 
   # Method that checks if the gem is valid , and if it is will fetch the infromation about the gem
@@ -117,7 +127,7 @@ class RubygemsApi < CoreApi
   #
   # @return [void]
   def fetch_gem_stable_version_data
-    fetch_data("#{RubygemsApi::BASE_URL}/api/v1/versions/#{gem_name}.json", 'callback' => @callback) do |http_response|
+    fetch_data("#{RubygemsApi::BASE_URL}/api/v1/versions/#{gem_name}.json", @default_options) do |http_response|
       latest_stable_version_details = get_latest_stable_version_details(http_response)
       downloads_count = latest_stable_version_details['downloads_count'] unless latest_stable_version_details.blank?
       @callback.call(downloads_count, http_response)
@@ -130,7 +140,7 @@ class RubygemsApi < CoreApi
   #
   # @return [void]
   def fetch_specific_version_data
-    fetch_data("#{RubygemsApi::BASE_URL}/api/v1/downloads/#{gem_name}-#{gem_version}.json", 'callback' => @callback) do |http_response|
+    fetch_data("#{RubygemsApi::BASE_URL}/api/v1/downloads/#{gem_name}-#{gem_version}.json", @default_options) do |http_response|
       downloads_count = http_response['version_downloads']
       downloads_count = http_response['total_downloads'] if display_total
       @callback.call(downloads_count, http_response)
@@ -143,7 +153,7 @@ class RubygemsApi < CoreApi
   #
   # @return [void]
   def fetch_gem_data_without_version
-    fetch_data("#{RubygemsApi::BASE_URL}/api/v1/gems/#{gem_name}.json", 'callback' => @callback) do |http_response|
+    fetch_data("#{RubygemsApi::BASE_URL}/api/v1/gems/#{gem_name}.json", @default_options) do |http_response|
       downloads_count = http_response['version_downloads']
       downloads_count = http_response['downloads'] if display_total
       @callback.call(downloads_count, http_response)
