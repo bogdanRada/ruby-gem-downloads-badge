@@ -24,9 +24,7 @@ class CoreApi
       connect_timeout: 5, # default connection setup timeout
       inactivity_timeout: 10, # default connection inactivity (post-setup) timeout
       ssl: {
-        cipher_list: 'ALL',
         verify_peer: false,
-        ssl_version: 'TLSv1_2',
         sni_hostname: parsed_url_property(url)
       },
       head: {
