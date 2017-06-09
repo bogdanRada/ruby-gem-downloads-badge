@@ -38,7 +38,7 @@ GEM
       thor (~> 0.19.1)
     github-markup (1.6.0)
     http_parser.rb (0.6.0)
-    i18n (0.8.1)
+    i18n (0.8.4)
     json (2.1.0)
     kgio (2.11.0)
     listen (3.1.5)
@@ -158,4 +158,4 @@ RUBY VERSION
    ruby 2.4.1p111
 
 BUNDLED WITH
-   1.15.0
+   1.15.1
