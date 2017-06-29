@@ -23,6 +23,9 @@
   "buildpacks": [
     {
       "url": "heroku/ruby"
+    },
+    {
+      "url": "heroku/heroku-buildpack-locale"
     }
   ]
 }
