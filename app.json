@@ -1,6 +1,8 @@
 {
   "name": "ruby-gem-downloads-badge",
-
+  "description": "Clean and simple gem download badge,courtesy of shields.io, that displays the downloads number of your gem",
+  "website": "https://github.com/bogdanRada/ruby-gem-downloads-badge",
+  "success_url": "/",
   "scripts": {
   },
   "env": {
@@ -19,6 +21,7 @@
   },
   "formation": {},
   "addons": [],
+  "region": "eu",
   "stack": "heroku-16",
   "buildpacks": [
     {
