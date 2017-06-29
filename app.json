@@ -1,0 +1,32 @@
+{
+  "name": "ruby-gem-downloads-badge",
+  "scripts": {
+  },
+  "env": {
+    "APP_ENV": {
+      "required": true
+    },
+    "GITHUB_API_KEY": {
+      "required": true
+    },
+    "LANG": {
+      "required": true
+    },
+    "LOG_REQUESTS": {
+      "required": true
+    },
+    "RACK_ENV": {
+      "required": true
+    }
+  },
+  "formation": {
+  },
+  "addons": [
+
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/ruby"
+    }
+  ]
+}
