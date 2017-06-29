@@ -1,11 +1,10 @@
 {
   "name": "ruby-gem-downloads-badge",
-  "scripts": {},
+
+  "scripts": {
+  },
   "env": {
     "APP_ENV": {
-      "required": true
-    },
-    "GITHUB_API_KEY": {
       "required": true
     },
     "LANG": {
