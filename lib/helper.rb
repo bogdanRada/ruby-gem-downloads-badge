@@ -100,7 +100,7 @@ module_function
   # @see #rubygems_valid_response?
   # @see #shields_io_valid_response?
   #
-  # @param [EventMachine::HttpRequest] http The http client that will be verified for response
+  # @param [EventMachine::HttpRequest] http_client The http client that will be verified for response
   # @param [String] url The URL that was used by the client to make the request
   #
   # @return [Boolean] Returns true if valid, otherwise false
@@ -227,6 +227,42 @@ module_function
     JSON.parse(res)
   rescue JSON::ParserError
     nil
+  end
+
+  # returns the request name used for persisting cookies,
+  # by checking the options received or falling back to the URL received
+  #
+  # @param [Hash] options The options that will be used to retrive the request_name ( for shield.io we are only interested in the gem name )
+  # @param [String] request_url The URL that is used to fetch data from ( used as fallback if the options don't contain a request_name key)
+  #
+  # @return [String] returns the request name either from the options or it returns the request_url if a request name is not provided
+  def options_base_url(options, request_url)
+    request_name = options['request_name']
+    request_name.present? ? request_name : request_url
+  end
+
+  # INitializes the head key in the options received with a empty hash if not instantiated already
+  # and sets the url fetched to the url received
+  #
+  # @param [Hash] options The options used for settning the head key ( needed for setting the connection options)
+  # @param [String] request_url The URL that is being used currently to fetch data from
+  #
+  # @return [void]
+  def setup_options_for_url(options, request_url)
+    options['head'] ||= {}
+    options['url_fetched'] = request_url
+  end
+
+  # checks if a CookieHash instance is not expired and returns the cookie value , otherwise nil
+  #
+  # @see CookieHash#to_cookie_string
+  # @see CookieHash#expire_time
+  #
+  # @param [CookieHash] cookie_h The CookieHash instance that will be verified if not expired
+  #
+  # @return [String, nil] Returns the cookie value from the Cookie data if is not expired, or nil otherwise
+  def get_string_from_cookie_data(cookie_h)
+    cookie_h.to_cookie_string if cookie_h.expire_time >= Time.zone.now
   end
 
   # Method that is used to print to a stream . If the stream is already closed will return nil

@@ -37,3 +37,7 @@ YARD::Rake::YardocTask.new do |t|
   t.options = ['--any', '--extra', '--opts', '--markup-provider=redcarpet', '--markup=markdown', '--debug'] # optional
   t.stats_options = ['--list-undoc'] # optional
 end
+
+task :docs do
+  exec('bundle exec yard --list-undoc')
+end

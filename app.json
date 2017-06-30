@@ -1,25 +1,41 @@
 {
   "name": "ruby-gem-downloads-badge",
   "description": "Clean and simple gem download badge,courtesy of shields.io, that displays the downloads number of your gem",
-  "website": "https://github.com/bogdanRada/ruby-gem-downloads-badge",
+  "keywords": [
+    "badges",
+    "shields",
+    "gem",
+    "ruby",
+    "downloads",
+    "count",
+    "total"
+  ],
+  "repository": "https://github.com/bogdanRada/ruby-gem-downloads-badge",
+  "website": "https://ruby-gem-downloads-badge.herokuapp.com",
+  "logo": "https://ruby-gem-downloads-badge.herokuapp.com/favicon.ico",
   "success_url": "/",
   "scripts": {
   },
   "env": {
     "APP_ENV": {
+      "description": "The new environment variable used by Sinatra to set the environment (instead of RACK_ENV)",
       "required": true
     },
     "LANG": {
-      "required": true
-    },
-    "LOG_REQUESTS": {
+      "description": "The language used by the application (Default: en_US.UTF-8)",
       "required": true
     },
     "RACK_ENV": {
+      "description": "The old (deprecated) environment variable used by Sinatra to set the environment - kept here for compatibility with other gems",
       "required": true
     }
   },
-  "formation": {},
+  "formation": {
+    "web": {
+        "quantity": 1,
+        "size": "free"
+    }
+  },
   "addons": [],
   "region": "eu",
   "stack": "heroku-16",
@@ -30,5 +46,13 @@
     {
       "url": "https://github.com/heroku/heroku-buildpack-locale"
     }
-  ]
+  ],
+  "environments": {
+    "test": {
+      "scripts": {
+        "test-setup": "gem install rubocop && gem install reek",
+        "test": "rubocop . && reek . && bundle exec rake docs && bundle exec rake"
+      }
+    }
+  }
 }

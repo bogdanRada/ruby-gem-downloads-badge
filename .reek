@@ -1,11 +1,15 @@
 ---
-Attribute:
-  enabled: false
+exclude_paths:
+- middleware
+
 TooManyInstanceVariables:
   enabled: false
 TooManyMethods:
   enabled: false
-UtilityFunction:
-  enabled: false
-exclude_paths:
-- middleware
+
+ManualDispatch:
+  enabled: false # disabled for force_encoding
+InstanceVariableAssumption:
+  enabled: false # disabled for CoreApi @base_url usage
+DataClump:
+  enabled: false # disable for CoreApi taking parameters ['options', 'url'] to 3 methods

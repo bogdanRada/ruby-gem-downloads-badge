@@ -55,8 +55,9 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   #
   # @return [void]
   def self.cookie_hash(url)
+    db = settings.cookie_db
     CookieHash.new.tap do |cookie_hash|
-      cookie_hash.add_cookies(settings.cookie_db[url]) if settings.cookie_db.key?(url)
+      cookie_hash.add_cookies(db[url]) if db.key?(url)
     end
   end
 

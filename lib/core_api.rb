@@ -108,18 +108,6 @@ class CoreApi
     end
   end
 
-  # returns the request name used for persisting cookies,
-  # by checking the options received or falling back to the URL received
-  #
-  # @param [Hash] options The options that will be used to retrive the request_name ( for shield.io we are only interested in the gem name )
-  # @param [String] request_url The URL that is used to fetch data from ( used as fallback if the options don't contain a request_name key)
-  #
-  # @return [String] returns the request name either from the options or it returns the request_url if a request name is not provided
-  def options_base_url(options, request_url)
-    request_name = options['request_name']
-    request_name.present? ? request_name : request_url
-  end
-
   # check if a cookie data already exist in the cookie store for the specified URL and if it is will return only the cookie value
   # without the other data, like expiration date, or other values that are specific to cookies
   #
@@ -134,18 +122,6 @@ class CoreApi
     cookie_h = cookie_db.key?(base_url) ? cookie_hash(base_url) : {}
     return if cookie_h.blank?
     get_string_from_cookie_data(cookie_h)
-  end
-
-  # checks if a CookieHash instance is not expired and returns the cookie value , otherwise nil
-  #
-  # @see CookieHash#to_cookie_string
-  # @see CookieHash#expire_time
-  #
-  # @param [CookieHash] cookie_h The CookieHash instance that will be verified if not expired
-  #
-  # @return [String, nil] Returns the cookie value from the Cookie data if is not expired, or nil otherwise
-  def get_string_from_cookie_data(cookie_h)
-    cookie_h.to_cookie_string if cookie_h.expire_time >= Time.zone.now
   end
 
   # Adds in the options received , inside the head key the cookie key with value of the cookie that
@@ -163,18 +139,6 @@ class CoreApi
     @base_url = options_base_url(options, url)
     cookie_string = get_cookie_string_for_base_url(@base_url)
     options['head']['cookie'] = cookie_string if cookie_string.present?
-  end
-
-  # INitializes the head key in the options received with a empty hash if not instantiated already
-  # and sets the url fetched to the url received
-  #
-  # @param [Hash] options The options used for settning the head key ( needed for setting the connection options)
-  # @param [String] request_url The URL that is being used currently to fetch data from
-  #
-  # @return [void]
-  def setup_options_for_url(options, request_url)
-    options['head'] ||= {}
-    options['url_fetched'] = request_url
   end
 
   # Method that fetch the data from a URL and registers the error and success callback to the HTTP object

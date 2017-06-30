@@ -32,6 +32,4 @@ group :development, :test do
   gem 'coveralls'
 
   gem 'yard', '>= 0.8.7'
-  gem 'redcarpet', '>= 3.4'
-  gem 'github-markup', '>= 1.4'
 end
