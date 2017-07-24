@@ -37,7 +37,7 @@ GEM
     foreman (0.84.0)
       thor (~> 0.19.1)
     http_parser.rb (0.6.0)
-    i18n (0.8.4)
+    i18n (0.8.6)
     json (2.1.0)
     kgio (2.11.0)
     listen (3.1.5)
@@ -45,7 +45,7 @@ GEM
       rb-inotify (~> 0.9, >= 0.9.7)
       ruby_dep (~> 1.2)
     localmemcache (0.4.4)
-    minitest (5.10.2)
+    minitest (5.10.3)
     moneta (1.0.0)
     multi_json (1.12.1)
     mustermann (1.0.0)
@@ -55,8 +55,8 @@ GEM
       rack
     rack-protection (2.0.0)
       rack
-    rack-test (0.6.3)
-      rack (>= 1.0)
+    rack-test (0.7.0)
+      rack (>= 1.0, < 3)
     rack-timeout (0.4.2)
     rainbows (5.1.1)
       kgio (~> 2.5)
@@ -64,7 +64,7 @@ GEM
       unicorn (~> 5.1)
     raindrops (0.18.0)
     rake (12.0.0)
-    rb-fsevent (0.10.1)
+    rb-fsevent (0.10.2)
     rb-inotify (0.9.10)
       ffi (>= 0.5.0, < 2)
     rerun (0.11.0)
@@ -154,4 +154,4 @@ RUBY VERSION
    ruby 2.4.1p111
 
 BUNDLED WITH
-   1.15.1
+   1.15.3
