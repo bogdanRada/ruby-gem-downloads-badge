@@ -86,9 +86,9 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
 
   before do
     headers('Pragma' => 'no-cache')
-    etag SecureRandom.hex
+    # etag SecureRandom.hex
     # last_modified(Time.now - 60)
-    # self.class.set_time_zone
+    self.class.set_time_zone
     expires Time.zone.now - 1.day, :no_cache, :no_store, :must_revalidate, max_age: 0
     cache_control :public, :no_cache, :no_store, :must_revalidate, max_age: 0
   end
