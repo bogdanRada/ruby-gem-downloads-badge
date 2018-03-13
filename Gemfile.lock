@@ -35,7 +35,7 @@ GEM
     em-socksify (0.3.2)
       eventmachine (>= 1.0.0.beta.4)
     eventmachine (1.2.5)
-    ffi (1.9.21)
+    ffi (1.9.23)
     foreman (0.84.0)
       thor (~> 0.19.1)
     http-cookie (1.0.3)
@@ -64,7 +64,7 @@ GEM
       rack
     rack-protection (2.0.1)
       rack
-    rack-test (0.8.2)
+    rack-test (0.8.3)
       rack (>= 1.0, < 3)
     rack-timeout (0.4.2)
     rainbows (5.1.1)
@@ -73,7 +73,7 @@ GEM
       unicorn (~> 5.1)
     raindrops (0.19.0)
     rake (12.3.0)
-    rb-fsevent (0.10.2)
+    rb-fsevent (0.10.3)
     rb-inotify (0.9.10)
       ffi (>= 0.5.0, < 2)
     rerun (0.13.0)
