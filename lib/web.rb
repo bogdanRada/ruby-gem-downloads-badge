@@ -89,7 +89,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
     #    etag SecureRandom.hex
     #    last_modified(Time.now - 60)
     self.class.set_time_zone
-    expires Time.zone.now - 1, :no_cache, :no_store, :must_revalidate, max_age: 0
+    expires Time.zone.now.to_i - 1.month, :no_cache, :no_store, :must_revalidate, max_age: 0
   end
 
   get '/favicon.*' do
