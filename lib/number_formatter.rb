@@ -76,10 +76,12 @@ class NumberFormatter
     while index >= 0
       limit = metric_power[index]
       if @number > limit
-        return "#{(@number / limit).to_f.round}#{metric_prefixes[index]}"
+        nr = "#{(@number / limit).to_f.round}#{metric_prefixes[index]}"
+        return nr
       end
       index -= 1
     end
+    @number if nr.blank?
   end
 
   # Description of method
