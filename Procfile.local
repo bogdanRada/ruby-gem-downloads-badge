@@ -1,1 +1,2 @@
+# /bin/bash --login -c 'source .rvmrc && foreman start -f Procfile.local'
 web: rerun -- bundle exec rainbows -o 0.0.0.0 -p $PORT -c ./config/rainbows.rb
