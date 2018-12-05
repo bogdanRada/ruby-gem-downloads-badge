@@ -1,7 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (5.2.1)
+    activesupport (5.2.2)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 0.7, < 2)
       minitest (~> 5.1)
@@ -14,7 +14,7 @@ GEM
     backports (3.11.4)
     blockenspiel (0.5.0)
     colorize (0.8.1)
-    concurrent-ruby (1.0.5)
+    concurrent-ruby (1.1.3)
     cookiejar (0.3.3)
     coveralls (0.8.22)
       json (>= 1.8, < 3)
@@ -51,7 +51,7 @@ GEM
     multi_json (1.13.1)
     mustermann (1.0.3)
     public_suffix (3.0.3)
-    rack (2.0.5)
+    rack (2.0.6)
     rack-handlers (0.7.3)
       rack
     rack-protection (2.0.4)
@@ -106,12 +106,12 @@ GEM
       sinatra (= 2.0.4)
       tilt (>= 1.3, < 3)
     sleepy_penguin (3.5.0)
-    term-ansicolor (1.6.0)
+    term-ansicolor (1.7.0)
       tins (~> 1.0)
     thor (0.19.4)
     thread_safe (0.3.6)
-    tilt (2.0.8)
-    tins (1.17.0)
+    tilt (2.0.9)
+    tins (1.20.2)
     tzinfo (1.2.5)
       thread_safe (~> 0.1)
     unicorn (5.4.1)
