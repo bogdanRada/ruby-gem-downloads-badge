@@ -3,4 +3,4 @@ export rvm_project_rvmrc=1
 export rvm_trust_rvmrcs_flag=1
 export rvm_project_rvmrc_default=1
 export rvm_silence_path_mismatch_check_flag=1
-rvm use 'ruby-2.5.1@ruby-gem-downloads-badge' --create
+rvm use 'ruby-2.6.0@ruby-gem-downloads-badge' --create
