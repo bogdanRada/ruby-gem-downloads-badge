@@ -262,7 +262,8 @@ module_function
   #
   # @return [String, nil] Returns the cookie value from the Cookie data if is not expired, or nil otherwise
   def get_string_from_cookie_data(cookie_h)
-    cookie_h.to_cookie_string if cookie_h.expire_time >= Time.zone.now
+    expiration = cookie_h.expiration
+    cookie_h.to_cookie_string if expiration.blank? || (expiration.present? && expiration >= Time.zone.now.gmtime)
   end
 
   # Method that is used to print to a stream . If the stream is already closed will return nil

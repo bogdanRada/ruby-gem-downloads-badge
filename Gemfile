@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-ruby '2.6.1'
+ruby '2.6.5'
 gem 'sinatra'
 gem 'rack-handlers'
 gem 'rainbows'
@@ -30,6 +30,6 @@ group :development, :test do
   gem 'simplecov'
   gem 'simplecov-summary'
   gem 'coveralls'
-
-  gem 'yard', '>= 0.8.7'
+  gem "rest-client", ">= 1.8.0"
+  gem "yard", ">= 0.9.20"
 end
