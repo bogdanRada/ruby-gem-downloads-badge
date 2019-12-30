@@ -29,7 +29,6 @@ group :development, :test do
   gem 'rspec'
   gem 'simplecov'
   gem 'simplecov-summary'
-  gem 'coveralls'
   gem "rest-client", ">= 1.8.0"
   gem "yard", ">= 0.9.20"
 end
