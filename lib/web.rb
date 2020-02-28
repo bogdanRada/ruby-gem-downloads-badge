@@ -34,7 +34,8 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   include Helper
   helpers Sinatra::Streaming
   register Sinatra::Async
-  CACHE_CONTROL_FLAGS = [:no_cache,:no_store, :must_revalidate, max_age: 0]
+
+  set :cache_control_flags, [:no_cache,:no_store, :must_revalidate, max_age: 0]
 
   set :root, File.dirname(File.dirname(__FILE__)) # You must set app root
   enable :logging
@@ -45,7 +46,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   set :dump_errors, settings.development
   set :show_exceptions, settings.development
 
-  set :static_cache_control, [:private].concat(RubygemsDownloadShieldsApp::CACHE_CONTROL_FLAGS)
+  set :static_cache_control, [:private].concat(settings.cache_control_flags)
   set :static, false # set up static file routing
   set :public_folder, File.join(settings.root, 'static') # set up the static dir (with images/js/css inside)
   set :views, File.join(settings.root, 'views') # set up the views dir
@@ -90,8 +91,8 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
     etag SecureRandom.hex
     last_modified(Time.now - 60)
     self.class.set_time_zone
-    expires Time.zone.now - 1.day, *RubygemsDownloadShieldsApp::CACHE_CONTROL_FLAGS
-    cache_control :private, *RubygemsDownloadShieldsApp::CACHE_CONTROL_FLAGS
+    expires Time.zone.now - 1.day, *settings.cache_control_flags
+    cache_control :private, *settings.cache_control_flags
   end
 
   get '/favicon.*' do

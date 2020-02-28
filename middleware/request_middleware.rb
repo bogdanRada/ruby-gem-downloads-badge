@@ -12,13 +12,13 @@ class RequestMiddleware
   # @param [String, nil] body The body sent to API
   # @return [Array<Hash,String>] Returns the http headers and the body
   def request(client, head, body)
-    if ENV['RACK_ENV'] != 'production' && ENV['APP_ENV'] != "production"
+    if !env_production?
 
       puts "############## HTTP REQUEST  #####################\n"
       puts JSON.pretty_generate(
-      headers: head,
-      url: client.req.uri,
-      body: body
+        headers: head,
+        url: client.req.uri,
+        body: body
       )
     end
     [head, body]
