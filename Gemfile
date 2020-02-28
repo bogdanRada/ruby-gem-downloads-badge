@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-ruby '2.6.5'
+ruby '2.7.0'
 gem 'sinatra'
 gem 'rack-handlers'
 gem 'rainbows'
@@ -18,7 +18,6 @@ gem 'rack-timeout'
 gem 'moneta'
 gem 'localmemcache'
 gem 'sleepy_penguin'
-
 
 group :development, :test do
   gem 'foreman'
