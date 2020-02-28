@@ -5,7 +5,7 @@
 #   @return [Hash] The Hash that will contain the data about the cookie
 class CookieHash
   # constant that is used for filtering the cookie data (@hash) from unwanted values
-  CLIENT_COOKIES = %w[path expires domain secure httponly max-age].freeze
+  CLIENT_COOKIES = %w[path expires domain secure httponly max-age session samesite].freeze
 
   # Initializes the instance with empty hash by default
   #
