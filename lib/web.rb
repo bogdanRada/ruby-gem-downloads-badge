@@ -40,7 +40,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   register Sinatra::Async
 
   #noinspection RailsParamDefResolve
-  set :cache_control_flags, [:no_cache, :no_store, :must_revalidate, { max_age: 0 }]
+  set :cache_control_flags, [:no_cache, :no_store, :must_revalidate, { max_age: 0, s_max_age: 0 }]
 
   set :root, File.dirname(File.dirname(__FILE__)) # You must set app root
   enable :logging

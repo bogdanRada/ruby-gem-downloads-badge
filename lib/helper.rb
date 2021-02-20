@@ -157,7 +157,7 @@ module Helper
   def fetch_content_type(extension = 'svg')
     extension = extension.present? && available_extension?(extension) ? extension : 'svg'
     mime_type = Rack::Mime::MIME_TYPES[".#{extension}"]
-    "#{mime_type};Content-Encoding: gzip; charset=utf-8"
+    "#{mime_type}; charset=utf-8"
   end
 
   # Checks if a extension is currently supported by the application, by checking if it is in the list of supported extension
