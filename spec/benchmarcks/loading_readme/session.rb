@@ -1,5 +1,7 @@
+#noinspection RubyResolve
 require 'celluloid_benchmark'
 
+#noinspection RubyResolve
 CelluloidBenchmark::Session.define do
   benchmark :production
   get 'https://github.com/bogdanRada/ruby-gem-downloads-badge/blob/master/README.md'

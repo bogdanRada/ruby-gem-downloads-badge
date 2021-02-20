@@ -1,5 +1,7 @@
+#noinspection RubyResolve
 require 'celluloid_benchmark'
 
+#noinspection RubyResolve
 CelluloidBenchmark::Session.define do
   benchmark :production
   get 'http://ruby-gem-downloads-badge.herokuapp.com/rails'

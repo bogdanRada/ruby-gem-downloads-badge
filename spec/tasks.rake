@@ -26,8 +26,8 @@ YARD::Config.options[:load_plugins] = true
 YARD::Config.load_plugins
 
 YARD::Rake::YardocTask.new do |t|
-  t.files = ['lib/**/*.rb', 'spec/**/*_spec.rb'] # optional
-  t.options = ['--any', '--extra', '--opts', '--markup-provider=redcarpet', '--markup=markdown', '--debug'] # optional
+  t.files = %w[lib/**/*.rb spec/**/*_spec.rb] # optional
+  t.options = %w[--any --extra --opts --markup-provider=redcarpet --markup=markdown --debug] # optional
   t.stats_options = ['--list-undoc'] # optional
 end
 

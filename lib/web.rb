@@ -19,22 +19,27 @@ require 'forwardable'
 require 'json'
 require 'securerandom'
 
-Dir.glob('./config/initializers/**/*.rb') { |file| require file }
-Dir.glob('./lib/**/*.rb') { |file| require file }
+#noinspection RubyResolve
+Dir.glob('./config/initializers/**/*.rb') { |file| require(file) }
+#noinspection RubyResolve
+Dir.glob('./lib/**/*.rb') { |file| require(file) }
 
 require_relative '../middleware/request_middleware'
 require_relative './cookie_hash'
 require 'moneta'
+#noinspection RubyResolve
 require 'localmemcache'
 require 'sleepy_penguin'
 
 # @author Rada Bogdan Raul
 # class that is used to download shields for ruby gems using their name and version
+#noinspection RubyResolve
 class RubygemsDownloadShieldsApp < Sinatra::Base
   include Helper
   helpers Sinatra::Streaming
   register Sinatra::Async
 
+  #noinspection RailsParamDefResolve
   set :cache_control_flags, [:no_cache, :no_store, :must_revalidate, { max_age: 0 }]
 
   set :root, File.dirname(File.dirname(__FILE__)) # You must set app root
@@ -100,7 +105,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   end
 
   aget '/?:gem?/?:version?' do
-    settings.logger.debug("Sinatra runing in #{Thread.current} with referrer #{request.env['HTTP_REFERER']}")
+    settings.logger.debug("Sinatra running in #{Thread.current} with referrer #{request.env['HTTP_REFERER']}")
     em_request_badge do |out|
       RubygemsApi.new(request, params, badge_callback(out, 'api' => 'rubygems', 'request_name' => params[:gem]))
     end

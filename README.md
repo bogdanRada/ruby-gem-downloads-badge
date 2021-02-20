@@ -17,7 +17,7 @@ In your README.md, just add an image with the base URL (`https://ruby-gem-downlo
 
 You will then get a nice and pretty **SVG** with the downloads count of the gem provided:
 
-```ruby
+```sh
   ![](https://ruby-gem-downloads-badge.herokuapp.com/rails)
 ```
 
@@ -25,7 +25,7 @@ You will then get a nice and pretty **SVG** with the downloads count of the gem 
 
 Or you can use any extension you like like this (e.g. **PNG**, **JSON**\):
 
-```ruby
+```sh
   ![](https://ruby-gem-downloads-badge.herokuapp.com/rails?extension=png)
 ```
 
@@ -33,7 +33,7 @@ Or you can use any extension you like like this (e.g. **PNG**, **JSON**\):
 
 You can also specify the version of the gem, for example:
 
-```ruby
+```sh
   ![](https://ruby-gem-downloads-badge.herokuapp.com/rails/4.1.0)
 ```
 
@@ -41,7 +41,7 @@ You can also specify the version of the gem, for example:
 
 You can also specify to display the total downloads count like this:
 
-```ruby
+```sh
   ![](https://ruby-gem-downloads-badge.herokuapp.com/rails?type=total)
 ```
 
@@ -49,7 +49,7 @@ You can also specify to display the total downloads count like this:
 
 You can also specify to display the total downloads count for a version like this:
 
-```ruby
+```sh
   ![](https://ruby-gem-downloads-badge.herokuapp.com/rails/4.1.0?type=total)
 ```
 
@@ -57,7 +57,7 @@ You can also specify to display the total downloads count for a version like thi
 
 You can also customize the message displayed when using **type=total** params by using this:
 
-```ruby
+```sh
   ![](https://ruby-gem-downloads-badge.herokuapp.com/rails?type=total&total_label=total-awesome)
 ```
 
@@ -65,7 +65,7 @@ You can also customize the message displayed when using **type=total** params by
 
 If you want the downloads count to use **metrics**,, you can add `&metric=true` at the end of the url.
 
-```ruby
+```sh
 ![](https://ruby-gem-downloads-badge.herokuapp.com/rails?metric=true)
 ```
 
@@ -104,7 +104,7 @@ Available styles are:
 
 For social badges you can also use links for both sides of the badge like this:
 
-```ruby
+```sh
 ![](https://ruby-gem-downloads-badge.herokuapp.com/rails?style=social&link=https://google.com&link=https://yahoo.com)
 ```
 
@@ -112,7 +112,7 @@ For social badges you can also use links for both sides of the badge like this:
 
 If you want something else written on the badge you can use:
 
-```ruby
+```sh
 ![](https://ruby-gem-downloads-badge.herokuapp.com/rails?label=something-else)
 ```
 
@@ -120,7 +120,7 @@ If you want something else written on the badge you can use:
 
 You can change the logo width by using this:
 
-```ruby
+```sh
 ![](https://ruby-gem-downloads-badge.herokuapp.com/rails?logoWidth=80)
 ```
 
@@ -128,7 +128,7 @@ You can change the logo width by using this:
 
 If you specify a version that is not valid like this, you will see a invalid image:
 
-```ruby
+```sh
 ![](https://ruby-gem-downloads-badge.herokuapp.com/rails/4.1.dsad)
 ```
 

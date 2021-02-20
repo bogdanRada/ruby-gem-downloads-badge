@@ -12,7 +12,7 @@ class RequestMiddleware
   # @param [String, nil] body The body sent to API
   # @return [Array<Hash,String>] Returns the http headers and the body
   def request(client, head, body)
-    if !env_production?
+    unless env_production?
 
       puts "############## HTTP REQUEST  #####################\n"
       puts JSON.pretty_generate(

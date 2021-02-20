@@ -13,7 +13,7 @@ class CoreApi
   include Helper
 
   # @return [Hash] The params that Sinatra received
-  attr_reader :params
+  attr_reader :params, :base_url
 
   # Returns the connection options used for connecting to API's
   # @param [String] url  The url that will be used for connection, this is needed so that we can set properly the SNI hostname
@@ -58,7 +58,7 @@ class CoreApi
     }
   end
 
-  # instantiates an eventmachine http request object that will be used to make the htpp request
+  # instantiates an eventmachine http request object that will be used to make the http request
   # @see EventMachine::HttpRequest#initialize
   #
   # @param [String] request_url The URL that will be used in the HTTP request
@@ -71,10 +71,10 @@ class CoreApi
   end
 
   # sets the full cookie string received from the response to the application's request cookies store
-  # so that it can be used later when a new request cames for same URL
+  # so that it can be used later when a new request comes for same URL
   #
   # This is in particular used for CloudFlare to be able to send the _cfuid cookie next time a new
-  # request cames for same gem, This cookie is used to prevent CloudFlare to generate new cookies for same
+  # request will come for same gem, This cookie is used to prevent CloudFlare to generate new cookies for same
   # visitor, and to bypass the cache miss functionality that is executed when it can't identify the visitor
   # and use instead the caching functionality as long as is not expired
   #
@@ -173,7 +173,7 @@ class CoreApi
     do_fetch_real_data(http, options, &block)
   end
 
-  # Method that is used to reqister the callbacks for success, erorr, and on receiving headers
+  # Method that is used to register the callbacks for success, error, and on receiving headers
   # @see #persist_cookies
   # @see #register_error_callback
   # @see #register_success_callback
@@ -202,7 +202,7 @@ class CoreApi
   end
 
   # Method that is call an additional callback before calling the success callback for parsing response
-  # and dispatch the http response to the appropiate callback
+  # and dispatch the http response to the appropriate callback
   # @see #callback_before_success
   # @see #dispatch_http_response
   #
@@ -218,7 +218,7 @@ class CoreApi
 
   # Callback that is used before returning the response the the instance, by default it does no additional processing
   #
-  # if needed this can be overriden by child classes to provide the format processing
+  # if needed this can be overridden by child classes to provide the format processing
   # before calling the dispatch_http_response method
   #
   # @param [String] response The response that will be dispatched to the instance class that made the request
@@ -227,9 +227,9 @@ class CoreApi
     response
   end
 
-  # This method is used to reqister a error callback to a HTTP request object
+  # This method is used to register a error callback to a HTTP request object
   # @see #callback_error
-  # @param [EventMachine::HttpRequest] http The HTTP object that will be used for reqisteringt the error callback
+  # @param [EventMachine::HttpRequest] http The HTTP object that will be used for registering the error callback
   # @param [Hash] options The additional options needed for further processing
   # @return [void]
   def register_error_callback(http, options)

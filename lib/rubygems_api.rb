@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative './core_api'
-# class used for connecting to runygems.org and downloading info about a gem
+# class used for connecting to rubygems.org and downloading info about a gem
 #
 # @!attribute request
 #   @return [Rack::Request] The request that Sinatra received
@@ -42,7 +42,7 @@ class RubygemsApi < CoreApi
     { 'Authorization' => api_key }
   end
 
-  # Method that checks if the gem is valid , and if it is will fetch the infromation about the gem
+  # Method that checks if the gem is valid , and if it is will fetch the information about the gem
   # and pass the callback to the method . If is not valid the callback will be called with nil value
   # @see #valid?
   # @see #fetch_dowloads_info
@@ -50,21 +50,21 @@ class RubygemsApi < CoreApi
   # @return [void]
   def fetch_downloads_data
     if valid?
-      fetch_dowloads_info
+      fetch_downloads_info
     else
       @callback.call(nil, nil)
     end
   end
 
   # This method will decide what API method need to be called, depending if we want the latest stable version,
-  # a specific version or the latest one and passs the callback to the method call
+  # a specific version or the latest one and passes the callback to the method call
   # @see #fetch_gem_data_without_version
   # @see #gem_stable_version?
   # @see #fetch_specific_version_data
   # @see #fetch_gem_stable_version_data
   #
   # @return [void]
-  def fetch_dowloads_info
+  def fetch_downloads_info
     if gem_version.blank?
       fetch_gem_data_without_version
     elsif !gem_stable_version?
@@ -75,7 +75,7 @@ class RubygemsApi < CoreApi
   end
 
   # Method that is used to determine if the gem is valid by checking his name and version
-  # THe name is required and the version need to checked if is stable or sintactically valid
+  # THe name is required and the version need to checked if is stable or syntactically valid
   # @see  #gem_with_version?
   #
   # @return [Boolean] Returns true if the gem is valid
@@ -104,19 +104,19 @@ class RubygemsApi < CoreApi
     gem_version.present? && gem_version == 'stable'
   end
 
-  # Method that checks if the version of the gem is sintactically valid
+  # Method that checks if the version of the gem is syntactically valid
   #
-  # @return [Boolean] returns true if the version of the gem is sintactically valid
+  # @return [Boolean] returns true if the version of the gem is syntactically valid
   def gem_valid_version?
     gem_version.present? && parse_gem_version(gem_version).present?
   end
 
   # Method that check if the gem name and gem version are present and the gem version is either 'stable'
-  # or sintactically valid
+  # or syntactically valid
   # @see #gem_stable_version?
   # @see #gem_valid_version?
   #
-  # @return [Boolean] returns true if the name and version of gem are present and valid sintactically
+  # @return [Boolean] returns true if the name and version of gem are present and valid syntactically
   def gem_with_version?
     gem_name.present? && gem_version.present? && (gem_stable_version? || gem_valid_version?)
   end
@@ -131,11 +131,12 @@ class RubygemsApi < CoreApi
     fetch_data("#{RubygemsApi::BASE_URL}/api/v1/versions/#{gem_name}.json", @default_options) do |http_response|
       latest_stable_version_details = get_latest_stable_version_details(http_response)
       downloads_count = latest_stable_version_details['downloads_count'] unless latest_stable_version_details.blank?
+      #noinspection RubyScope
       @callback.call(downloads_count, http_response)
     end
   end
 
-  # Method that downloads information about a specifc version of a gem and send the count to the callback
+  # Method that downloads information about a specific version of a gem and send the count to the callback
   # The count defers depending if we need to display total amount or not
   # @see #display_total
   #
@@ -173,7 +174,7 @@ class RubygemsApi < CoreApi
   end
 
   # Method that is executed after we receive an successful response.
-  # This method willt try and parse the response as JSON, and if the
+  # This method will try and parse the response as JSON, and if the
   # parsing fails will return  nil
   #
   # @param [String] response The response received after successful HTTP request

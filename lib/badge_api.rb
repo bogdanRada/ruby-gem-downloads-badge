@@ -9,11 +9,12 @@ require_relative './core_api'
 # @!attribute params
 #   @return [Hash] The params that Sinatra received
 # @!attribute output_buffer
-#   @return [Sintra::Stream] The Sinatra Stream to which the badge will be inserted into
+#   @return [Sinatra::Stream] The Sinatra Stream to which the badge will be inserted into
 # @!attribute downloads
 #   @return [Hash] THe downloads count that will need to be displayed on the badge
 # @!attribute http_response
 #   @return [Hash] THe http response receives from the other service, used for providing JSON format
+#noinspection RubyTooManyInstanceVariablesInspection
 class BadgeApi < CoreApi
   # constant that is used to show message for invalid badge
   INVALID_COUNT = 'invalid'
@@ -111,14 +112,14 @@ class BadgeApi < CoreApi
 
   # Fetches the logo width from the params, otherwise empty string
   #
-  # @return [String] Returns the logo width from the params, otherwise empty string
+  # @return [Integer] Returns the logo width from the params, otherwise empty string
   def logo_width
     @logo_width ||= @params.fetch('logoWidth', 0).to_s.to_i || 0
   end
 
   # Fetches the logo padding from the params, otherwise empty string
   #
-  # @return [String] Returns the logo padding from the params, otherwise empty string
+  # @return [Integer] Returns the logo padding from the params, otherwise empty string
   def logo_padding
     @logo_padding ||= @params.fetch('logoPadding', 0).to_s.to_i || 0
   end
@@ -140,7 +141,7 @@ class BadgeApi < CoreApi
 
   # Method that is used to fetch the status of the badge
   #
-  # @return [String] Returns the status of the badge
+  # @return [String, nil] Returns the status of the badge
   def status_param
     @status_param ||= begin
       status_param = @params.fetch('label', 'downloads') || 'downloads'
@@ -162,7 +163,7 @@ class BadgeApi < CoreApi
   # Method that is used to determine the image color, by default blue.
   # In case the downloads are blank , will return lightgrey
   #
-  # @return [String] Returns the color of the badge (Default: blue)
+  # @return [String, nil] Returns the color of the badge (Default: blue)
   def image_colour
     @image_colour ||= @downloads.blank? ? 'lightgrey' : @params.fetch('color', 'blue')
   end
@@ -199,7 +200,7 @@ class BadgeApi < CoreApi
   # @see  NumberFormatter#initialize
   # @see NumberFormatter#formatted_display
   #
-  # @return [String] If the downloads argument is blank will return invalid, otherwise will format the numbere either with metrics or delimiters
+  # @return [String] If the downloads argument is blank will return invalid, otherwise will format the number either with metrics or delimiters
   def format_number_of_downloads
     @format_number_of_downloads ||= (@downloads.blank? ? BadgeApi::INVALID_COUNT : NumberFormatter.new(@downloads, @params).to_s)
   end

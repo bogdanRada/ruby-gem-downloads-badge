@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
 # module that is used for formatting numbers using metrics
+#noinspection RubyTooManyMethodsInspection
 module Helper
-  # function that makes the methods incapsulated as utility functions
+  # function that makes the methods encapsulated as utility functions
 
   module_function
 
+  #noinspection RailsParamDefResolve
   delegate :settings, :cookie_hash, :set_time_zone, to: :RubygemsDownloadShieldsApp
   delegate :logger, :cookie_db, to: :settings
 
@@ -13,10 +15,10 @@ module Helper
   # (By default , the 'host' property)
   # @see Addressable::URI#parse
   #
-  # @param [String] url  The URL that will be parsed
+  # @param [String, nil] url  The URL that will be parsed
   # @param [String] property The property of the URL that we want to get (Default: 'host')
   #
-  # @return [String,nil] The property value or nil if there is a exception in parsing the URL or the property does not exist
+  # @return [String,nil, Addressable::URI] The property value or nil if there is a exception in parsing the URL or the property does not exist
   def parsed_url_property(url, property = 'host')
     return if url.blank? || !url.is_a?(String)
     uri = Addressable::URI.parse(url)
@@ -51,7 +53,7 @@ module Helper
     http.is_a?(EM::HttpClient) && non_empty_http_response?(http)
   end
 
-  # Method used to determine if the reponse form the http client is valid
+  # Method used to determine if the response form the http client is valid
   #
   # @param [EventMachine::HttpRequest] http The http client that will be verified for response
   #
@@ -63,7 +65,7 @@ module Helper
   # Method used to determine if URL is from Rubygems and if has valid status code ( 200 or 404)
   # 404 are considered valid, because it determines if a gem exists or not.
   #
-  # We don't check the content type for this, becasue if JSON is not returned,
+  # We don't check the content type for this, because if JSON is not returned,
   # the JSON parsing will return nil , because the parsed exception is rescued,
   # and will call the success callback with nil value, which will still show a badge
   # that is 'invalid' ( this happens also for 404 statuses, since we receive HTML format,
@@ -124,7 +126,7 @@ module Helper
   # Method used to check if the status code returned by http client is in the list of valid status codes
   #
   # @param [EventMachine::HttpRequest] http The http client that will be verified for status code
-  # @param [Array<String>] status_codes The status codes that are considered valid ( e.g 200 )
+  # @param [Array<String>, Array<Integer>, String, Integer] status_codes The status codes that are considered valid ( e.g 200 )
   #
   # @return [Boolean] Returns true if valid, otherwise false
   def http_valid_status_code?(http, status_codes = [200])
@@ -148,8 +150,8 @@ module Helper
     @params.fetch('type', nil)
   end
 
-  # Returns the corect mime type for the given extension ( suported extension are SVG, PNG, JPG, JPEG)
-  # @param [String] extension The extension that will be used to determine the coorect MimeType that needs to be set before the response is outputted (Default: 'svg')
+  # Returns the correct mime type for the given extension ( supported extensions are SVG, PNG, JPG, JPEG)
+  # @param [String] extension The extension that will be used to determine the correct MimeType that needs to be set before the response is outputted (Default: 'svg')
   #
   # @return [String] Returns the mime type that the browser will use in order to know what output to expect
   def fetch_content_type(extension = 'svg')
@@ -180,7 +182,7 @@ module Helper
 
   # Returns utf8 encoding of the msg
   # @param [String] msg
-  # @return [String] ReturnsReturns utf8 encoding of the msg
+  # @return [String, nil] ReturnsReturns utf8 encoding of the msg
   def force_utf8_encoding(msg)
     msg.respond_to?(:force_encoding) && msg.encoding.name != 'UTF-8' ? msg.force_encoding('UTF-8') : msg
   rescue StandardError
@@ -214,8 +216,9 @@ module Helper
 
   # Returns the metric powers of all metric prefixes . This method is used in metric display of numbers
   # @see #metric_prefixes
-  # @return [Array<Number>] An array of metric powers that correspont to each metric prefix
+  # @return [Array<Number>] An array of metric powers that correspond to each metric prefix
   def metric_power
+    #noinspection RubyYardReturnMatch
     metric_prefixes.map.with_index { |_item, index| (1000**(index + 1)).to_i }
   end
 
@@ -233,7 +236,7 @@ module Helper
   # returns the request name used for persisting cookies,
   # by checking the options received or falling back to the URL received
   #
-  # @param [Hash] options The options that will be used to retrive the request_name ( for shield.io we are only interested in the gem name )
+  # @param [Hash] options The options that will be used to retrieve the request_name ( for shield.io we are only interested in the gem name )
   # @param [String] request_url The URL that is used to fetch data from ( used as fallback if the options don't contain a request_name key)
   #
   # @return [String] returns the request name either from the options or it returns the request_url if a request name is not provided
@@ -242,10 +245,10 @@ module Helper
     request_name.present? ? request_name : request_url
   end
 
-  # INitializes the head key in the options received with a empty hash if not instantiated already
+  # Initializes the head key in the options received with a empty hash if not instantiated already
   # and sets the url fetched to the url received
   #
-  # @param [Hash] options The options used for settning the head key ( needed for setting the connection options)
+  # @param [Hash] options The options used for setting the head key ( needed for setting the connection options)
   # @param [String] request_url The URL that is being used currently to fetch data from
   #
   # @return [void]
@@ -259,7 +262,7 @@ module Helper
   # @see CookieHash#to_cookie_string
   # @see CookieHash#expire_time
   #
-  # @param [CookieHash] cookie_h The CookieHash instance that will be verified if not expired
+  # @param [CookieHash, Hash] cookie_h The CookieHash instance that will be verified if not expired
   #
   # @return [String, nil] Returns the cookie value from the Cookie data if is not expired, or nil otherwise
   def get_string_from_cookie_data(cookie_h)
@@ -279,11 +282,11 @@ module Helper
     output_buffer.close
   end
 
-  # Method that tries to check if the version provided is a valid versin sintactical and semantical.
+  # Method that tries to check if the version provided is a valid version syntactically and semantically.
   # it does not check if the gem actually has that version published or not.
   # if the parsing of the version fails will return nil, otherwise will return the parsed version
   # @see Versionomy#parse
-  # @param [String] gem_version The string that represents the gem version that we want to check
+  # @param [String, nil] gem_version The string that represents the gem version that we want to check
   # @return [String, nil] Returns nil if the version is blank or 'stable' or the parsing has failed, otherwise will return the parsed version
   def parse_gem_version(gem_version)
     return if gem_version.blank? || gem_version == 'stable'
@@ -292,7 +295,7 @@ module Helper
     nil
   end
 
-  # Given an aray of gem versions , will filter them and return only the stable versions
+  # Given an array of gem versions , will filter them and return only the stable versions
   #
   # @param [Array<Hash>] http_response The HTTP response as a array of Hash
   # @return [Array<Hash>] Will return only the items from the array that have the key 'prerelease' with value false
@@ -311,8 +314,8 @@ module Helper
   # Method to search for a version number in all gem versions and return the hash object
   #
   # @param [Array<Hash>] versions The array of gem versions that we will use for searching
-  # @param [string] number The version number used for searching
-  # @return [Hash] Returns the version object that has the number specified
+  # @param [string, nil] number The version number used for searching
+  # @return [Hash, nil] Returns the version object that has the number specified
   def find_version(versions, number)
     number.blank? ? {} : versions.find { |val| val['number'] == number }
   end
@@ -321,7 +324,7 @@ module Helper
   # Will return empty string if array is blank
   #
   # @param [Array<String>] sorted_versions describe sorted_versions
-  # @return [string] description of returned object
+  # @return [string, nil] description of returned object
   def last_version(sorted_versions)
     sorted_versions.blank? ? '' : sorted_versions.last
   end
@@ -333,7 +336,8 @@ module Helper
   # @see #find_version
   #
   # @param [Array<Hash>] http_response The array with all the versions of the gem
-  # @return [Hash] Returns the latest stable version
+  # @return [Hash, nil] Returns the latest stable version
+  #noinspection RubyInstanceMethodNamingConvention
   def get_latest_stable_version_details(http_response)
     versions = stable_gem_versions(http_response)
     sorted_versions = sorted_versions(versions)

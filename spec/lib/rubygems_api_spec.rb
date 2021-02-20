@@ -1,8 +1,10 @@
+#noinspection RubyResolve
 require 'spec_helper'
 describe RubygemsApi do
-  let(:params) { { gem: 'rails', version: 'stable', tyoe: 'total' } }
+  let(:params) { { gem: 'rails', version: 'stable', type: 'total' } }
   let(:callback) { -> {} }
-  let(:request) { double() }
+  let(:request) { double }
+  #noinspection RubyYardParamTypeMatch
   let(:subject) { RubygemsApi.new(request, params, callback) }
 
   before(:each) do

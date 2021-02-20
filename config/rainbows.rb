@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Sync stdout to print mesages in real time.
+# Sync stdout to print messages in real time.
 $stdout.sync = true
 # Preload app to make it faster
 preload_app true
@@ -20,6 +20,7 @@ before_fork do |_server, _worker|
     Process.kill 'QUIT', Process.pid
   end
   if defined?(ActiveRecord::Base)
+    #noinspection RubyResolve
     ActiveRecord::Base.connection.disconnect!
   end
   # ...

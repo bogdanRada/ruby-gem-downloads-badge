@@ -7,6 +7,8 @@ class CookieHash
   # constant that is used for filtering the cookie data (@hash) from unwanted values
   CLIENT_COOKIES = %w[path expires domain secure httponly max-age session samesite].freeze
 
+  attr_reader :hash
+
   # Initializes the instance with empty hash by default
   #
   # @param [Hash] hash The Hash that will contain the data about the cookie
@@ -24,7 +26,7 @@ class CookieHash
     case value
     when Hash
       parsed = value.each_with_object({}) do |(key, val), memo|
-        key = special?(key) ? key.to_s.strip.downcase : key.to_s
+        key = special?(key.to_s) ? key.to_s.strip.downcase : key.to_s
         memo[key] = val
       end
       @hash.merge!(parsed)
@@ -55,7 +57,7 @@ class CookieHash
   #
   # @return [String] returns cookie value, filtering the unwanted values
   def to_cookie_string
-    data = @hash.delete_if { |key, _value| special?(key) }
+    data = @hash.delete_if { |key, _value| special?(key.to_s) }
     data.map { |key, value| "#{key}=#{value}" }.join('; ')
   end
 
@@ -72,7 +74,7 @@ class CookieHash
   # checks if the given key is in the list of special attributes to be handled
   #
   # @param [String, nil] key The key that will be verified
-  # @return [Boolean] returns true if the key is in the special attibutes list
+  # @return [Boolean] returns true if the key is in the special attributes list
   def special?(key)
     CLIENT_COOKIES.include?(key.to_s.strip.downcase)
   end

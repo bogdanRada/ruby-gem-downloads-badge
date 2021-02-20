@@ -70,14 +70,15 @@ class NumberFormatter
 
   # Method used to print a number using metrics
   #
-  # @return [String] Returns the formatted number in metrics format
+  # @return [Integer] Returns the formatted number in metrics format
   def number_with_metric
     index = metric_prefixes.size - 1
+    nr = nil
     while index >= 0
       limit = metric_power[index]
       if @number > limit
         nr = "#{(@number / limit).to_f.round}#{metric_prefixes[index]}"
-        return nr
+        return nr.to_i
       end
       index -= 1
     end
@@ -87,12 +88,13 @@ class NumberFormatter
   # Description of method
   #
   # @param [String] delimiter = ',' The delimiter that is used for number greater than 1000
-  # @param [String] separator = '.' The separator is used for float numbers to separate zecimals
-  # @return [String] Returns the formatted number using delimiters and separators
+  # @param [String] separator = '.' The separator is used for float numbers to separate decimals
+  # @return [String, Integer] Returns the formatted number using delimiters and separators
+  #noinspection RubyModifiedFrozenObject
   def number_with_delimiter(delimiter = ',', separator = '.')
     parts = @number.to_s.split('.')
     parts[0].gsub!(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1#{delimiter}")
-    parts.join separator
+    parts.join(separator)
   rescue StandardError
     @number
   end
