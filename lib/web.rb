@@ -35,7 +35,7 @@ class RubygemsDownloadShieldsApp < Sinatra::Base
   helpers Sinatra::Streaming
   register Sinatra::Async
 
-  set :cache_control_flags, [:no_cache,:no_store, :must_revalidate, max_age: 0]
+  set :cache_control_flags, [:no_cache, :no_store, :must_revalidate, { max_age: 0 }]
 
   set :root, File.dirname(File.dirname(__FILE__)) # You must set app root
   enable :logging

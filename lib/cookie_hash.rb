@@ -23,9 +23,9 @@ class CookieHash
   def add_cookies(value)
     case value
     when Hash
-      parsed = value.each_with_object({}) do |(key, value), memo|
+      parsed = value.each_with_object({}) do |(key, val), memo|
         key = special?(key) ? key.to_s.strip.downcase : key.to_s
-        memo[key] = value
+        memo[key] = val
       end
       @hash.merge!(parsed)
     when String
@@ -43,13 +43,12 @@ class CookieHash
   #
   # @return [Time] returns the expire time of the cookie that has been parsed
   def expiration
-    begin
-      if (max_age = @hash['max-age'].to_s.strip).present?
-        Time.zone.now + max_age.to_i
-      else
-        expire_time
-      end
-    end&.gmtime
+    val = if (max_age = @hash['max-age'].to_s.strip).present?
+            Time.zone.now + max_age.to_i
+          else
+            expire_time
+          end
+    val&.gmtime
   end
 
   # returns the cookie value as a String, filtering unwanted values

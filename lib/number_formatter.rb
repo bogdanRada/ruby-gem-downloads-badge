@@ -93,7 +93,7 @@ class NumberFormatter
     parts = @number.to_s.split('.')
     parts[0].gsub!(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1#{delimiter}")
     parts.join separator
-  rescue
+  rescue StandardError
     @number
   end
 end

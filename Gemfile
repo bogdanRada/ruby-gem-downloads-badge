@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-ruby '2.7.1'
+ruby '3.0.0'
 gem 'sinatra'
 gem 'rack-handlers'
 gem 'rainbows'
@@ -30,4 +30,6 @@ group :development, :test do
   gem 'simplecov-summary'
   gem "rest-client", ">= 1.8.0"
   gem "yard", ">= 0.9.20"
+  gem 'rubocop', require: false
+  gem 'reek', require: false
 end

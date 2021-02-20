@@ -29,6 +29,7 @@ class RubygemsApi < CoreApi
     @params = params.stringify_keys
     @callback = callback
     @default_options = { 'callback' => @callback }
+    super()
     fetch_downloads_data
   end
 

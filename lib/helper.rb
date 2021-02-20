@@ -2,8 +2,9 @@
 
 # module that is used for formatting numbers using metrics
 module Helper
-# function that makes the methods incapsulated as utility functions
-module_function
+  # function that makes the methods incapsulated as utility functions
+
+  module_function
 
   delegate :settings, :cookie_hash, :set_time_zone, to: :RubygemsDownloadShieldsApp
   delegate :logger, :cookie_db, to: :settings
@@ -20,7 +21,7 @@ module_function
     return if url.blank? || !url.is_a?(String)
     uri = Addressable::URI.parse(url)
     uri.present? && property.present? ? uri.send(property) : uri
-  rescue
+  rescue StandardError
     nil
   end
 
@@ -174,7 +175,7 @@ module_function
   # @return [String,nil] Returns the sanitized string, or nil if string is blank
   def clean_image_label(label)
     return if label.blank?
-    label.gsub(/[\s]+/, ' ').gsub(/[\_\-]+/, '_')
+    label.gsub(/\s+/, ' ').gsub(/[_\-]+/, '_')
   end
 
   # Returns utf8 encoding of the msg
@@ -182,7 +183,7 @@ module_function
   # @return [String] ReturnsReturns utf8 encoding of the msg
   def force_utf8_encoding(msg)
     msg.respond_to?(:force_encoding) && msg.encoding.name != 'UTF-8' ? msg.force_encoding('UTF-8') : msg
-  rescue
+  rescue StandardError
     nil
   end
 
@@ -288,7 +289,7 @@ module_function
     return if gem_version.blank? || gem_version == 'stable'
     Versionomy.parse(gem_version)
   rescue Versionomy::Errors::ParseError
-    return nil
+    nil
   end
 
   # Given an aray of gem versions , will filter them and return only the stable versions

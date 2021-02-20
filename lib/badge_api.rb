@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative './number_formatter.rb'
+require_relative './number_formatter'
 require_relative './core_api'
 # class used to download badges from shields.io
 #
@@ -60,6 +60,7 @@ class BadgeApi < CoreApi
     @downloads = downloads
     @http_response = http_response
     @default_options = { 'request_name' => @params.fetch('request_name', nil) }
+    super()
     fetch_image_shield
   end
 
@@ -127,11 +128,11 @@ class BadgeApi < CoreApi
   # @return [String] Returns the URL query string used for displaying the badge
   def additional_params
     additionals = {
-      'logo': logo_param,
-      'logoWidth': logo_width,
-      'logoPadding': logo_padding,
-      'style': style_param,
-      'maxAge': max_age_param.to_i
+      logo: logo_param,
+      logoWidth: logo_width,
+      logoPadding: logo_padding,
+      style: style_param,
+      maxAge: max_age_param.to_i
     }.delete_if { |_key, value| value.blank? || (value.is_a?(Numeric) && value.zero?) }
     additionals = additionals.to_query
     "#{additionals}#{style_additionals}"

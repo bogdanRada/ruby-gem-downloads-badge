@@ -68,8 +68,9 @@ class CoreApi
   def em_request(request_url, options)
     em_request = EventMachine::HttpRequest.new(request_url, em_connection_options(request_url))
     em_request.send(options.fetch('http_method', 'get'), em_request_options(options))
-  end # sets the full cookie string received from the response to the application's request cookies store
+  end
 
+  # sets the full cookie string received from the response to the application's request cookies store
   # so that it can be used later when a new request cames for same URL
   #
   # This is in particular used for CloudFlare to be able to send the _cfuid cookie next time a new

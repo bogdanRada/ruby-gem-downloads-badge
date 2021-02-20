@@ -32,9 +32,9 @@ module Enumerable
     version_string.split(/_/).map { |version| version_is_float?(version) }
   end
 
-# function that makes the methods incapsulated as utility functions
+  # function that makes the methods incapsulated as utility functions
 
-module_function
+  module_function
 
   # if the version is a float number, will return the float number, otherwise the string in downcase letters
   #
