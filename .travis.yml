@@ -1,12 +1,37 @@
-sudo: false
-cache: bundler
 language: ruby
+
+cache: bundler
+
+bundler_args: --no-deployment --binstubs=./bin
+
 before_install:
   - "echo 'gem: --no-ri --no-rdoc' > ~/.gemrc"
-  - gem install bundler
+  - rvm rubygems current
+  - gem update --system || true
+  - gem --version
+  - gem install bundler -v '2.2.11'
+  - export MY_BUNDLER_VERSION="_2.2.11_"
+  - bundle ${MY_BUNDLER_VERSION} --version
+
+install:
+  - bundle ${MY_BUNDLER_VERSION} config --local path vendor/bundle
+  - bundle ${MY_BUNDLER_VERSION} config --local jobs 3
+  - bundle ${MY_BUNDLER_VERSION} config --local retry 3
+  - bundle ${MY_BUNDLER_VERSION} config --local binstubs ./bin
+  - bundle ${MY_BUNDLER_VERSION} config --local bin ./bin
+  - bundle ${MY_BUNDLER_VERSION} install
+  - gem env
+  - bundle ${MY_BUNDLER_VERSION} env
+
+script:
+  - echo $BUNDLE_GEMFILE
+  - bundle ${MY_BUNDLER_VERSION} exec rake
+
 rvm:
-- 2.6.5
+- 3.0.0
+
 env:
  - RAILS_ENV=test RACK_ENV=test APP_ENV=test
+
 notifications:
   email: false
