@@ -38,7 +38,7 @@
   },
   "addons": [],
   "region": "eu",
-  "stack": "heroku-18",
+  "stack": "heroku-20",
   "buildpacks": [
     {
       "url": "heroku/ruby"
