@@ -82,7 +82,7 @@ class NumberFormatter
       end
       index -= 1
     end
-    @number if nr.blank?
+    nr.blank? ? @number : nr
   end
 
   # Description of method
