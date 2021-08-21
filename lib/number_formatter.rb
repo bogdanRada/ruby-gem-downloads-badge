@@ -78,7 +78,7 @@ class NumberFormatter
       limit = metric_power[index]
       if @number > limit
         nr = "#{(@number / limit).to_f.round}#{metric_prefixes[index]}"
-        return nr.to_i
+        return nr.to_s
       end
       index -= 1
     end
