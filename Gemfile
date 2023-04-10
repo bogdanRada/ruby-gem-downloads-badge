@@ -18,9 +18,9 @@ gem 'rack-timeout'
 gem 'moneta'
 gem 'localmemcache'
 gem 'sleepy_penguin'
+gem 'foreman'
 
 group :development, :test do
-  gem 'foreman'
   gem 'rerun'
   gem 'rb-fsevent'
 
